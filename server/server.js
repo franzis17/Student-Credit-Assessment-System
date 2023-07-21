@@ -1,2 +1,6 @@
 /*server*/
-/*this change was made by nathan*/
+
+/*add function here*/
+
+
+num = 5;
