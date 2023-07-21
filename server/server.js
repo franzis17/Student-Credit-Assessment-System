@@ -3,4 +3,4 @@
 /*add function here*/
 
 
-num = 5;
+num = 10;
