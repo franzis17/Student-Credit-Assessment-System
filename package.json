@@ -1,0 +1,11 @@
+{
+  "name": "crl_database_repo",
+  "version": "1.0.0",
+  "description": "Handles IP of incoming requests",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC"
+}
