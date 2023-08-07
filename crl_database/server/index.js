@@ -37,6 +37,7 @@ mongoose.connect(process.env.MONGO_URL, {
 
 }).then(()=> {
     app.listen(PORT, () => console.log('Server Port:', PORT))
+    console.log("Server Connection Successful")
 }).catch((error) => console.log(error, ': Did not connect'))
 
 
