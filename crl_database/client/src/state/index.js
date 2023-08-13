@@ -1,7 +1,7 @@
 import{ createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-    mode: "dark"
+    mode: "light" // change this to start in dark mode
 };
 
 //this function allows you to change from dark to light theme
@@ -10,7 +10,7 @@ export const globalSlice = createSlice({
     initialState,
     reducers: {
         setMode: (state) => {
-            state.mode = state.mode === 'light' ? "dark" : 'light';
+            state.mode = state.mode === 'light' ? "light" : 'light'; //change middle to dark for button to work properly
         }
     }
 })
