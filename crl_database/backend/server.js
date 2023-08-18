@@ -6,7 +6,7 @@ import helmet from "helmet";
 import dotenv from "dotenv";
 import morgan from "morgan";
 
-import userRoutes from "./routes/user.js";
+import usersRoutes from "./routes/users.js";
 import generalRoutes from "./routes/general.js";
 import dataRoutes from "./routes/data.js";
 import facilityRoutes from "./routes/facility.js";
@@ -23,10 +23,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cors());
 
 // Routes
-app.use("/user", userRoutes);
-app.use("/general", generalRoutes);
-app.use("/data", dataRoutes);
-app.use("/facility", facilityRoutes);
+app.use("/user", usersRoutes);
 
 // Connect to database
 const PORT = process.env.PORT || 9000; // backup port if env does not exist
@@ -38,20 +35,13 @@ connection.once("open", () => {
   console.log("MongoDB database connection established successfully");
 });
 
+/* Not sure what this routes are for
+app.use("/general", generalRoutes);
+app.use("/data", dataRoutes);
+app.use("/facility", facilityRoutes);
+*/
+
 // Start server
 app.listen(PORT, () => {
   console.log(`Server is running on port: ${PORT}`);
 });
-
-/* -- Old code --
-mongoose
-  .connect(process.env.MONGO_URL, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  })
-  .then(() => {
-    app.listen(PORT, () => console.log("Server Port:", PORT));
-    console.log("Server Connection Successful");
-  })
-  .catch((error) => console.log(error, ": Did not connect"));
-*/
