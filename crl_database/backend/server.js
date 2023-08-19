@@ -23,9 +23,15 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cors());
 
 // Routes
-app.use("/user", usersRoutes);
+app.use("/users", usersRoutes);
 
-// Connect to database
+// UNUSED ROUTES
+app.use("/general", generalRoutes);
+app.use("/data", dataRoutes);
+app.use("/facility", facilityRoutes);
+// END OF UNUSED ROUTES
+
+// Connect to the database
 const PORT = process.env.PORT || 9000; // backup port if env does not exist
 const URL = process.env.MONGO_URL;
 
@@ -34,12 +40,6 @@ const connection = mongoose.connection;
 connection.once("open", () => {
   console.log("MongoDB database connection established successfully");
 });
-
-/* Not sure what this routes are for
-app.use("/general", generalRoutes);
-app.use("/data", dataRoutes);
-app.use("/facility", facilityRoutes);
-*/
 
 // Start server
 app.listen(PORT, () => {

@@ -53,4 +53,4 @@ const unitSchema = new Schema(
 
 const Unit = mongoose.model("Unit", unitSchema);
 
-module.exports = Unit;
+export default Unit;

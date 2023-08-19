@@ -37,4 +37,4 @@ const institutionSchema = new Schema(
 
 const Institution = mongoose.model("Institution", institutionSchema);
 
-module.exports = Institution;
+export default Institution;
