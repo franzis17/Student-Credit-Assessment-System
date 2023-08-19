@@ -5,7 +5,7 @@ const router = express.Router();
 
 // ---- [GET] ----
 
-// Get all users
+// Get all users = /users
 router.route("/").get((req, res) => {
   User.find()
     .then((users) => res.json(users))
@@ -14,12 +14,17 @@ router.route("/").get((req, res) => {
 
 // ---- [POST] ----
 
+// Add a user = /users/add
 router.route("/add").post((req, res) => {
   const username = req.body.username;
   const password = req.body.password;
   const role = req.body.role;
 
-  const newUser = new User({ username, password, role });
+  const newUser = new User({
+    username,
+    password,
+    role,
+  });
 
   newUser
     .save()
@@ -29,10 +34,32 @@ router.route("/add").post((req, res) => {
 
 // ---- [UPDATE] ----
 
-// update route to be added
+// Update a user's details = /users/update/:id
+router.route("/update/:id").post((req, res) => {
+  User.findById(req.params.id)
+    .then((user) => {
+      user.username = req.body.username;
+      user.password = req.body.password;
+      user.role = req.body.role;
+
+      user
+        .save()
+        .then(() => res.json("User details updated!"))
+        .catch((err) => res.status(400).json("Error:" + err));
+    })
+    .catch((err) => res.status(400).json("Error:" + err));
+});
+
+// Update a user's password = /users/updatePass/:id
+// Code here...
 
 // ---- [DELETE] ----
 
-// delete route to be added
+// Delete a user = /users/delete/:id
+router.route("/delete/:id").delete((req, res) => {
+  User.findByIdAndDelete(req.params.id)
+    .then(() => res.json("User deleted"))
+    .catch((err) => err.status(400).json("Error:" + err));
+});
 
 export default router;

@@ -7,9 +7,13 @@ import dotenv from "dotenv";
 import morgan from "morgan";
 
 import usersRoutes from "./routes/users.js";
+import institutionsRoutes from "./routes/institutions.js";
+
+// ****UNUSED ROUTES****
 import generalRoutes from "./routes/general.js";
 import dataRoutes from "./routes/data.js";
 import facilityRoutes from "./routes/facility.js";
+// END OF UNUSED ROUTES
 
 /* CONFIG */
 dotenv.config();
@@ -24,8 +28,9 @@ app.use(cors());
 
 // Routes
 app.use("/users", usersRoutes);
+app.use("/institutions", institutionsRoutes);
 
-// UNUSED ROUTES
+// ****UNUSED ROUTES****
 app.use("/general", generalRoutes);
 app.use("/data", dataRoutes);
 app.use("/facility", facilityRoutes);
