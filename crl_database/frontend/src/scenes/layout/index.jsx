@@ -4,6 +4,7 @@ import { Outlet } from '@mui/icons-material';
 import { useSelector } from "react-redux";
 import Navbar from '../../components/Navbar';
 import Sidebar from '../../components/Sidebar'
+import Dashboard from '../dashboard';
 
 
 
@@ -13,11 +14,11 @@ const Layout = () => {
   const [isSideBarOpen, setIsSideBarOpen] = useState(true);
   
   return (
-    <Box width="100%" height="100%">
-      <Box>
-        <Navbar/>
-        </Box>
-    </Box>
-  )}
+    <div>
+      <Navbar/>
+      <Dashboard/>
+    </div>
+  );
+};
 
 export default Layout
