@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styles.css">
+    <title>Navigation Bar</title>
+    <style>
+        body {
+        margin: 0;
+        padding: 0;
+        font-family: Arial, sans-serif;
+        }
+
+        header {
+            background-color: #333;
+            color: white;
+            padding: 10px 0;
+        }
+
+        nav {
+            display: flex;
+            justify-content: center;
+        }
+
+        .nav-list {
+            list-style: none;
+            display: flex;
+            gap: 20px;
+        }
+
+        .nav-list li a {
+            text-decoration: none;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 5px;
+        }
+
+        .nav-list li a:hover {
+            background-color: #555;
+        }
+
+    </style>
+</head>
+<body>
+    <header>
+        <nav>
+            <ul class="nav-list">
+                <li><a href="dashboard.html">Dashboard</a></li>
+                <li><a href="institution.html">Institution</a></li>
+                <li><a href="unit-list.html">Unit List</a></li>
+                <li><a href="Unit_Assessment.html">Unit Assessment</a></li>
+                <li><a href="previously-assessed.html">Previously Assessed List</a></li>
+            </ul>
+        </nav>
+    </header>
+</body>
+</html>
