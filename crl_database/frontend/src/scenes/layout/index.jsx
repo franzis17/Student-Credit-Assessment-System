@@ -3,7 +3,6 @@ import { Box, useMediaQuery }  from "@mui/material";
 import { Outlet } from '@mui/icons-material';
 import { useSelector } from "react-redux";
 import Navbar from '../../components/Navbar';
-import Sidebar from '../../components/Sidebar'
 import Dashboard from '../dashboard';
 
 
