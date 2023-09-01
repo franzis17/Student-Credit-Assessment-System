@@ -59,7 +59,7 @@ router.route("/update/:id").post((req, res) => {
 router.route("/delete/:id").delete((req, res) => {
   User.findByIdAndDelete(req.params.id)
     .then(() => res.json("User deleted"))
-    .catch((err) => err.status(400).json("Error:" + err));
+    .catch((err) => res.status(400).json("Error:" + err));
 });
 
 export default router;

@@ -33,7 +33,7 @@ const unitSchema = new Schema(
     institution: {
       type: Schema.Types.ObjectId,
       ref: "Institution",
-      required: true,
+      required: false,
       trim: true,
       minlength: 3,
     },

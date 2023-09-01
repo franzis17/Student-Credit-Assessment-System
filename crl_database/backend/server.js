@@ -8,7 +8,7 @@ import morgan from "morgan";
 
 import usersRoutes from "./routes/users.js";
 import institutionsRoutes from "./routes/institutions.js";
-
+import unitsRoutes from "./routes/units.js";
 // ****UNUSED ROUTES****
 import generalRoutes from "./routes/general.js";
 import dataRoutes from "./routes/data.js";
@@ -29,6 +29,7 @@ app.use(cors());
 // Routes
 app.use("/users", usersRoutes);
 app.use("/institutions", institutionsRoutes);
+app.use("/units", unitsRoutes);
 
 // ****UNUSED ROUTES****
 app.use("/general", generalRoutes);
