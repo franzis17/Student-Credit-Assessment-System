@@ -1,7 +1,7 @@
 import React from 'react'
 import { useState } from 'react'
 import { Tabs } from "react-ui"
-import { LightModeOutlined, 
+import { LightModeOutlined,  //For darkmode functionality
     DarkModeOutlined, 
     Menu as MenuIcon, 
     SettingsOutlined, 
@@ -12,7 +12,7 @@ import FlexBetween from '../../components/FlexBetween';
 import { useDispatch } from 'react-redux';
 import { setMode } from "../../state"
 import { Box, Grid, AppBar, Toolbar, IconButton, InputBase, Button, useTheme} from '@mui/material';
-// import Sidebar from './Sidebar';
+// import BurgerMenu from './BurgerMenu';
 
 const Dashboard = () => {
 
@@ -22,7 +22,7 @@ const Dashboard = () => {
   return (
   <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column', marginTop: '2rem' }}>
   <div style={{ fontSize: '24px', fontWeight: 'bold', marginBottom: '2rem', textAlign: 'center' }}>
-    Welcome to the CRL Database, Hannes
+    Welcome to the CRL Database
   </div>
   <div>
       <FlexBetween backgroundColor={theme.palette.background.alt} borderRadius="9px" gap="15rem" p="0.1rem 1.5rem">
@@ -35,7 +35,7 @@ const Dashboard = () => {
     <Grid container justifyContent="space-between" sx={{ marginTop: '5rem' }}>
         <Grid item xs={4} textAlign="center">
           <b style={{
-            fontSize:"19px",
+            fontSize:"20px",
             position:"relative",
             left:"-45px"
 
