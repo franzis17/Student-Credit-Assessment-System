@@ -1,6 +1,5 @@
 import './App.css';
-import { TableList } from './components/TableList/TableList';
-
+import InstitutionList from './components/InstitutionList/institution-list';
 
 function App() {
   return (
@@ -8,7 +7,7 @@ function App() {
       <h1>
         Institution List
       </h1>
-      <TableList />
+      <InstitutionList />
     </div>
   );
 }

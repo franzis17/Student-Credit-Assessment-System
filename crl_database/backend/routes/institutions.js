@@ -51,7 +51,7 @@ router.route("/update/:id").post((req, res) => {
       institution
         .save()
         .then(() => res.json("Institution has been updated!"))
-        .catch((err) => res.status(400).json("Error:changd" + err.message));
+        .catch((err) => res.status(400).json("ERROR when updating institutions: " + err.message));
     })
     .catch((err) => res.status(400).json("Error:" + err.message));
 });
