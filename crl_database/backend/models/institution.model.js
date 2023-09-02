@@ -12,7 +12,7 @@ const institutionSchema = new Schema(
     },
     rank: {
       type: Number,
-      required: false,
+      required: true,
     },
     location: {
       type: String,
@@ -27,7 +27,7 @@ const institutionSchema = new Schema(
     },
     notes: {
       type: String,
-      required: false,
+      required: true,
     },
   },
   {
