@@ -13,8 +13,8 @@ const InstitutionList = () => {
     retrieveInstitutions();  // After rendering, retrieve institutions
   }, []);
   
+  /* Use data service to get all institutions from the backend server */
   const retrieveInstitutions = () => {
-    // Use data service to get all institutions from the backend server
     InstitutionDataService.getAll()
       .then((response) => {
         console.log("Retrieved institutions: " + response.data);
@@ -22,8 +22,7 @@ const InstitutionList = () => {
       })
       .catch((err) => {
         console.log(
-          `ERROR when retrieving institutions,
-          file in components/InstitutionList/instituion-list.js. \nError: ${err}`
+          `ERROR when retrieving institutions. \nError: ${err}`
         );
       });
   };
@@ -31,25 +30,26 @@ const InstitutionList = () => {
   const columns = [
     { field: 'name', headerName: 'Name', width: 250 },
     { field: 'rank', headerName: 'Rank' },
-    { field: 'location', headerName: 'Location' },
-    { field: 'major', headerName: 'Major' },
+    { field: 'location', headerName: 'Location', width: 300 },
+    { field: 'major', headerName: 'Major', width: 150 },
     { field: 'notes', headerName: 'Notes', width: 400 }
   ];
 
   return (
-    <Box sx={{ height: 400, width: '100%' }}>
+    <Box sx={{ height: '100%', width: '100%' }}>
       <DataGrid
         rows={institutions}
         columns={columns}
+        columnResizable={true}
         getRowId={(row) => row._id}
         initialState={{
           pagination: {
             paginationModel: {
-              pageSize: 20,
+              pageSize: 25,
             },
           },
         }}
-        pageSizeOptions={[5]}
+        pageSizeOptions={[10, 25, 50]}
         checkboxSelection
         disableRowSelectionOnClick
       />
