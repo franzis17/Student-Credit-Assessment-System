@@ -70,7 +70,7 @@ const Navbar = () => {
             <SettingsOutlined sx={{ fontSize: '25px' }} />
           </IconButton>
           <IconButton>
-            <Avatar sx={{ height:"20", width:"35px" }}/>
+            <Avatar sx={{ height:"30px", width:"30px" }}/>
           </IconButton>
           </FlexBetween>
       </Toolbar>
