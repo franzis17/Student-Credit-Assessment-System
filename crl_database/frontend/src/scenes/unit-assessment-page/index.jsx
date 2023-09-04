@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import './App.css';
+import Navbar from "../../components/Navbar";
 
 const UnitAssessmentPage = () => {
     
@@ -45,7 +46,10 @@ const UnitAssessmentPage = () => {
   };
 
   return (
-    <div className="App">
+    <div className="uap">
+      <div>
+        <Navbar />
+      </div>
       <div className="container">
         <div className="columns">
           <div className="left-column">

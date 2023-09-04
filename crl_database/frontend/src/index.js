@@ -5,6 +5,7 @@ import App from './App';
 import { configureStore } from "@reduxjs/toolkit"
 import globalReducer from "./state"
 import { Provider } from 'react-redux';
+import { AuthContextProvider } from './context/AuthContext.js';
 
 const store = configureStore({
   reducer: {
@@ -16,9 +17,12 @@ const store = configureStore({
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-    <Provider store={store}>
-      <App />
-    </Provider>
+    <AuthContextProvider>
+      <Provider store={store}>
+        <App />
+      </Provider>
+    </AuthContextProvider>
   </React.StrictMode>
+  
 );
 

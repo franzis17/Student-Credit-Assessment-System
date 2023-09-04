@@ -1,17 +1,10 @@
 
 
-body {
+.uap body {
     font-family: Arial, sans-serif;
     background-color: #f2f2f2;
     margin: 0;
     padding: 0;
-}
-
-header {
-    background-color: #333;
-    color: white;
-    text-align: center;
-    padding: 1rem;
 }
 
 .container {
@@ -23,8 +16,14 @@ header {
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
-h1 {
+.uap h1 {
     color: #333;
+}
+
+.uap h2 {
+    font-size: 40px;
+    padding-top: 0px;
+    margin-top: 0px;
 }
 
 .unit-info {
