@@ -25,8 +25,8 @@ const Dashboard = () => {
     Welcome to the CRL Database
   </div>
   <div>
-      <FlexBetween backgroundColor={theme.palette.background.alt} borderRadius="9px" gap="15rem" p="0.1rem 1.5rem">
-        <InputBase placeholder="Search..."/>
+      <FlexBetween backgroundColor={theme.palette.background.alt} borderRadius="10px" gap="1rem" p="0.1rem 1rem">
+        <InputBase placeholder="Search..." sx={{width:"500px"}}/>
         <IconButton>
           <Search />
         </IconButton>
@@ -35,7 +35,7 @@ const Dashboard = () => {
     <Grid container justifyContent="space-between" sx={{ marginTop: '5rem' }}>
         <Grid item xs={4} textAlign="center">
           <b style={{
-            fontSize:"20px",
+            fontSize:"19px",
             position:"relative",
             left:"-45px"
 
