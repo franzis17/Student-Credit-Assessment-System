@@ -3,6 +3,7 @@ import { Box, useMediaQuery }  from "@mui/material";
 import { Outlet } from '@mui/icons-material';
 import { useSelector } from "react-redux";
 import Navbar from '../../components/Navbar';
+import UnitAssessmentPage from "../unit-assessment-page";
 import Dashboard from '../dashboard';
 
 
@@ -15,7 +16,8 @@ const Layout = () => {
   return (
     <div>
       <Navbar/>
-      <Dashboard/>
+      {/*<Dashboard/>*/}
+      <UnitAssessmentPage/>
     </div>
   );
 };
