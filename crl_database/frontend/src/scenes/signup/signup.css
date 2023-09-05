@@ -52,3 +52,19 @@
     color: #f00;
     margin-top: 10px;
   }
+
+.signup-container {
+    position: relative;
+}
+
+.access-denied-message {
+    position: relative;
+    top: 10px; /* Adjust the top position as needed */
+    left: 10px; /* Adjust the left position as needed */
+    background-color: #ff0000; /* Background color */
+    color: #ffffff; /* Text color */
+    padding: 10px;
+    border-radius: 5px;
+    z-index: 9999; /* Ensure it appears above other elements */
+    text-align: center;
+}

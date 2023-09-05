@@ -1,13 +1,12 @@
 import express from 'express';
 
 // Import controller functions for sign-in from userControllers.js
-import { addWhitelist } from '../controllers/whitelistController.js';
+import { addWhitelistedUser, checkWhitelistUser } from '../controllers/whitelistController.js';
 
 const router = express.Router();
 
-//Request Handlers connected to userController functions
-//Login Route 
-router.post('/whitelist', addWhitelist)
-//Signup account route
+
+router.post('/addUserEmail', addWhitelistedUser)
+router.get('/checkWhitelist', checkWhitelistUser)
 
 export default router

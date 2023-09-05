@@ -6,27 +6,25 @@ const Whitelist = () => {
 
     const [email, setEmail] = useState('')
     const [userRole, setUserRole] = useState('')
-    const [isLoading, setIsLoading] = useState('')
-
-    const handleRoleChange = (event) => {
-        setUserRole(event.target.value)
-    }
+    const [isLoading, setIsLoading] = useState(false)
 
     const handleWhitelist= async () => {
+
         if(email && userRole)
         {
             setIsLoading(true);
 
             try {
 
-                const response = await fetch('http://localhost:5001/api/add-to-whitelist', {
+
+                const response = await fetch('http://localhost:5001/api/whitelist/addUserEmail', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
 
 
                     },
-                    body: JSON.stringify({email, userRole}),
+                    body: JSON.stringify({email, role: userRole}),
      
                 });
 
@@ -67,14 +65,14 @@ return (
 
     <select 
         value={userRole} 
-        onChange={handleRoleChange}
+        onChange={(e) => setUserRole(e.target.value)}
+        placeholder = "Select an option"
     >
-    <option value="">Select an option</option>
-    <option value="Option1">Moderator</option>
-    <option value="Option2">Staff</option>
+    <option value="Staff">Staff</option>
+    <option value="Moderator">Moderator</option>
     </select>
 
-    <button disabled={handleWhitelist}> Add user to whitelist </button>
+    <button disabled={isLoading} onClick={handleWhitelist}> Add user to whitelist </button>
 
     </div>
 

@@ -24,7 +24,7 @@ const userSchema = new Schema({
 
     role: {
         type: String,
-        default: 'user'
+        default: 'Staff'
     }
 })
 
@@ -42,16 +42,18 @@ userSchema.statics.signup = async function(email, password, username) {
 
     //If password is strong enough
     if(!validator.isStrongPassword(password)){
-        throw Error('Password does not follow password guidelines: Password must be 8 characters or more and include atleast 1 capital letter, number and symbol')
+        throw Error('Password does not follow password guidelines: Password must be 8 characters or more and include atleast 1 capital letter, number and symbol.')
     }
 
-    //check if email already exists in database
-    const emailExists = await this.findOne({email})
+    //check if email already exists in database - make it case sensitive
+    /*const emailExists = await this.findOne({email})*/
+    const emailExists = await this.findOne({ email: { $regex: new RegExp('^' + email + '$', 'i') } });
     if(emailExists) {
         throw Error('Email already in use by another account')
     }
 
-    const userExists = await this.findOne({username})
+    /* const userExists = await this.findOne({username})*/
+    const userExists = await this.findOne({ username: { $regex: new RegExp('^' + username + '$', 'i') } });
     if(userExists) {
         throw Error('Username already exists')
     }

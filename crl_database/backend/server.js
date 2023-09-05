@@ -7,6 +7,7 @@ import dotenv from "dotenv";
 import morgan from "morgan";
 
 import userRoutes from "./routes/user.js"
+import whitelistRoute from "./routes/whitelist.js"
 import institutionsRoutes from "./routes/institutions.js";
 import unitsRoutes from "./routes/units.js";
 
@@ -23,6 +24,7 @@ app.use(cors());
 
 // Routes
 app.use('/api/user', userRoutes);
+app.use('/api/whitelist', whitelistRoute);
 app.use("/institutions", institutionsRoutes);
 app.use("/units", unitsRoutes);
 
