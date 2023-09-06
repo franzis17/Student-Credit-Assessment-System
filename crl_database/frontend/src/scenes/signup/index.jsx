@@ -14,22 +14,21 @@ const Signup = () => {
     const {signup, error, isLoading} = useSignup()
     const navigate = useNavigate();
     const { isWhitelisted } = useWhitelistCheck(email)
-    const [showAccessDeniedMessage, setShowAccessDeniedMessage] = useState(false)
-    const { userRole, updateRole } = useGetRoleID()
+    const [showAccessDeniedMessage, setShowAccessDeniedMessage] = useState(JSON.parse(localStorage.getItem('showAccessDeniedMessage') || "false"))
+    const { userRole, updateRole } = useGetRoleID(email)
 
-    useEffect(() => {
+    /*useEffect(() => {
         //Run when component mounts and calls whitelist function to initialise state
         const storedState = localStorage.getItem('showAccessDeniedMessage')
         if (storedState) {
             setShowAccessDeniedMessage(JSON.parse(storedState))
         }
 
-    }, [email])
+    }, [email])*/
     
     
     const handle = async(e) => {
 
-        console.log(isWhitelisted)
 
         if(!isWhitelisted)
         {
@@ -42,10 +41,17 @@ const Signup = () => {
             //Clear local storage for access denied message
             localStorage.removeItem('showAccessDeniedMessage')
 
-            //call setRole hook and set the role of user to one on the whitelist
-            await updateRole(userId, newRole)
+            //Update the users role in the User schema table after getting new assigned role
 
             const signupSuccessful = await signup(email, password, username, userRole)
+
+            const role = userRole
+            console.log(role)
+
+            if (role) {
+                // Call updateRole with the correct arguments
+                await updateRole(email, role);
+            }
     
              if (signupSuccessful) {
 

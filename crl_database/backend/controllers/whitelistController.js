@@ -3,11 +3,11 @@ import registeredUsers from '../models/userModel.js'
 import jwt from 'jsonwebtoken';
 
 
-const createJsonToken = (_id) => {
+const createJsonTokenID = (_id, role) => {
     
-    return jwt.sign({_id:_id}, process.env.JWT_KEY, {expiresIn: '3d'})
+        return jwt.sign({_id:_id, role: role}, process.env.JWT_KEY, {expiresIn: '3d'});
+    }
     
-}
 // add whitelisted user account
 const addWhitelistedUser = async (req, res) => {
 
@@ -29,7 +29,7 @@ const addWhitelistedUser = async (req, res) => {
         const wlUser = await WhitelistedUser.create({email, role})
 
         //create a token for user
-        const token = createJsonToken(wlUser._id)
+        const token = createJsonTokenID(wlUser._id)
 
         //token -> payload encoded, headers encoded, secret_token encoded
         res.status(200).json({email, token})
@@ -78,12 +78,13 @@ const getUserRole = async (req, res)  => {
 
             const userRole = emailExists.role
 
-            const token = createJsonToken(emailExists._id, userRole)
+            const token = createJsonTokenID(emailExists._id, userRole)
+
+            res.status(200).json({ email, token, message: 'Successfully grabbed user role' });
      
-            res.status(200).json({email, token})
      } else {
 
-        res.status(400).send('No role indicated to user')
+        res.status(400).send('No role indicated to that user account')
 
      }
     } catch (error) {
@@ -93,4 +94,49 @@ const getUserRole = async (req, res)  => {
 }
 
 
-export { addWhitelistedUser, checkWhitelistUser, getUserRole }
+const updateRole = async (req, res)  => {
+    
+
+    const { email } = req.query // email as a URL parameter
+    const { role } = req.body //  new role in request body
+
+    const newRole = role
+
+    console.log('Received email:', email);
+    console.log('Received role:', newRole);
+    
+    if (!email || !newRole) {
+         return res.status(400).send("Email and role are required.");
+     }
+    
+        try {
+
+            const user = await WhitelistedUser.findOne({ email: email });
+            console.log("Found user:", user);
+    
+            if (!user) {
+                return res.status(404).send("User not found.");
+            }
+
+    
+                user.role = newRole;
+                console.log(newRole)
+
+                await user.save();
+
+                const updatedUser = await WhitelistedUser.findOne({ email: email });
+                console.log("Updated user role:", updatedUser.role)
+    
+                return res.status(200).json({ message: "Role updated successfully." });
+
+
+            
+    
+        } catch (error) {
+
+            console.error("Error updating role:", error);
+            return res.status(500).send("Server error.");
+        }
+    }
+
+export { addWhitelistedUser, checkWhitelistUser, getUserRole, updateRole }

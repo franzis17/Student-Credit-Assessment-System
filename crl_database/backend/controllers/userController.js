@@ -38,11 +38,10 @@ const loginUser = async (req, res) => {
 // sign up user account - after admin acceptance
 const signupUser = async (req, res) => {
 
-    const {email, password, username} = req.body
+    const {email, password, username, role} = req.body
     try {
 
-        const user = await User.signup(email, password, username)
-
+        const user = await User.signup(email, password, username, role)
         //create a token for user
         const token = createJsonToken(user._id)
 
