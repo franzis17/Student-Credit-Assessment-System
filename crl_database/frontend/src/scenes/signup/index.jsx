@@ -4,6 +4,7 @@ import { useSignup } from "../../hooks/useSignup"
 import "./signup.css";
 import { useNavigate } from 'react-router-dom';
 import { useWhitelistCheck } from '../../hooks/useWhitelistCheck';
+import { useGetRoleID } from '../../hooks/useGetRoleID';
 
 const Signup = () => {
 
@@ -14,6 +15,7 @@ const Signup = () => {
     const navigate = useNavigate();
     const { isWhitelisted } = useWhitelistCheck(email)
     const [showAccessDeniedMessage, setShowAccessDeniedMessage] = useState(false)
+    const { userRole, updateRole } = useGetRoleID()
 
     useEffect(() => {
         //Run when component mounts and calls whitelist function to initialise state
@@ -40,10 +42,13 @@ const Signup = () => {
             //Clear local storage for access denied message
             localStorage.removeItem('showAccessDeniedMessage')
 
-            const signupSuccessful = await signup(email, password, username)
+            //call setRole hook and set the role of user to one on the whitelist
+            await updateRole(userId, newRole)
+
+            const signupSuccessful = await signup(email, password, username, userRole)
     
              if (signupSuccessful) {
-                console.log("Signup successful");
+
                 navigate('/dashboard');
             
                } else {

@@ -43,7 +43,7 @@ const addWhitelistedUser = async (req, res) => {
 }
 
 const checkWhitelistUser = async (req, res) => {
-    
+
     const {email} = req.query
 
     try {
@@ -62,7 +62,35 @@ const checkWhitelistUser = async (req, res) => {
         console.error('Error:', error);
         res.status(400).json({error: error.message})
     }
-} 
+}
+
+const getUserRole = async (req, res)  => {
 
 
-export { addWhitelistedUser, checkWhitelistUser }
+     const {email} = req.query
+     //generate token to carry the user's role
+
+     try {
+
+        const emailExists = await WhitelistedUser.findOne({ email })
+
+        if(emailExists) {
+
+            const userRole = emailExists.role
+
+            const token = createJsonToken(emailExists._id, userRole)
+     
+            res.status(200).json({email, token})
+     } else {
+
+        res.status(400).send('No role indicated to user')
+
+     }
+    } catch (error) {
+        console.error('Error:', error)
+        res.status(400).json({error: error.message})
+    }
+}
+
+
+export { addWhitelistedUser, checkWhitelistUser, getUserRole }
