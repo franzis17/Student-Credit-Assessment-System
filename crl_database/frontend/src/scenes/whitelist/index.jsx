@@ -50,8 +50,9 @@ const Whitelist = () => {
 return (
   
 
-    <div classname="admin-whitelist">
+    <div className="admin-whitelist">
    
+    <h1> Whitelist a User Account</h1>
 
      <label>Email:</label>
      <input
