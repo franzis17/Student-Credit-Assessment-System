@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Box from '@mui/material/Box';
 import { DataGrid } from '@mui/x-data-grid';
 import InstitutionDataService from "../../services/institution";
+import Navbar from "../../components/Navbar";
 
 const InstitutionList = () => {
   
@@ -36,6 +37,10 @@ const InstitutionList = () => {
   ];
 
   return (
+    <>
+    <div>
+      <Navbar />
+    </div>
     <Box sx={{ height: '100%', width: '100%' }}>
       <DataGrid
         rows={institutions}
@@ -54,6 +59,7 @@ const InstitutionList = () => {
         disableRowSelectionOnClick
       />
     </Box>
+    </>
   );
 
 }

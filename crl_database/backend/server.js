@@ -6,14 +6,9 @@ import helmet from "helmet";
 import dotenv from "dotenv";
 import morgan from "morgan";
 
-import usersRoutes from "./routes/users.js";
+import userRoutes from "./routes/user.js"
 import institutionsRoutes from "./routes/institutions.js";
 import unitsRoutes from "./routes/units.js";
-// ****UNUSED ROUTES****
-import generalRoutes from "./routes/general.js";
-import dataRoutes from "./routes/data.js";
-import facilityRoutes from "./routes/facility.js";
-// END OF UNUSED ROUTES
 
 /* CONFIG */
 dotenv.config();
@@ -27,15 +22,9 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cors());
 
 // Routes
-app.use("/users", usersRoutes);
+app.use('/api/user', userRoutes);
 app.use("/institutions", institutionsRoutes);
 app.use("/units", unitsRoutes);
-
-// ****UNUSED ROUTES****
-app.use("/general", generalRoutes);
-app.use("/data", dataRoutes);
-app.use("/facility", facilityRoutes);
-// END OF UNUSED ROUTES
 
 // Connect to the database
 const PORT = process.env.PORT || 9000; // backup port if env does not exist
