@@ -1,5 +1,7 @@
 import express from "express";
 import Institution from "../models/institution.model.js";
+import fs from "fs";
+
 
 const router = express.Router();
 
@@ -51,9 +53,9 @@ router.route("/update/:id").post((req, res) => {
       institution
         .save()
         .then(() => res.json("Institution has been updated!"))
-        .catch((err) => res.status(400).json("ERROR when updating institutions: " + err.message));
+        .catch((err) => res.status(400).json("ERROR when updating institutions: " + err));
     })
-    .catch((err) => res.status(400).json("Error:" + err.message));
+    .catch((err) => res.status(400).json("Error when updating institution: " + err));
 });
 
 // ---- [DELETE] ----
@@ -63,6 +65,24 @@ router.route("/delete/:id").delete((req, res) => {
   Institution.findByIdAndDelete(req.params.id)
     .then(() => res.json("Institution deleted."))
     .catch((err) => res.status(400).json("Error:" + err));
+});
+
+
+// ---- MOCK DATA ----
+
+
+// TEST: Mock data to be put in db
+router.route("/add-mock").post(async (req, res) => {
+  try {
+    const rawData = fs.readFileSync("./routes/MOCK-Institutions.json");
+    const jsonData = JSON.parse(rawData);
+    
+    await Institution.insertMany(jsonData);
+    
+    res.json("Mock institutions have been added.");
+  } catch (err) {
+    res.status(400).json("Error when adding mock: " + err);
+  }
 });
 
 export default router;
