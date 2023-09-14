@@ -25,6 +25,15 @@ const userSchema = new Schema({
     role: {
         type: String,
         default: 'Staff'
+    },
+
+    isVerified: {
+        type: Boolean,
+        default: false
+    },
+
+    emailToken: {
+        type: String
     }
 })
 
@@ -32,7 +41,7 @@ const userSchema = new Schema({
 // static sign-up method for new users
 //Adding new user to database
 //protected by hashing passwords - using bcrypt and salt
-userSchema.statics.signup = async function(email, password, username) {
+userSchema.statics.signup = async function(email, password, username, role, emailToken) {
 
     //Validation of email and password- using validator library
     //If valid email reverse to be false
@@ -63,7 +72,7 @@ userSchema.statics.signup = async function(email, password, username) {
 
     const hash = await bcrypt.hash(password, salt)
 
-    const user = await this.create({email, password: hash, username: username})
+    const user = await this.create({email, password: hash, username: username, role: role, emailToken: emailToken})
 
     return user
 

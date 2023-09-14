@@ -98,14 +98,13 @@ const updateRole = async (req, res)  => {
     
 
     const { email } = req.query // email as a URL parameter
-    const { role } = req.body //  new role in request body
 
-    const newRole = role
+    const { role } = req.body
 
     console.log('Received email:', email);
-    console.log('Received role:', newRole);
+    console.log('Received role:', role);
     
-    if (!email || !newRole) {
+    if (!email || !role) {
          return res.status(400).send("Email and role are required.");
      }
     
@@ -119,13 +118,12 @@ const updateRole = async (req, res)  => {
             }
 
     
-                user.role = newRole;
-                console.log(newRole)
+                user.role = role;
+                console.log(role)
 
                 await user.save();
 
-                const updatedUser = await WhitelistedUser.findOne({ email: email });
-                console.log("Updated user role:", updatedUser.role)
+                console.log("Updated user role:", user.role)
     
                 return res.status(200).json({ message: "Role updated successfully." });
 
@@ -135,7 +133,7 @@ const updateRole = async (req, res)  => {
         } catch (error) {
 
             console.error("Error updating role:", error);
-            return res.status(500).send("Server error.");
+            return res.status(500).json({error:"Server error."});
         }
     }
 

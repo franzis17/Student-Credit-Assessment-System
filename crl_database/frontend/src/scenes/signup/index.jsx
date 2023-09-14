@@ -16,16 +16,6 @@ const Signup = () => {
     const { isWhitelisted } = useWhitelistCheck(email)
     const [showAccessDeniedMessage, setShowAccessDeniedMessage] = useState(JSON.parse(localStorage.getItem('showAccessDeniedMessage') || "false"))
     const { userRole, updateRole } = useGetRoleID(email)
-
-    /*useEffect(() => {
-        //Run when component mounts and calls whitelist function to initialise state
-        const storedState = localStorage.getItem('showAccessDeniedMessage')
-        if (storedState) {
-            setShowAccessDeniedMessage(JSON.parse(storedState))
-        }
-
-    }, [email])*/
-    
     
     const handle = async(e) => {
 
