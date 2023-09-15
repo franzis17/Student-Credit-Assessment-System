@@ -1,11 +1,7 @@
 import { useState } from 'react';
 import { useLogin } from '../../hooks/useLogin.js';
 import styles from './LoginForm.css';
-import PersonIcon from '@mui/icons-material/Person';
 import { useNavigate } from 'react-router-dom';
-
-
-//User signs themselves up -> need email whitelist first
 
 
 const Login = () => {
@@ -13,6 +9,7 @@ const Login = () => {
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
     const {login, error, isLoading} = useLogin()
+    const [showPassword, setShowPassword] = useState(false)
     
     const navigate = useNavigate();
 
@@ -20,11 +17,18 @@ const Login = () => {
 
         e.preventDefault()
 
-        const loginSuccessful = await login(email, password)
+        try {
 
-        if (loginSuccessful) {
-            console.log(email)
-            navigate('/dashboard');
+            const loginSuccessful = await login(email, password)
+
+            if (loginSuccessful) {
+                console.log(email)
+                navigate('/dashboard');
+            }
+        } catch (err) {
+            if(err.message.includes('Email is not verified')) {
+                navigate('/verifyemail')
+            }
         }
        
     }
@@ -45,7 +49,6 @@ const Login = () => {
                 <label>Email:</label>
             </div>
             <div className="input-icon"> 
-                <span className="material-icons"><PersonIcon style={{ fontSize: 50, color: '#007bff' }}/></span>
                 <input 
                 type="email"
                 onChange={(e) => setEmail(e.target.value)}
@@ -78,3 +81,4 @@ const Login = () => {
 }
 
 export default Login
+

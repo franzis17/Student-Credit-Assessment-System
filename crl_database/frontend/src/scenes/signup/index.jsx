@@ -45,7 +45,7 @@ const Signup = () => {
     
              if (signupSuccessful) {
 
-                navigate('/dashboard');
+                navigate('/verifyemail');
             
                } else {
                 console.log("Signup not successful");

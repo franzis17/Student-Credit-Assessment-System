@@ -1,6 +1,7 @@
 import User from '../models/userModel.js'
 import jwt from 'jsonwebtoken';
 import crypto from 'crypto';
+import {sendVerificationEmail} from '../utils/sendVerificationEmail.js';
 
 //JSON token creation using token password
 const createJsonToken = (_id) => {
@@ -53,6 +54,9 @@ const signupUser = async (req, res) => {
             
             //await for user signup using all required fields for a user account
             const user = await User.signup(email, password, username, role, emailToken)
+
+            //verify email after signing up
+            sendVerificationEmail(user)
         
             //create a token for user
             const token = createJsonToken(user._id)

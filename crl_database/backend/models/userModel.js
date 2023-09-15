@@ -99,6 +99,10 @@ userSchema.statics.login= async function(email, password) {
         throw Error('Invalid Login Credentials')
     }
 
+    if(!user.isVerified) {
+        throw Error('Email is not verified.  Please verify your email before logging in.')
+    }
+
     return user
 
 }

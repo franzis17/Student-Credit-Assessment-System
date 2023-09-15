@@ -36,15 +36,15 @@ form.signLink a{
 }
 
 .input-container label {
-  align-items: left; /* Align labels and inputs vertically */
+  align-items: center; /* Align labels and inputs vertically */
   font-size: 18px;
   position:absolute; left:25px;
 }
 
 .label-container label {
-    width: 100px; /* Adjust the width of the labels as needed */
-    text-align: left; /* Align label text to the left */
-    margin-right: 10px; /* Add spacing between label and input */
+    width: 100px;
+    text-align: left; 
+    margin-right: 10px;
     font-size: 18px;
 }
 
