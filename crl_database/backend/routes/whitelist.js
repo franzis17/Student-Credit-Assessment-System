@@ -12,5 +12,13 @@ router.get('/getUserRole', getUserRole)
 router.put('/updateRole', updateRole)
 
 
+/* router.route("/").get((req, res) => {
+  Institution.find()
+    .then((institutions) => res.json(institutions))
+    .catch((err) => res.status(400).json("Error:" + err));
+});*/
+
+
+
 
 export default router

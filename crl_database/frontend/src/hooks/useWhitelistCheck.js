@@ -29,32 +29,3 @@ export const useWhitelistCheck = (initialEmail) => {
     return { isWhitelisted };
 };
 
-/*export const useWhitelistCheck = () => {
-
-    const [isWhitelisted, setIsWhitelisted] = useState(false);
-    
-
-    const whitelist = async (email) => {
-
-        //Make a request to server to check if the email is whitelisted
-         try {
-
-            const response = await fetch(`http://localhost:5001/api/whitelist/checkWhitelist?email=${encodeURIComponent(email)}`) 
-
-            if(response.status === 200) {
-                setIsWhitelisted(true)
-            }
-            else {
-                setIsWhitelisted(false)
-            }
-
-        } catch(error) {
-            console.error('Error: ', error)
-            setIsWhitelisted(false)
-        }
-    }
-
-
-    return {isWhitelisted, whitelist}
-
-}*/
