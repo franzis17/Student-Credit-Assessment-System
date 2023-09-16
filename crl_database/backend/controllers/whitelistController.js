@@ -11,28 +11,28 @@ const createJsonTokenID = (_id, role) => {
 // add whitelisted user account
 const addWhitelistedUser = async (req, res) => {
 
-    const {email, role} = req.body
+    const {curtinID, role} = req.body
     try {
 
-        const emailExists = await WhitelistedUser.findOne({ email })
+        const idExists = await WhitelistedUser.findOne({ curtinID })
 
-        if (emailExists) {
-            return res.status(400).json({ error: 'Email already added to whitelist' })
+        if (idExists) {
+            return res.status(400).json({ error: 'ID already added to whitelist' })
           }
 
-        const registeredUsrExists = await registeredUsers.findOne({email})
+        const registeredUsrExists = await registeredUsers.findOne({curtinID})
         
         if(registeredUsrExists) {
-            return res.status(400).json({ error: 'A registered account has already been created and whitelisted with this email' })
+            return res.status(400).json({ error: 'A registered account has already been created and whitelisted with this ID' })
         }
 
-        const wlUser = await WhitelistedUser.create({email, role})
+        const wlUser = await WhitelistedUser.create({curtinID, role})
 
         //create a token for user
         const token = createJsonTokenID(wlUser._id)
 
         //token -> payload encoded, headers encoded, secret_token encoded
-        res.status(200).json({email, token})
+        res.status(200).json({curtinID, role, token, _id: wlUser._id})
 
      } catch (error) {
      console.error('Error:', error);
@@ -44,18 +44,18 @@ const addWhitelistedUser = async (req, res) => {
 
 const checkWhitelistUser = async (req, res) => {
 
-    const {email} = req.query
+    const {curtinID} = req.query
 
     try {
 
-        const emailExists = await WhitelistedUser.findOne({ email })
+        const idExists = await WhitelistedUser.findOne({ curtinID })
 
-        if(emailExists) {
-            console.log("Email is whitelisted.");
+        if(idExists) {
+            console.log("User is whitelisted.");
             res.status(200).send('Account is approved by Admin')
         }
         else {
-            console.log("Email is not whitelisted.");
+            console.log("User is not whitelisted.");
             res.status(400).send('You have not been approved by Admin to have login access - please contact the Admin for support')
         }
     } catch (error) {
@@ -67,20 +67,20 @@ const checkWhitelistUser = async (req, res) => {
 const getUserRole = async (req, res)  => {
 
 
-     const {email} = req.query
+     const {curtinID} = req.query
      //generate token to carry the user's role
 
      try {
 
-        const emailExists = await WhitelistedUser.findOne({ email })
+        const idExists = await WhitelistedUser.findOne({ curtinID })
 
-        if(emailExists) {
+        if(idExists) {
 
-            const userRole = emailExists.role
+            const userRole = idExists.role
 
-            const token = createJsonTokenID(emailExists._id, userRole)
+            const token = createJsonTokenID(idExists._id, userRole)
 
-            res.status(200).json({ email, token, message: 'Successfully grabbed user role' });
+            res.status(200).json({ curtinID, token, message: 'Successfully grabbed user role' });
      
      } else {
 
@@ -97,20 +97,20 @@ const getUserRole = async (req, res)  => {
 const updateRole = async (req, res)  => {
     
 
-    const { email } = req.query // email as a URL parameter
+    const { curtinID } = req.query // ID as a URL parameter
 
     const { role } = req.body
 
-    console.log('Received email:', email);
+    console.log('Received ID:', curtinID);
     console.log('Received role:', role);
     
-    if (!email || !role) {
-         return res.status(400).send("Email and role are required.");
+    if (!curtinID || !role) {
+         return res.status(400).send("ID and role are required.");
      }
     
         try {
 
-            const user = await WhitelistedUser.findOne({ email: email });
+            const user = await WhitelistedUser.findOne({ curtinID: curtinID });
             console.log("Found user:", user);
     
             if (!user) {

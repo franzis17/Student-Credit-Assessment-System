@@ -1,21 +1,26 @@
 //User signs themselves up -> need email whitelist first
 import { useState, useEffect } from 'react';
 import { useSignup } from "../../hooks/useSignup"
-import "./signup.css";
 import { useNavigate } from 'react-router-dom';
 import { useWhitelistCheck } from '../../hooks/useWhitelistCheck';
 import { useGetRoleID } from '../../hooks/useGetRoleID';
+import { Button, TextField, Paper, Typography, Container } from '@material-ui/core';
+import useStyles from './signupFormStyle.js'
+import Alert from '@material-ui/lab/Alert';
 
 const Signup = () => {
 
     const [email, setEmail] = useState('')
     const [username, setUsername] = useState('')
     const [password, setPassword] = useState('')
+    const [curtinID, setCurtinID] = useState('')
     const {signup, error, isLoading} = useSignup()
     const navigate = useNavigate();
     const { isWhitelisted } = useWhitelistCheck(email)
     const [showAccessDeniedMessage, setShowAccessDeniedMessage] = useState(JSON.parse(localStorage.getItem('showAccessDeniedMessage') || "false"))
     const { userRole, updateRole } = useGetRoleID(email)
+    const classes = useStyles()
+    
     
     const handle = async(e) => {
 
@@ -33,7 +38,7 @@ const Signup = () => {
 
             //Update the users role in the User schema table after getting new assigned role
 
-            const signupSuccessful = await signup(email, password, username, userRole)
+            const signupSuccessful = await signup(email, password, username, userRole, curtinID)
 
             const role = userRole
             console.log(role)
@@ -57,43 +62,80 @@ const Signup = () => {
 
 
     return (
-        <div>
-            {showAccessDeniedMessage && (
-                <div className="access-denied-message">
-                    You do not have authorized access. Please contact the admin.
-                </div>
-            )}
-        <form className="signup" onSubmit={handle}> 
-        <h3> Sign up</h3>
-
-        <label>Username:</label>
-        <input 
-            type="username"
-            onChange={(e) => setUsername(e.target.value)}
-            value={username}
-        />
-
-        <label>Email:</label>
-        <input 
-            type="email"
-            onChange={(e) => setEmail(e.target.value)}
-            value={email}
-        />
-        <label>Password:</label>
-        <input
-            type="password"
-            onChange={(e) => setPassword(e.target.value)}
-            value={password}
-        />
-
-
-        <button disabled={isLoading} onClick={handle}>Signup</button>
-        {error && <div className="error">{error}</div>}
-        </form>
-      </div>
-     
-    )
-
+            <Container maxWidth="xs">
+                {showAccessDeniedMessage && (
+                    <Alert severity="error">You do not have authorized access. Please contact the admin.</Alert>
+                )}
+    
+                <Paper elevation={3} className={classes.paper}>
+                    <Typography variant="h5" gutterBottom>Sign Up</Typography>
+                    
+                    <form onSubmit={handle}>
+                        <TextField
+                            variant="outlined"
+                            margin="normal"
+                            required
+                            fullWidth
+                            label="Username"
+                            onChange={(e) => setUsername(e.target.value)}
+                            value={username}
+                        />
+                        <TextField
+                            variant="outlined"
+                            margin="normal"
+                            required
+                            fullWidth
+                            label="Email"
+                            type="email"
+                            onChange={(e) => setEmail(e.target.value)}
+                            value={email}
+                        />
+                        <TextField
+                            variant="outlined"
+                            margin="normal"
+                            required
+                            fullWidth
+                            label="Password"
+                            type="password"
+                            onChange={(e) => setPassword(e.target.value)}
+                            value={password}
+                        />
+                        <TextField
+                            variant="outlined"
+                            margin="normal"
+                            required
+                            fullWidth
+                            label="Curtin ID"
+                            onChange={(e) => setCurtinID(e.target.value)}
+                            value={curtinID}
+                        />
+                        <Button
+                            type="submit"
+                            fullWidth
+                            variant="contained"
+                            color="primary"
+                            disabled={isLoading}
+                            style={{ marginTop: '1em' }}
+                        >
+                            Sign Up
+                        </Button>
+                        {error && <Alert severity="error" style={{ marginTop: '1em' }}>{error}</Alert>}
+                    </form>
+    
+                    <Button
+                        type="button"
+                        fullWidth
+                        variant="text"
+                        color="default"
+                        style={{ marginTop: '1em' }}
+                        onClick={() => navigate('/login')}
+                    >
+                        Already have an account? Log in
+                    </Button>
+                </Paper>
+            </Container>
+        )
 }
 
 export default Signup
+

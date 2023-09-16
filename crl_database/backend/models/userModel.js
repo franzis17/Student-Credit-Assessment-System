@@ -11,6 +11,12 @@ const userSchema = new Schema({
         type: String, 
         unique: true,
     },
+
+    curtinID: { 
+        type: Number,
+        unique: true,
+        required: true,
+    },
     email: {
         type: String,
         required: true,
@@ -41,7 +47,7 @@ const userSchema = new Schema({
 // static sign-up method for new users
 //Adding new user to database
 //protected by hashing passwords - using bcrypt and salt
-userSchema.statics.signup = async function(email, password, username, role, emailToken) {
+userSchema.statics.signup = async function(email, password, username, role, emailToken, curtinID) {
 
     //Validation of email and password- using validator library
     //If valid email reverse to be false
@@ -67,12 +73,17 @@ userSchema.statics.signup = async function(email, password, username, role, emai
         throw Error('Username already exists')
     }
 
+    const idExists = await this.findOne({ curtinID })
+    if (idExists) {
+        throw Error('ID already exists')
+    }
+
     //Number of salt rounds: Default = 10
     const salt = await bcrypt.genSalt(10)
 
     const hash = await bcrypt.hash(password, salt)
 
-    const user = await this.create({email, password: hash, username: username, role: role, emailToken: emailToken})
+    const user = await this.create({email, password: hash, username: username, role: role, emailToken: emailToken, curtinID: curtinID})
 
     return user
 

@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import jwt_decode from 'jwt-decode';
 
 
-export const useGetRoleID = (email) => { 
+export const useGetRoleID = (curtinID) => { 
 
     const [userRole, setUserRole] = useState(null)
 
@@ -12,7 +12,7 @@ export const useGetRoleID = (email) => {
 
             try {
 
-                const response = await fetch(`http://localhost:5001/api/whitelist/getUserRole?email=${email}`) 
+                const response = await fetch(`http://localhost:5001/api/whitelist/getUserRole?curtinID=${curtinID}`) 
 
                 if(response.status === 200) {
 
@@ -44,14 +44,14 @@ export const useGetRoleID = (email) => {
     
 
         
-    }, [email]);
+    }, [curtinID]);
 
 
-    const updateRole = async (email, newRole) => {
+    const updateRole = async (curtinID, newRole) => {
 
         try {
 
-            const response = await fetch(`http://localhost:5001/api/whitelist/updateRole?email=${email}`, {
+            const response = await fetch(`http://localhost:5001/api/whitelist/updateRole?curtinID=${curtinID}`, {
                 method: 'PUT',
                 headers: {
                   'Content-Type': 'application/json',
