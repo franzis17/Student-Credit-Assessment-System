@@ -1,21 +1,19 @@
 import React from 'react'
 import { useState } from 'react'
-import { Tabs } from "react-ui"
-import { LightModeOutlined,  //For darkmode functionality
+import { LightModeOutlined,  //For darkmode functionality later
     DarkModeOutlined, 
-    Menu as MenuIcon, 
-    SettingsOutlined, 
-    ArrowDropDownOutlined, 
+    Menu as MenuIcon,
     Search
 } from "@mui/icons-material";
 import FlexBetween from '../../components/FlexBetween';
 import { useDispatch } from 'react-redux';
-import { setMode } from "../../state"
-import { Box, Grid, AppBar, Toolbar, IconButton, InputBase, Button, useTheme} from '@mui/material';
-// import BurgerMenu from './BurgerMenu';
+import { setMode } from "../../state" //For darkmode functionality later
+import { Box, Grid, IconButton, InputBase, Button, useTheme} from '@mui/material';
 import Navbar from "../../components/Navbar";
 
 const Dashboard = () => {
+  const [totalApplications, setTotalApplications] = useState(0);
+  const [pendingApplications, setPendingApplications] = useState(0);
 
   const dispatch = useDispatch();
   const theme = useTheme();
