@@ -16,9 +16,9 @@ const Signup = () => {
     const [curtinID, setCurtinID] = useState('')
     const {signup, error, isLoading} = useSignup()
     const navigate = useNavigate();
-    const { isWhitelisted } = useWhitelistCheck(email)
+    const { isWhitelisted } = useWhitelistCheck(curtinID)
     const [showAccessDeniedMessage, setShowAccessDeniedMessage] = useState(JSON.parse(localStorage.getItem('showAccessDeniedMessage') || "false"))
-    const { userRole, updateRole } = useGetRoleID(email)
+    const { userRole, updateRole } = useGetRoleID(curtinID)
     const classes = useStyles()
     
     
@@ -37,16 +37,15 @@ const Signup = () => {
             localStorage.removeItem('showAccessDeniedMessage')
 
             //Update the users role in the User schema table after getting new assigned role
-
-            const signupSuccessful = await signup(email, password, username, userRole, curtinID)
-
             const role = userRole
             console.log(role)
 
             if (role) {
                 // Call updateRole with the correct arguments
-                await updateRole(email, role);
+                await updateRole(curtinID, role);
             }
+
+            const signupSuccessful = await signup(email, password, username, role, curtinID)
     
              if (signupSuccessful) {
 
@@ -106,6 +105,7 @@ const Signup = () => {
                             required
                             fullWidth
                             label="Curtin ID"
+                            type="text"
                             onChange={(e) => setCurtinID(e.target.value)}
                             value={curtinID}
                         />

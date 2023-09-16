@@ -13,7 +13,7 @@ const userSchema = new Schema({
     },
 
     curtinID: { 
-        type: Number,
+        type: String,
         unique: true,
         required: true,
     },

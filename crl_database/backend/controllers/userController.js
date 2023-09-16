@@ -40,20 +40,20 @@ const loginUser = async (req, res) => {
 // sign up user account - after admin acceptance
 const signupUser = async (req, res) => {
 
-    const {email, password, username, role} = req.body
+    const {email, password, username, role, curtinID} = req.body
     try {
 
         //Create token for email verification
         const emailToken = crypto.randomBytes(64).toString("hex")
-
-        if(!username || !email || !password)
+        if(!username || !email || !password || !curtinID)
         {
             return res.status(400).json("All fields are required to signup")
         }
+
         else { 
             
             //await for user signup using all required fields for a user account
-            const user = await User.signup(email, password, username, role, emailToken)
+            const user = await User.signup(email, password, username, role, emailToken, curtinID)
 
             //verify email after signing up
             sendVerificationEmail(user)
