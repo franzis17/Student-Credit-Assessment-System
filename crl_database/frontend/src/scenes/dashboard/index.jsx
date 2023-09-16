@@ -11,22 +11,26 @@ import { setMode } from "../../state" //For darkmode functionality later
 import { Box, Grid, IconButton, InputBase, Button, useTheme} from '@mui/material';
 import Navbar from "../../components/Navbar";
 import InstitutionDataService from "../../services/institution";
+import UnitDataService from "../../services/institution";
+import { useNavigate } from 'react-router-dom';
 
 const Dashboard = () => {
   const [totalInstitutions, setTotalInstitutions] = useState([]);
+  const [totalUnits, setTotalUnits] = useState([]);
   
   // To do after render
   useEffect(() => {
-    getInstitutionCount(); // After rendering, retrieve institutions
+    getInstitutionCount();
+    getUnitCount(); // After rendering, retrieve institutions
   }, []);
 
   const getInstitutionCount = () => {
     InstitutionDataService.getAll()
       .then((response) => {
         const institutions = response.data;
-        const count = institutions.length; // Get the count from the length of the array
+        const count = institutions.length;
         console.log("Total institutions: " + count);
-        setTotalInstitutions(count); // Assuming you have a state variable called 'totalInstitutions'
+        setTotalInstitutions(count);
       })
       .catch((err) => {
         console.log(
@@ -35,8 +39,24 @@ const Dashboard = () => {
       });
   };
 
+  const getUnitCount = () => {
+    UnitDataService.getAll()
+    .then((response) => {
+      const units = response.data;
+      const count = units.length;
+      console.log("Total institutions: " + count);
+      setTotalUnits(count);
+    })
+    .catch((err) => {
+      console.log(
+        `ERROR when retrieving institutions. \nError: ${err}`
+      );
+    });
+  }
+
   const dispatch = useDispatch();
   const theme = useTheme();
+  const navigate = useNavigate();
 
   return (
   <div>
@@ -60,9 +80,50 @@ const Dashboard = () => {
             <b style={{
               fontSize:"19px",
               position:"relative",
-              left:"-45px"
+              left:"-60px"
 
-            }}>Total CRL Applications</b>
+            }}>Total Mapped Units</b>
+            <Box sx={{ 
+                    display:"flex",
+                    flexDirection: 'column', // Arrange children vertically
+                    justifyContent: 'center', // Center vertically
+                    width: ["100%", '200px', '300px'], 
+                    height: "100px",
+                    alignItems: "center",
+                    borderRadius: "15px",
+                    backgroundColor: "#D3D3D3",
+                    margin: '0 auto', // Center the box horizontally
+                    marginTop:"5px"
+                    }}onClick={() => navigate('/unitlist')}>
+                    <div style={{
+                        fontSize: "18px",
+                        fontWeight: "bold",
+                    }}> {totalUnits}
+                    </div>
+      </Box>
+            <div>
+              <Button style={{
+                       color: '#0070E0',
+                       padding: "8px 10px",
+                       fontSize: "10px",
+                       position: 'relative', // Position relative to the container
+                       bottom: '0', // Aligned to the bottom
+                       left: '-105px' // Aligned to the left
+
+                       
+                      }}
+                      onClick={() => navigate('/unitlist')}>
+                      View All Units
+              </Button>
+            </div>
+          </Grid>
+          <Grid item xs={4} textAlign="center">
+          <b style={{
+              fontSize:"19px",
+              position:"relative",
+              left:"-35px"
+
+            }}>Units Listed This Month</b>
             <Box sx={{ 
                     display:"flex",
                     flexDirection: 'column', // Arrange children vertically
@@ -75,7 +136,7 @@ const Dashboard = () => {
                     margin: '0 auto', // Center the box horizontally
                     marginTop:"5px"
                     }}>
-        Put Total CRL Applications Here
+        Put Total Monthly Cases Here
       </Box>
             <div>
               <Button style={{
@@ -84,51 +145,18 @@ const Dashboard = () => {
                        fontSize: "10px",
                        position: 'relative', // Position relative to the container
                        bottom: '0', // Aligned to the bottom
-                       left: '-85px' // Aligned to the left
+                       left: '-105px' // Aligned to the left
                       }}>
-              View All Applications</Button>
+              View new Cases</Button>
             </div>
           </Grid>
           <Grid item xs={4} textAlign="center">
           <b style={{
               fontSize:"19px",
               position:"relative",
-              left:"-15px"
+              left:"-35px"
 
-            }}>Applications in Last 24 hours</b>
-            <Box sx={{ 
-                    display:"flex",
-                    flexDirection: 'column', // Arrange children vertically
-                    justifyContent: 'center', // Center vertically
-                    width: ["100%", '200px', '300px'], 
-                    height: "100px",
-                    alignItems: "center",
-                    borderRadius: "15px",
-                    backgroundColor: "#D3D3D3",
-                    margin: '0 auto', // Center the box horizontally
-                    marginTop:"5px"
-                    }}>
-        Put Previous 24 Hour Applications Here
-      </Box>
-            <div>
-              <Button style={{
-                       color: '#0070E0',
-                       padding: "8px 10px",
-                       fontSize: "10px",
-                       position: 'relative', // Position relative to the container
-                       bottom: '0', // Aligned to the bottom
-                       left: '-85px' // Aligned to the left
-                      }}>
-              View new applications</Button>
-            </div>
-          </Grid>
-          <Grid item xs={4} textAlign="center">
-          <b style={{
-              fontSize:"19px",
-              position:"relative",
-              left:"-5px"
-
-            }}>Currently Pending Applications</b>
+            }}>Conditional Status Units</b>
             <Box sx={{ 
                     display:"flex",
                     flexDirection: 'column', // Arrange children vertically
@@ -141,7 +169,7 @@ const Dashboard = () => {
                     margin: '0 auto', // Center the box horizontally
                     marginTop:"5px"
                     }}>
-        Put number of pending applications here
+        Put number of Conditional Status Units Here
       </Box>
             <div>
               <Button style={{
@@ -150,9 +178,9 @@ const Dashboard = () => {
                        fontSize: "10px",
                        position: 'relative', // Position relative to the container
                        bottom: '0', // Aligned to the bottom
-                       left: '-70px' // Aligned to the left
+                       left: '-60px' // Aligned to the left
                       }}>
-              View pending applications</Button>
+              View Conditional Status Units</Button>
             </div>
           </Grid>
           <div style={{ marginTop: '15rem' }} />
@@ -160,9 +188,9 @@ const Dashboard = () => {
           <b style={{
               fontSize:"19px",
               position:"relative",
-              left:"-20px"
+              left:"-45px"
 
-            }}>Total Accepted Applications</b>
+            }}>Total Unmapped Units</b>
             <Box sx={{ 
                     display:"flex",
                     flexDirection: 'column', // Arrange children vertically
@@ -174,7 +202,7 @@ const Dashboard = () => {
                     backgroundColor: "#D3D3D3",
                     margin: '0 auto', // Center the box horizontally
                     marginTop:"5px"
-                    }}>Put Total Accepted Applications Here
+                    }}>Put Total Unmapped Units Here
         </Box>
             <div>
               <Button style={{
@@ -183,18 +211,18 @@ const Dashboard = () => {
                        fontSize: "10px",
                        position: 'relative', // Position relative to the container
                        bottom: '0', // Aligned to the bottom
-                       left: '-70px' // Aligned to the left
+                       left: '-85px' // Aligned to the left
                       }}>
-                    View Accepted Applications</Button>
+                    View Unmapped Units</Button>
             </div>
           </Grid>
           <Grid item xs={4} textAlign="center">
           <b style={{
               fontSize:"19px",
               position:"relative",
-              left:"-25px"
+              left:"-15px"
 
-            }}>Total Rejected Applications</b>
+            }}>Total Rejected Comparisons</b>
             <Box sx={{ 
                     display:"flex",
                     flexDirection: 'column', // Arrange children vertically
@@ -207,7 +235,7 @@ const Dashboard = () => {
                     margin: '0 auto', // Center the box horizontally
                     marginTop:"5px"
                     }}>
-        Put Total Rejected Applications Here
+        Put Total Rejected Unit Comparisons Here
       </Box>
             <div>
               <Button style={{
@@ -218,7 +246,7 @@ const Dashboard = () => {
                        bottom: '0', // Aligned to the bottom
                        left: '-70px' // Aligned to the left
                       }}>
-              View Rejected Applications</Button>
+              View Rejected Comparisons</Button>
             </div>
           </Grid>
           <Grid item xs={4} textAlign="center">
@@ -239,12 +267,13 @@ const Dashboard = () => {
                     backgroundColor: "#D3D3D3",
                     margin: '0 auto', // Center the box horizontally
                     marginTop:"5px"
-                    }}>
+                    }}onClick={() => navigate('/institutions')}>
                        <div style={{ // Add styles to the text element
                           fontSize: "18px", // Set the font size
                           fontWeight: "bold", // Set the font weight
                            // Set the text color
-                         }}> {totalInstitutions}
+                         }}
+                         > {totalInstitutions}
                       </div>
       </Box>
             <div>
@@ -255,7 +284,7 @@ const Dashboard = () => {
                        position: 'relative', // Position relative to the container
                        bottom: '0', // Aligned to the bottom
                        left: '-100px' // Aligned to the left
-                      }}>
+                      }}onClick={() => navigate('/institutions')}>
               View Institutions</Button>
             </div>
           </Grid>

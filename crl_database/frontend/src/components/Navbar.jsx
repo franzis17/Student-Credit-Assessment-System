@@ -3,7 +3,6 @@ import { Tabs } from "react-ui"
 import { LightModeOutlined, 
     DarkModeOutlined, 
     Menu as MenuIcon, 
-    SettingsOutlined, 
     ArrowDropDownOutlined, 
     Search,
     Dashboard
@@ -14,6 +13,8 @@ import { setMode } from "../state"
 import { Box, Grid, AppBar, Toolbar, IconButton, InputBase, Button, useTheme, Avatar} from '@mui/material';
 import { Link } from "react-router-dom";
 import BurgerMenu from './BurgerMenu';
+import AvatarDropDown from './AvatarDropDown';
+import SettingsDropDown from './SettingsDropdown';
 
 const Navbar = () => {
   const dispatch = useDispatch();
@@ -75,10 +76,10 @@ const Navbar = () => {
             )}
           </IconButton>
           <IconButton>
-            <SettingsOutlined sx={{ fontSize: '25px' }} />
+            <SettingsDropDown/>
           </IconButton>
           <IconButton>
-            <Avatar sx={{ height:"30px", width:"30px" }}/>
+            <AvatarDropDown/>
           </IconButton>
           </FlexBetween>
       </Toolbar>
