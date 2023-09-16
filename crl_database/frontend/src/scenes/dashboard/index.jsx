@@ -1,5 +1,5 @@
 import React from 'react'
-import { useState } from 'react'
+import { useState, useEffect} from 'react'
 import { LightModeOutlined,  //For darkmode functionality later
     DarkModeOutlined, 
     Menu as MenuIcon,
@@ -10,10 +10,30 @@ import { useDispatch } from 'react-redux';
 import { setMode } from "../../state" //For darkmode functionality later
 import { Box, Grid, IconButton, InputBase, Button, useTheme} from '@mui/material';
 import Navbar from "../../components/Navbar";
+import InstitutionDataService from "../../services/institution";
 
 const Dashboard = () => {
-  const [totalApplications, setTotalApplications] = useState(0);
-  const [pendingApplications, setPendingApplications] = useState(0);
+  const [totalInstitutions, setTotalInstitutions] = useState([]);
+  
+  // To do after render
+  useEffect(() => {
+    getInstitutionCount(); // After rendering, retrieve institutions
+  }, []);
+
+  const getInstitutionCount = () => {
+    InstitutionDataService.getAll()
+      .then((response) => {
+        const institutions = response.data;
+        const count = institutions.length; // Get the count from the length of the array
+        console.log("Total institutions: " + count);
+        setTotalInstitutions(count); // Assuming you have a state variable called 'totalInstitutions'
+      })
+      .catch((err) => {
+        console.log(
+          `ERROR when retrieving institutions. \nError: ${err}`
+        );
+      });
+  };
 
   const dispatch = useDispatch();
   const theme = useTheme();
@@ -154,9 +174,8 @@ const Dashboard = () => {
                     backgroundColor: "#D3D3D3",
                     margin: '0 auto', // Center the box horizontally
                     marginTop:"5px"
-                    }}>
-        Put Total Accepted Applications Here
-      </Box>
+                    }}>Put Total Accepted Applications Here
+        </Box>
             <div>
               <Button style={{
                        color: '#0070E0',
@@ -166,7 +185,7 @@ const Dashboard = () => {
                        bottom: '0', // Aligned to the bottom
                        left: '-70px' // Aligned to the left
                       }}>
-              View Accepted Applications</Button>
+                    View Accepted Applications</Button>
             </div>
           </Grid>
           <Grid item xs={4} textAlign="center">
@@ -221,7 +240,12 @@ const Dashboard = () => {
                     margin: '0 auto', // Center the box horizontally
                     marginTop:"5px"
                     }}>
-        Put Number of Institutions Here
+                       <div style={{ // Add styles to the text element
+                          fontSize: "18px", // Set the font size
+                          fontWeight: "bold", // Set the font weight
+                           // Set the text color
+                         }}> {totalInstitutions}
+                      </div>
       </Box>
             <div>
               <Button style={{

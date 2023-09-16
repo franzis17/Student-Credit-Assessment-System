@@ -65,4 +65,13 @@ router.route("/delete/:id").delete((req, res) => {
     .catch((err) => res.status(400).json("Error:" + err));
 });
 
+const countInstitutions = async () => {
+  try {
+    const count = await Institution.countDocuments();
+    return count;
+  } catch (error) {
+    throw new Error("Error counting institutions: " + error.message);
+  }
+};
+
 export default router;
