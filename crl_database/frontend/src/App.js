@@ -7,7 +7,7 @@ import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom"
 import Login from "./scenes/login";
 import Signup from "./scenes/signup";
 import Dashboard from "./scenes/dashboard";
-import InstitutionList from "./components/InstitutionList/institution-list";
+import InstitutionList from "./scenes/institution-list";
 import UnitAssessmentPage from "./scenes/unit-assessment-page";
 import Layout from "./scenes/layout";
 
