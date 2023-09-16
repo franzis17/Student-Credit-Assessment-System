@@ -12,6 +12,7 @@ import FlexBetween from './FlexBetween';
 import { useDispatch } from 'react-redux';
 import { setMode } from "../state"
 import { Box, Grid, AppBar, Toolbar, IconButton, InputBase, Button, useTheme, Avatar} from '@mui/material';
+import { Link } from "react-router-dom";
 
 const Navbar = () => {
   const dispatch = useDispatch();
@@ -38,23 +39,33 @@ const Navbar = () => {
                      fontSize: "13px",
                      marginLeft: "100px"
                      // Position relative to the containe // Aligned to the botto
-                    }}> DashBoard
+                    }}>
+              <Link to={{ pathname: "/dashboard" }}>Dashboard</Link>
           </Button>
           <Button style={{
                      color: 'black',
                      fontSize: "13px"// Position relative to the containe // Aligned to the botto
-                    }}> Institution List
+                    }}>
+              <Link to={{ pathname: "/institutions" }}>Institution List</Link>
           </Button>
           <Button style={{
                      color: 'black',
                      fontSize: "13px"
                      // Position relative to the containe // Aligned to the botto
-                    }}> Unit List
+                    }}>
+              {/*TBA<Link to={{ pathname: "/units" }}>Unit List</Link>*/}
+              Unit List
           </Button>
           <Button style={{
                      color: 'black',
                      fontSize: "13px"// Position relative to the containe // Aligned to the botto
                     }}> Previously Assessed List
+          </Button>
+          <Button style={{
+                     color: 'black',
+                     fontSize: "13px"// Position relative to the containe // Aligned to the botto
+                    }}>
+            <Link to={{ pathname: "/unitassessmentpage" }}>Unit Assessment Page</Link>
           </Button>
         </FlexBetween>
         {/* Right Side Top Bar */}
