@@ -10,6 +10,8 @@ import userRoutes from "./routes/user.js"
 import institutionsRoutes from "./routes/institutions.js";
 import unitsRoutes from "./routes/units.js";
 
+import Test from "./test/testUnit.js";
+
 /* CONFIG */
 dotenv.config();
 const app = express();
@@ -40,3 +42,6 @@ connection.once("open", () => {
 app.listen(PORT, () => {
   console.log(`Server is running on port: ${PORT}`);
 });
+
+// Test
+// Test.testPopulate();

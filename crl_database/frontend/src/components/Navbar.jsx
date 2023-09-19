@@ -53,8 +53,7 @@ const Navbar = () => {
                      fontSize: "13px"
                      // Position relative to the containe // Aligned to the botto
                     }}>
-              {/*TBA<Link to={{ pathname: "/units" }}>Unit List</Link>*/}
-              Unit List
+              <Link to={{ pathname: "/units" }}>Unit List</Link>
           </Button>
           <Button style={{
                      color: 'black',
