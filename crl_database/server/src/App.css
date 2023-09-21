@@ -122,19 +122,19 @@ h1 {
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.7); /* 半透明黑色背景 */
-    z-index: 1000; /* 确保在其他元素之上 */
+    background-color: rgba(0, 0, 0, 0.7);
+    z-index: 1000; 
   }
   
   .prerequisites-content {
-    background-color: #000; /* 黑色背景 */
-    color: #fff; /* 白色字体 */
+    background-color: #000; 
+    color: #fff; 
     padding: 20px;
     border-radius: 10px;
-    width: 75%; /* 框架宽度为屏幕宽度的75% */
-    max-width: 600px; /* 最大宽度 */
+    width: 75%; 
+    max-width: 600px; 
     text-align: center;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3); /* 阴影效果 */
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3); 
     position: relative;
   }
   
