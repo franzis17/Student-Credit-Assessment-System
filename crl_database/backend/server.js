@@ -11,8 +11,6 @@ import institutionsRoutes from "./routes/institutions.js";
 import unitsRoutes from "./routes/units.js";
 import applicationRoutes from "./routes/application.js";
 import whitelistRoute from "./routes/whitelist.js"
-import institutionsRoutes from "./routes/institutions.js";
-import unitsRoutes from "./routes/units.js";
 
 import Test from "./test/testUnit.js";
 
