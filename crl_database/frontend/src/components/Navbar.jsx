@@ -57,14 +57,15 @@ const Navbar = () => {
           </Button>
           <Button style={{
                      color: 'black',
-                     fontSize: "13px"// Position relative to the containe // Aligned to the botto
+                     fontSize: "13px"
                     }}>
             <Link to={{ pathname: "/unitassessmentpage" }}>Unit Assessment Page</Link>
+          </Button>
         </FlexBetween> */}
-
         {/* Right Side Top Bar */}
         <FlexBetween gap="1.0rem">
           <IconButton onClick={() => dispatch(setMode())}>
+            {theme.palette.mode === 'light' ? (
               <DarkModeOutlined sx={{ fontSize: '25px' }} />
             ) : (
               <LightModeOutlined sx={{ fontSize: '25px' }} />
@@ -83,3 +84,4 @@ const Navbar = () => {
 }
 
 export default Navbar;
+
