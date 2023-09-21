@@ -5,8 +5,14 @@ import http from "../http-common";
 
 class InstitutionDataService {
   
+  static defaultRoute = `/institutions`;
+  
   getAll() {
-    return http.get(`/institutions`);
+    return http.get(InstitutionDataService.defaultRoute);
+  }
+  
+  getCount() {
+    return http.get("institutions/count");
   }
   
 }

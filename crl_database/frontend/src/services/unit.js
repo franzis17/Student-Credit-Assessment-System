@@ -1,12 +1,21 @@
 import http from "../http-common";
 
-class unitDataService {
+class UnitDataService {
   
   getAll() {
-    return http.get(`/units`);
+    return http.get("/units");
+  }
+  
+  /** Get all units of a specific institution */
+  getUnitsOfAnInstitution() {
+    
+  }
+  
+  getCount() {
+    return http.get("/units/count");
   }
   
 }
 
-const unitDataService = new unitDataService();
+const unitDataService = new UnitDataService();
 export default unitDataService;

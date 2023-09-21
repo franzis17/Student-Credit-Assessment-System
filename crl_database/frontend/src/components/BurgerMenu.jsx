@@ -99,7 +99,7 @@ const BurgerMenu = () => {
               {index === 1 && (
                 <Collapse in={openLists} timeout="auto" unmountOnExit>
                   <List component="div" disablePadding>
-                    {['Unit List', 'Institutions', 'Previously Assessed List'].map((subText) => (
+                    {['Units', 'Institutions', 'Previously Assessed List'].map((subText) => (
                       <ListItem key={subText} disablePadding>
                         <ListItemButton
                           component={Link}
