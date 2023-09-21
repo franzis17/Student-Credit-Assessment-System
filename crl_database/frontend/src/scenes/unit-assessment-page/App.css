@@ -23,10 +23,6 @@ header {
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
-h1 {
-    color: #333;
-}
-
 .unit-info {
     border: 1px solid #ddd;
     padding: 1rem;
