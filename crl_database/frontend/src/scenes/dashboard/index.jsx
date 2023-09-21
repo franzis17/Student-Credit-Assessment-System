@@ -197,7 +197,7 @@ const Dashboard = () => {
                     backgroundColor: "#D3D3D3",
                     margin: '0 auto',
                     marginTop:"5px"
-                    }}onClick={() => navigate('/unitlist')}>
+                    }}onClick={() => navigate('/units')}>
                     <div style={{
                         fontSize: "18px",
                         fontWeight: "bold",
@@ -213,7 +213,7 @@ const Dashboard = () => {
                        bottom: '0',
                        left: '-105px'
                       }}
-                      onClick={() => navigate('/unitlist')}>
+                      onClick={() => navigate('/units')}>
                       View All Units
               </Button>
             </div>
