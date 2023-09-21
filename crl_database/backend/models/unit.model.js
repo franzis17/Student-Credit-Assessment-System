@@ -29,17 +29,12 @@ const unitSchema = new Schema(
       trim: true,
       minlength: 3,
     },
-    // MUST verify if the institution exists
     institution: {
       type: Schema.Types.ObjectId,
       ref: "Institution",
-      required: false,
+      required: true,
       trim: true,
       minlength: 3,
-    },
-    status: {
-      type: Number,
-      required: false,
     },
     notes: {
       type: String,
