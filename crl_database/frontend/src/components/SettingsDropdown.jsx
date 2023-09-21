@@ -22,7 +22,7 @@ const SettingsDropDown = () => {
         aria-haspopup="true"
         onClick={handleClick}
       >
-        <SettingsOutlined sx = {{fontSize: '25px'}}/>
+        <SettingsOutlined sx={{ fontSize: '25px' }} />
       </IconButton>
       <Menu
         id="settings-menu"
@@ -33,7 +33,7 @@ const SettingsDropDown = () => {
       >
         <MenuItem onClick={handleClose}>
           <ListItemIcon>
-            <QuestionMarkRounded/>
+            <QuestionMarkRounded />
           </ListItemIcon>
           Preferences
         </MenuItem>

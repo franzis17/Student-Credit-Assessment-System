@@ -16,8 +16,8 @@ const AvatarDropDown = () => {
   };
 
   const handleLogout = () => {
-    // Perform your logout action here, e.g., clear authentication tokens, navigate to login page, etc.
-    // Example: clear localStorage and navigate to login page
+    // Perform logout action here, e.g., clear authentication tokens, navigate to login page, etc.
+    //clear localStorage and navigate to login page
     localStorage.clear();
     navigate('/login');
     handleClose();

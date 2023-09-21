@@ -3,7 +3,7 @@ import { createTheme } from "@mui/material/styles";
 import { useMemo } from "react";
 import { useSelector } from "react-redux";
 import { themeSettings } from "./theme"
-import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom"
+import { BrowserRouter, Navigate, Route, Routes, Switch } from "react-router-dom"
 import Login from "./scenes/login";
 import Signup from "./scenes/signup";
 import Dashboard from "./scenes/dashboard";
@@ -23,16 +23,16 @@ function App() {
         
         <ThemeProvider theme = {theme}>
           <CssBaseline />
-          <Routes>
-            {/* <Route path="/" element={<Login />} /> */}
-            <Route path="/" element={<Dashboard />}/>
-            <Route path="/login" element={<Login />}/>
-            <Route path="/signup" element={<Signup />}/>
-            <Route path="/dashboard" element={<Dashboard />}/>
-            <Route path="/institutions" element={<InstitutionList/> }/>
-            <Route path="/unitassessmentpage" element={<UnitAssessmentPage />}/>
-            
-          </Routes>
+              <Routes>
+                {/* <Route path="/" element={<Login />} /> */}
+                <Route path="/" element={<Dashboard />}/>
+                <Route path="/login" element={<Login />}/>
+                <Route path="/signup" element={<Signup />}/>
+                <Route path="/dashboard" element={<Dashboard />}/>
+                <Route path="/institutions" element={<InstitutionList/> }/>
+                <Route path="/unitassessmentpage" element={<UnitAssessmentPage />}/>
+                
+              </Routes> 
         </ThemeProvider>
       </BrowserRouter>
     </div>

@@ -1,27 +1,57 @@
 import React from 'react'
-import { useState, useEffect} from 'react'
+import { useState, useEffect, useRef} from 'react'
 import { LightModeOutlined,  //For darkmode functionality later
     DarkModeOutlined, 
     Menu as MenuIcon,
-    Search
+    Search,
+    CountertopsRounded
 } from "@mui/icons-material";
 import FlexBetween from '../../components/FlexBetween';
 import { useDispatch } from 'react-redux';
 import { setMode } from "../../state" //For darkmode functionality later
-import { Box, Grid, IconButton, InputBase, Button, useTheme} from '@mui/material';
+import { Box, 
+  Grid, 
+  IconButton, 
+  InputBase, 
+  Button, 
+  useTheme, 
+  List,
+  ListItem,
+  ListItemText,
+  Divider} from '@mui/material';
 import Navbar from "../../components/Navbar";
 import InstitutionDataService from "../../services/institution";
 import UnitDataService from "../../services/institution";
 import { useNavigate } from 'react-router-dom';
+import Counter from './animate/counter';
 
 const Dashboard = () => {
   const [totalInstitutions, setTotalInstitutions] = useState([]);
   const [totalUnits, setTotalUnits] = useState([]);
+  const [searchInput, setSearchInput] = useState('');
+  const [institutionList, setInstitutionList] = useState([]);
+  const [filteredList, setFilteredList] = useState([]);
+  const listRef = useRef(null);
   
   // To do after render
   useEffect(() => {
     getInstitutionCount();
     getUnitCount(); // After rendering, retrieve institutions
+    getAllInstitutions();
+
+
+    const handleClickOutside = (event) => {
+      if (listRef.current && !listRef.current.contains(event.target)) {
+        setFilteredList([]);
+      }
+    };
+
+    document.addEventListener("click", handleClickOutside);
+
+    return () => {
+      document.removeEventListener("click", handleClickOutside);
+    };
+
   }, []);
 
   const getInstitutionCount = () => {
@@ -54,6 +84,37 @@ const Dashboard = () => {
     });
   }
 
+
+  const getAllInstitutions = () => {
+    InstitutionDataService.getAll()
+    .then((response) => {
+      const institutions = response.data;
+      setInstitutionList(institutions);
+    })
+      .catch((err) => {
+        console.log(
+          `ERROR when retrieving institutions. \nError: ${err}`
+        );
+    });
+  }
+
+  const handleSearchChange = (event) => {
+    const query = event.target.value.toLowerCase();
+    if (query === "") {
+      setFilteredList([]); //hides list
+    }
+    else{
+      var filteredList = institutionList.filter((institution) =>
+        institution.name.toLowerCase().includes(query)
+      );
+      setFilteredList(filteredList);
+    }
+  };
+
+  const navigateToInstitutionList = (institutionId) => {
+    navigate(`/institutions/`); //Change this for return route into institution list
+  };
+
   const dispatch = useDispatch();
   const theme = useTheme();
   const navigate = useNavigate();
@@ -67,14 +128,56 @@ const Dashboard = () => {
     <div style={{ fontSize: '24px', fontWeight: 'bold', marginBottom: '2rem', textAlign: 'center' }}>
       Welcome to the CRL Database
     </div>
-    <div>
-        <FlexBetween backgroundColor={theme.palette.background.alt} borderRadius="10px" gap="1rem" p="0.1rem 1rem">
-          <InputBase placeholder="Search..." sx={{width:"500px"}}/>
-          <IconButton>
-            <Search />
-          </IconButton>
-        </FlexBetween>
-      </div>
+    <FlexBetween backgroundColor={theme.palette.background.alt} borderRadius="10px" gap="0.5rem" p="0.1rem 1rem" style={{ position: 'relative' }}>
+            <InputBase
+              type="text"
+              placeholder="Search an institution..."
+              style={{ width: '500px', padding: "0" }}
+              onChange={handleSearchChange}
+            />
+            <IconButton>
+              <Search />
+            </IconButton>
+            {filteredList.length > 0 && (
+              <List
+                component="ul"
+                ref={listRef}
+                style={{
+                  marginTop: "0",
+                  alignItems: "left",
+                  textAlign: 'left',
+                  maxHeight: '200px',
+                  overflowY: 'auto',
+                  position: 'absolute',
+                  zIndex: 1,
+                  backgroundColor: "white",
+                  padding: "0",
+                  top: 'calc(100%)',
+                  borderLeft:"solid",
+                  borderLeftColor:"#D3D3D3",
+                  borderRight:"solid",
+                  borderRightColor:"#D3D3D3",
+                  borderBottomRightRadius:"10px",
+                  borderBottomLeftRadius:"10px",
+                  borderBottom:"solid",
+                  borderBottomColor: "#D3D3D3",
+                  width : "95%"
+                }}
+              >
+                {filteredList.map((institution, index) => (
+                  <React.Fragment key={institution.id}>
+                    <ListItem
+                      button
+                      onClick={() => navigateToInstitutionList(institution.name)}
+                    >
+                      <ListItemText primary={institution.name} />
+                    </ListItem>
+                    {index < 7 && <Divider />}
+                  </React.Fragment>
+                ))}
+              </List>
+            )}
+          </FlexBetween>
       <Grid container justifyContent="space-between" sx={{ marginTop: '5rem' }}>
           <Grid item xs={4} textAlign="center">
             <b style={{
@@ -85,20 +188,20 @@ const Dashboard = () => {
             }}>Total Mapped Units</b>
             <Box sx={{ 
                     display:"flex",
-                    flexDirection: 'column', // Arrange children vertically
-                    justifyContent: 'center', // Center vertically
+                    flexDirection: 'column',
+                    justifyContent: 'center',
                     width: ["100%", '200px', '300px'], 
                     height: "100px",
                     alignItems: "center",
                     borderRadius: "15px",
                     backgroundColor: "#D3D3D3",
-                    margin: '0 auto', // Center the box horizontally
+                    margin: '0 auto',
                     marginTop:"5px"
                     }}onClick={() => navigate('/unitlist')}>
                     <div style={{
                         fontSize: "18px",
                         fontWeight: "bold",
-                    }}> {totalUnits}
+                    }}> <Counter number={totalUnits}/>
                     </div>
       </Box>
             <div>
@@ -106,11 +209,9 @@ const Dashboard = () => {
                        color: '#0070E0',
                        padding: "8px 10px",
                        fontSize: "10px",
-                       position: 'relative', // Position relative to the container
-                       bottom: '0', // Aligned to the bottom
-                       left: '-105px' // Aligned to the left
-
-                       
+                       position: 'relative',
+                       bottom: '0',
+                       left: '-105px'
                       }}
                       onClick={() => navigate('/unitlist')}>
                       View All Units
@@ -126,14 +227,14 @@ const Dashboard = () => {
             }}>Units Listed This Month</b>
             <Box sx={{ 
                     display:"flex",
-                    flexDirection: 'column', // Arrange children vertically
-                    justifyContent: 'center', // Center vertically
+                    flexDirection: 'column',
+                    justifyContent: 'center',
                     width: ["100%", '200px', '300px'], 
                     height: "100px",
                     alignItems: "center",
                     borderRadius: "15px",
                     backgroundColor: "#D3D3D3",
-                    margin: '0 auto', // Center the box horizontally
+                    margin: '0 auto',
                     marginTop:"5px"
                     }}>
         Put Total Monthly Cases Here
@@ -143,9 +244,9 @@ const Dashboard = () => {
                        color: '#0070E0',
                        padding: "8px 10px",
                        fontSize: "10px",
-                       position: 'relative', // Position relative to the container
-                       bottom: '0', // Aligned to the bottom
-                       left: '-105px' // Aligned to the left
+                       position: 'relative',
+                       bottom: '0',
+                       left: '-105px'
                       }}>
               View new Cases</Button>
             </div>
@@ -159,14 +260,14 @@ const Dashboard = () => {
             }}>Conditional Status Units</b>
             <Box sx={{ 
                     display:"flex",
-                    flexDirection: 'column', // Arrange children vertically
-                    alignItems: 'center', // Center horizontally
-                    justifyContent: 'center', // Center vertically
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    justifyContent: 'center',
                     width: ["100%", '200px', '300px'], 
                     height: "100px",
                     borderRadius: "15px",
                     backgroundColor: "#D3D3D3",
-                    margin: '0 auto', // Center the box horizontally
+                    margin: '0 auto',
                     marginTop:"5px"
                     }}>
         Put number of Conditional Status Units Here
@@ -176,9 +277,9 @@ const Dashboard = () => {
                        color: '#0070E0',
                        padding: "8px 10px",
                        fontSize: "10px",
-                       position: 'relative', // Position relative to the container
-                       bottom: '0', // Aligned to the bottom
-                       left: '-60px' // Aligned to the left
+                       position: 'relative',
+                       bottom: '0',
+                       left: '-60px'
                       }}>
               View Conditional Status Units</Button>
             </div>
@@ -193,14 +294,14 @@ const Dashboard = () => {
             }}>Total Unmapped Units</b>
             <Box sx={{ 
                     display:"flex",
-                    flexDirection: 'column', // Arrange children vertically
-                    alignItems: 'center', // Center horizontally
-                    justifyContent: 'center', // Center vertically
+                    flexDirection: 'column',
+                    alignItems: 'center', 
+                    justifyContent: 'center',
                     width: ["100%", '200px', '300px'], 
                     height: "100px",
                     borderRadius: "15px",
                     backgroundColor: "#D3D3D3",
-                    margin: '0 auto', // Center the box horizontally
+                    margin: '0 auto',
                     marginTop:"5px"
                     }}>Put Total Unmapped Units Here
         </Box>
@@ -209,9 +310,9 @@ const Dashboard = () => {
                        color: '#0070E0',
                        padding: "8px 10px",
                        fontSize: "10px",
-                       position: 'relative', // Position relative to the container
-                       bottom: '0', // Aligned to the bottom
-                       left: '-85px' // Aligned to the left
+                       position: 'relative',
+                       bottom: '0', 
+                       left: '-85px'
                       }}>
                     View Unmapped Units</Button>
             </div>
@@ -225,14 +326,14 @@ const Dashboard = () => {
             }}>Total Rejected Comparisons</b>
             <Box sx={{ 
                     display:"flex",
-                    flexDirection: 'column', // Arrange children vertically
-                    alignItems: 'center', // Center horizontally
-                    justifyContent: 'center', // Center vertically
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    justifyContent: 'center',
                     width: ["100%", '200px', '300px'], 
                     height: "100px",
                     borderRadius: "15px",
                     backgroundColor: "#D3D3D3",
-                    margin: '0 auto', // Center the box horizontally
+                    margin: '0 auto',
                     marginTop:"5px"
                     }}>
         Put Total Rejected Unit Comparisons Here
@@ -242,9 +343,9 @@ const Dashboard = () => {
                        color: '#0070E0',
                        padding: "8px 10px",
                        fontSize: "10px",
-                       position: 'relative', // Position relative to the container
-                       bottom: '0', // Aligned to the bottom
-                       left: '-70px' // Aligned to the left
+                       position: 'relative',
+                       bottom: '0',
+                       left: '-70px'
                       }}>
               View Rejected Comparisons</Button>
             </div>
@@ -258,22 +359,21 @@ const Dashboard = () => {
             }}>Total Registered Institutions</b>
             <Box sx={{ 
                     display:"flex",
-                    flexDirection: 'column', // Arrange children vertically
-                    alignItems: 'center', // Center horizontally
-                    justifyContent: 'center', // Center vertically
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    justifyContent: 'center',
                     width: ["100%", '200px', '300px'], 
                     height: "100px",
                     borderRadius: "15px",
                     backgroundColor: "#D3D3D3",
-                    margin: '0 auto', // Center the box horizontally
+                    margin: '0 auto',
                     marginTop:"5px"
                     }}onClick={() => navigate('/institutions')}>
-                       <div style={{ // Add styles to the text element
-                          fontSize: "18px", // Set the font size
-                          fontWeight: "bold", // Set the font weight
-                           // Set the text color
+                       <div style={{
+                          fontSize: "18px",
+                          fontWeight: "bold",
                          }}
-                         > {totalInstitutions}
+                         > <Counter number={totalInstitutions}/>
                       </div>
       </Box>
             <div>
@@ -281,9 +381,9 @@ const Dashboard = () => {
                        color: '#0070E0',
                        padding: "8px 10px",
                        fontSize: "10px",
-                       position: 'relative', // Position relative to the container
-                       bottom: '0', // Aligned to the bottom
-                       left: '-100px' // Aligned to the left
+                       position: 'relative',
+                       bottom: '0',
+                       left: '-100px'
                       }}onClick={() => navigate('/institutions')}>
               View Institutions</Button>
             </div>
@@ -291,9 +391,5 @@ const Dashboard = () => {
         </Grid>
     </div>
   </div>
-  
-
-  ) 
-}
-
-export default Dashboard
+  )}
+export default Dashboard;

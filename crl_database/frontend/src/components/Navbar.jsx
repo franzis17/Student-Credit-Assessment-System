@@ -1,11 +1,7 @@
 import React, { useState } from 'react'
 import { Tabs } from "react-ui"
 import { LightModeOutlined, 
-    DarkModeOutlined, 
-    Menu as MenuIcon, 
-    ArrowDropDownOutlined, 
-    Search,
-    Dashboard
+    DarkModeOutlined
 } from "@mui/icons-material";
 import FlexBetween from './FlexBetween';
 import { useDispatch } from 'react-redux';
@@ -33,7 +29,7 @@ const Navbar = () => {
         <FlexBetween>
           <BurgerMenu/>
         </FlexBetween>
-        <FlexBetween gap= "5rem">
+        {/*<FlexBetween gap= "5rem">
           <Button style={{
                      color: 'black',
                      fontSize: "13px",
@@ -51,7 +47,7 @@ const Navbar = () => {
                      color: 'black',
                      fontSize: "13px"
                     }}>
-              {/*TBA<Link to={{ pathname: "/units" }}>Unit List</Link>*/}
+              {/*TBA<Link to={{ pathname: "/units" }}>Unit List</Link>
               Unit List
           </Button>
           <Button style={{
@@ -65,7 +61,7 @@ const Navbar = () => {
                     }}>
             <Link to={{ pathname: "/unitassessmentpage" }}>Unit Assessment Page</Link>
           </Button>
-        </FlexBetween>
+        </FlexBetween> */}
         {/* Right Side Top Bar */}
         <FlexBetween gap="1.0rem">
           <IconButton onClick={() => dispatch(setMode())}>
@@ -85,6 +81,6 @@ const Navbar = () => {
       </Toolbar>
     </AppBar>
   );
-};
+}
 
 export default Navbar;
