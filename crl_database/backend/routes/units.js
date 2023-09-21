@@ -30,6 +30,17 @@ router.route("/").get(async (req, res) => {
 
 });
 
+// Get total units count
+router.route("/count").get(async (req, res) => {
+  try {
+    const count = await Unit.countDocuments({});
+    res.json(count);
+  } catch(err) {
+    console.error(`ERROR: ${err}`);
+    res.status(500).json(`ERROR: Failed to fetch unit counts. More details: ${err}`);
+  }
+});
+
 // ---- [POST] -----
 
 // a unit has this properties = unitCode, name, location, major, institution, status, notes

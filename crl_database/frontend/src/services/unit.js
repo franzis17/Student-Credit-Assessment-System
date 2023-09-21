@@ -11,6 +11,10 @@ class UnitDataService {
     
   }
   
+  getCount() {
+    return http.get("/units/count");
+  }
+  
 }
 
 const unitDataService = new UnitDataService();

@@ -14,6 +14,17 @@ router.route("/").get((req, res) => {
     .catch((err) => res.status(400).json("Error:" + err));
 });
 
+// Get total institution count
+router.route("/count").get(async (req, res) => {
+  try {
+    const count = await Institution.countDocuments({});
+    res.json(count);
+  } catch(err) {
+    console.error(`ERROR: ${err}`);
+    res.status(500).json(`ERROR: Failed to fetch institution counts. More details: ${err}`);
+  }
+});
+
 // ---- [POST] ----
 
 // Add an institution = /institutions/add

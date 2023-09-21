@@ -21,7 +21,7 @@ import { Box,
   Divider} from '@mui/material';
 import Navbar from "../../components/Navbar";
 import InstitutionDataService from "../../services/institution";
-import UnitDataService from "../../services/institution";
+import UnitDataService from "../../services/unit";
 import { useNavigate } from 'react-router-dom';
 import Counter from './animate/counter';
 
@@ -55,12 +55,10 @@ const Dashboard = () => {
   }, []);
 
   const getInstitutionCount = () => {
-    InstitutionDataService.getAll()
+    InstitutionDataService.getCount()
       .then((response) => {
-        const institutions = response.data;
-        const count = institutions.length;
-        console.log("Total institutions: " + count);
-        setTotalInstitutions(count);
+        const instCount = response.data;
+        setTotalInstitutions(instCount);
       })
       .catch((err) => {
         console.log(
@@ -70,12 +68,11 @@ const Dashboard = () => {
   };
 
   const getUnitCount = () => {
-    UnitDataService.getAll()
+    UnitDataService.getCount()
     .then((response) => {
-      const units = response.data;
-      const count = units.length;
-      console.log("Total institutions: " + count);
-      setTotalUnits(count);
+      const unitCount = response.data;
+      console.log("Total units: " + unitCount);
+      setTotalUnits(unitCount);
     })
     .catch((err) => {
       console.log(
