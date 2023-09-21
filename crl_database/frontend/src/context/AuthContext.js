@@ -11,6 +11,8 @@ export const authReducer = (state, action) => {
             return { user: action.payload }
         case 'LOGOUT':
             return { user: null }
+        case 'VERIFY_EMAIL':
+            return { ...state, user: { ...state.user, isVerified: true } }
         default:
             return state
     }
