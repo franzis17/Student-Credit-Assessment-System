@@ -62,4 +62,13 @@ router.route("/delete/:id").delete((req, res) => {
     .catch((err) => res.status(400).json("Error:" + err));
 });
 
+router.route("/count").get(async (req, res) => {
+  try {
+    const count = await countInstitutions();
+    res.json({ count });
+  } catch (error) {
+    res.status(500).json("Error counting institutions: " + error.message);
+  }
+});
+
 export default router;

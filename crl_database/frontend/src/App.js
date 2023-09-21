@@ -23,16 +23,16 @@ function App() {
         
         <ThemeProvider theme = {theme}>
           <CssBaseline />
-          <Routes>
-            {/* <Route path="/" element={<Login />} /> */}
-            <Route path="/" element={<Dashboard />}/>
-            <Route path="/login" element={<Login />}/>
-            <Route path="/signup" element={<Signup />}/>
-            <Route path="/dashboard" element={<Dashboard />}/>
-            <Route path="/institutions" element={<InstitutionList/> }/>
-            <Route path="/unitassessmentpage" element={<UnitAssessmentPage />}/>
-            
-          </Routes>
+              <Routes>
+                {/* <Route path="/" element={<Login />} /> */}
+                <Route path="/" element={<Dashboard />}/>
+                <Route path="/login" element={<Login />}/>
+                <Route path="/signup" element={<Signup />}/>
+                <Route path="/dashboard" element={<Dashboard />}/>
+                <Route path="/institutions" element={<InstitutionList/> }/>
+                <Route path="/unitassessmentpage" element={<UnitAssessmentPage />}/>
+                
+              </Routes> 
         </ThemeProvider>
       </BrowserRouter>
     </div>
