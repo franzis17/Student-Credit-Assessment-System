@@ -1,16 +1,22 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './App.css';
-import Navbar from "../../components/Navbar";
 
-const UnitAssessmentPage = () => {
-    
+function App() {
   const [searchedUnit, setSearchedUnit] = useState('');
   const [notes, setNotes] = useState([]);
   const [changeLog, setChangeLog] = useState([]);
+  const [showConditionalButton, setShowConditionalButton] = useState(false);
+  const [showPrerequisites, setShowPrerequisites] = useState(false);
+
+  useEffect(() => {
+    if (searchedUnit) {
+      setShowConditionalButton(true);
+    } else {
+      setShowConditionalButton(false);
+    }
+  }, [searchedUnit]);
 
   const handleSearch = () => {
-    // Implement your search logic here and set the searchedUnit state.
-    // For example, you can fetch data from an API or perform any other action.
     const searchInput = document.querySelector('.search-input').value;
     setSearchedUnit(`Searched Curtin Unit: ${searchInput}`);
   };
@@ -45,11 +51,19 @@ const UnitAssessmentPage = () => {
     setChangeLog([...changeLog, logEntry]);
   };
 
+  const handleShowPrerequisites = () => {
+    setShowPrerequisites(true);
+  };
+
+  const handleClosePrerequisites = () => {
+    setShowPrerequisites(false);
+  };
+
   return (
-    <div className="uap">
-      <div>
-        <Navbar />
-      </div>
+    <div className="App">
+      <header>
+        {/* Add NavigationMenu component here */}
+      </header>
       <div className="container">
         <div className="columns">
           <div className="left-column">
@@ -71,8 +85,13 @@ const UnitAssessmentPage = () => {
               <div className="selected-unit">
                 <h3>Searched Curtin Unit</h3>
                 <p id="searched-unit-info">{searchedUnit}</p>
-                <button className="button secondary approve-button" onClick={handleApprove}>Approve</button>
-                <button className="button secondary deny-button" onClick={handleDeny}>Deny</button>
+                {showConditionalButton && (
+                  <button className="button secondary conditional-button" onClick={handleShowPrerequisites}>
+                    Show Prerequisites
+                  </button>
+                )}
+                <button className="button secondary approve-button conditional" onClick={handleApprove}>Approve</button>
+                <button className="button secondary deny-button conditional" onClick={handleDeny}>Deny</button>
               </div>
             </div>
 
@@ -86,7 +105,6 @@ const UnitAssessmentPage = () => {
           <div className="right-column">
             <div className="note-log">
               <h2>Notes Log</h2>
-              {/* Render notes here */}
               {notes.map((note, index) => (
                 <p key={index}>{note}</p>
               ))}
@@ -95,7 +113,6 @@ const UnitAssessmentPage = () => {
             <div className="change-log">
               <h2>Change Log</h2>
               <div className="log-container">
-                {/* Render change log entries he */}
                 {changeLog.map((entry, index) => (
                   <p key={index}>{entry}</p>
                 ))}
@@ -108,9 +125,19 @@ const UnitAssessmentPage = () => {
           <button className="button">Save and Submit</button>
         </div>
       </div>
+
+      {showPrerequisites && (
+        <div className="prerequisites-modal">
+          <div className="prerequisites-content">
+            <span className="close-button" onClick={handleClosePrerequisites}>&times;</span>
+            <h2>Prerequisites for {searchedUnit}</h2>
+            {/* Add prerequisite information here */}
+          </div>
+        </div>
+      )}
     </div>
   );
-  
 }
 
-export default UnitAssessmentPage;
+export default App;
+
