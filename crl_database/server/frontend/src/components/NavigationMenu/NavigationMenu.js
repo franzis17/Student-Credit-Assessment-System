@@ -1,5 +1,6 @@
 import React from 'react';
 import './flow.css'; 
+import { Link } from "react-router-dom";
 
 class NavigationMenu extends React.Component {
   render() {
@@ -7,16 +8,23 @@ class NavigationMenu extends React.Component {
       <div className="nav-menu">
         <ul className="nav-list">
           <li className="nav-item">
-            <a href="dashboard.html">Dashboard</a>
+            <Link to={{ pathname: "/dashboard" }}>
+              Dashboard
+            </Link>
           </li>
           <li className="nav-item">
-            <a href="institution.html">Institution</a>
+            <Link to={{ pathname: "/institutions" }}>
+              Institution
+            </Link>
           </li>
           <li className="nav-item">
             <a href="unit-list.html">Unit List</a>
           </li>
           <li className="nav-item">
-            <a href="Unit_Assessment.html">Unit Assessment</a>
+            <Link to={{ pathname: "/unitassessmentpage" }}>
+              Unit Assessment
+            </Link>
+            
           </li>
           <li className="nav-item">
             <a href="previously-assessed.html">Previously Assessed List</a>
