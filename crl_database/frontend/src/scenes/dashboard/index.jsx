@@ -71,7 +71,6 @@ const Dashboard = () => {
     UnitDataService.getCount()
     .then((response) => {
       const unitCount = response.data;
-      console.log("Total units: " + unitCount);
       setTotalUnits(unitCount);
     })
     .catch((err) => {
