@@ -9,6 +9,11 @@ class InstitutionDataService {
     return http.get(`/institutions`);
   }
   
+  // TO DO:
+  // getCount() {
+  //   return 
+  // }
+  
 }
 
 const institutionDataService = new InstitutionDataService();
