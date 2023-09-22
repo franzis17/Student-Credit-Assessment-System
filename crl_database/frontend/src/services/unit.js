@@ -2,8 +2,10 @@ import http from "../http-common";
 
 class UnitDataService {
   
+  static defaultRoute = `/units`;
+  
   getAll() {
-    return http.get("/units");
+    return http.get(UnitDataService.defaultRoute);
   }
   
   /** Get all units of a specific institution */
@@ -12,7 +14,7 @@ class UnitDataService {
   }
   
   getCount() {
-    return http.get("/units/count");
+    return http.get(UnitDataService.defaultRoute + "/count");
   }
   
 }

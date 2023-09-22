@@ -12,7 +12,7 @@ class InstitutionDataService {
   }
   
   getCount() {
-    return http.get("institutions/count");
+    return http.get(InstitutionDataService.defaultRoute + "/count");
   }
   
 }
