@@ -6,15 +6,18 @@ import { LightModeOutlined,
 import FlexBetween from './FlexBetween';
 import { useDispatch } from 'react-redux';
 import { setMode } from "../state"
-import { Box, Grid, AppBar, Toolbar, IconButton, InputBase, Button, useTheme, Avatar} from '@mui/material';
-import { Link } from "react-router-dom";
+import { useLocation } from 'react-router-dom';
+import { AppBar, Toolbar, IconButton, useTheme, Button} from '@mui/material';
 import BurgerMenu from './BurgerMenu';
 import AvatarDropDown from './AvatarDropDown';
 import SettingsDropDown from './SettingsDropdown';
+import AddUnitButton from './AddUnitButton';
+import AddInstitutionButton from './AddInstitutionButton';
 
 const Navbar = () => {
   const dispatch = useDispatch();
   const theme = useTheme();
+  const currentPage = useLocation();
 
   return (
     <AppBar
@@ -22,6 +25,7 @@ const Navbar = () => {
         position: 'static',
         background: 'none',
         boxShadow: 'none',
+        height:"75px"
       }}
     >
       <Toolbar sx={{ justifyContent: 'space-between' }}>
@@ -64,6 +68,12 @@ const Navbar = () => {
         </FlexBetween> */}
         {/* Right Side Top Bar */}
         <FlexBetween gap="1.0rem">
+          {currentPage.pathname === '/units' && (
+              <AddUnitButton/>
+            )}
+          {currentPage.pathname === '/institutions' && (
+              <AddInstitutionButton/>
+            )}  
           <IconButton onClick={() => dispatch(setMode())}>
             {theme.palette.mode === 'light' ? (
               <DarkModeOutlined sx={{ fontSize: '25px' }} />
