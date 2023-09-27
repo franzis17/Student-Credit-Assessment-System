@@ -76,7 +76,7 @@ const AvatarDropDown = () => {
       </Menu>
       
       {openModal && (
-        <UserDetailsModal user={user} onClose={handleCloseModal} />
+        <UserDetailsModal user={user} onClose={handleCloseModal}/>
       )}
     </div>
   );

@@ -18,6 +18,7 @@ const Navbar = () => {
   const dispatch = useDispatch();
   const theme = useTheme();
   const currentPage = useLocation();
+  const currentState = useState();
 
   return (
     <AppBar
@@ -68,7 +69,7 @@ const Navbar = () => {
         </FlexBetween> */}
         {/* Right Side Top Bar */}
         <FlexBetween gap="1.0rem">
-          {currentPage.pathname === '/units' && (
+          {currentPage.pathname === '/units' && ( //currentState === 'admin' &&
               <AddUnitButton/>
             )}
           {currentPage.pathname === '/institutions' && (

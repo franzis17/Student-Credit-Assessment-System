@@ -27,6 +27,10 @@ const UserDetailsModal = ({ user, onClose }) => {
         >
           X
         </Button>
+
+        username
+        email
+        //change password button
       </Box>
     </Modal>
   );
