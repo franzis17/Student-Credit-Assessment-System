@@ -1,8 +1,10 @@
 import express from "express";
 import mongoose from "mongoose";
 import Unit from "../models/unit.model.js";
+import requireAuth from '../middleware/requireAuth.js';
 
 const router = express.Router();
+router.use(requireAuth)
 
 // ---- [GET] -----
 

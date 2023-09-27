@@ -1,7 +1,10 @@
 import express from "express";
 import Application from "../models/application.model.js";
+import requireAuth from '../middleware/requireAuth.js';
 
 const router = express.Router();
+//Authenticated Routing
+router.use(requireAuth)
 
 /**
  * Add application

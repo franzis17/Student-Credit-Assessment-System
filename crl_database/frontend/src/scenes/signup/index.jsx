@@ -14,6 +14,7 @@ const Signup = () => {
     const [username, setUsername] = useState('')
     const [password, setPassword] = useState('')
     const [curtinID, setCurtinID] = useState('')
+    const [curtinIDError, setCurtinIDError] = useState('')
     const {signup, error, isLoading} = useSignup()
     const navigate = useNavigate();
     const { isWhitelisted } = useWhitelistCheck(curtinID)
@@ -24,6 +25,15 @@ const Signup = () => {
     
     const handle = async(e) => {
 
+         // Check curtinID format
+         if (!/^[a-zA-Z][\s\S]*$/.test(curtinID)) {
+            setCurtinIDError("Curtin ID is not valid");
+        return;
+
+        } else {
+            setCurtinIDError('');  // Clear error if format is correct
+        }
+
 
         if(!isWhitelisted)
         {
@@ -33,6 +43,7 @@ const Signup = () => {
         } else {
 
             e.preventDefault()
+
             //Clear local storage for access denied message
             localStorage.removeItem('showAccessDeniedMessage')
 
@@ -106,8 +117,14 @@ const Signup = () => {
                             fullWidth
                             label="Curtin ID"
                             type="text"
-                            onChange={(e) => setCurtinID(e.target.value)}
+                            onChange={(e) => {
+                                setCurtinID(e.target.value)
+                                setCurtinIDError('')
+                            }}
+                            
                             value={curtinID}
+                            error={!!curtinIDError}
+                            helperText={curtinIDError}
                         />
                         <Button
                             type="submit"

@@ -1,10 +1,12 @@
 import express from 'express';
 import WhitelstdUser from "../models/whitelistModel.js";
+import requireAuth from '../middleware/requireAuth.js';
 
 // Import controller functions for sign-in from userControllers.js
 import { addWhitelistedUser, checkWhitelistUser, getUserRole, updateRole } from '../controllers/whitelistController.js';
 
 const router = express.Router();
+router.use(requireAuth)
 
 
 router.post('/addUserID', addWhitelistedUser)
