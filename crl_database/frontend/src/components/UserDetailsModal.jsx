@@ -6,6 +6,7 @@ import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import { useAuthContext } from "../hooks/useAuthContext.js";
 import { useState } from 'react';
+import { blue } from '@mui/material/colors';
 
 
 // Username:  EMAIL AND CHANGE PASS BUTTON
@@ -26,6 +27,75 @@ const UserDetailsModal = ({ onClose }) => {
     <Modal open={true} onClose={onClose}>
       <Box
          sx={{
+         position: 'absolute',
+         top: '50%',
+         left: '50%',
+         transform: 'translate(-50%, -50%)',
+         bgcolor: 'white',
+         boxShadow: 24,
+         p: 4,
+         minWidth: 350,
+          minHeight: 300,
+          display: 'flex',
+         flexDirection: 'column',
+          alignItems: 'center',
+          gap: 3, 
+          borderRadius: 2,
+       }}
+     >
+        <Box
+        sx={{
+         width: '100%',
+         bgcolor: '#0d47a1',
+         padding: 2,
+         borderRadius: '8px 8px 0 0',
+         display: 'flex',
+         justifyContent: 'center',
+         alignItems: 'center',
+        }}
+       > 
+       <Typography
+        variant="h6"
+       sx={{ fontSize: '1.5rem', fontWeight: 'bold', color: 'white', position: 'center' }}
+         >Account Details</Typography>
+        </Box>
+
+       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+       <Typography variant="subtitle2" sx={{ fontWeight: 'bold', fontSize: '1.0rem' }} >Username: 
+       </Typography>
+       <Typography variant="body1"> {user?.username} </Typography>
+       </Box>
+
+       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+       <Typography variant="subtitle2" sx={{ fontWeight: 'bold', fontSize: '1.0rem' }} >Email: 
+       </Typography>
+       <Typography variant="body1"> {user?.email} </Typography>
+       </Box>
+
+       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+       <Typography variant="subtitle2" sx={{ fontWeight: 'bold', fontSize: '1.0rem' }} >Permissions: 
+       </Typography>
+       <Typography variant="body1"> {user?.role} </Typography>
+       </Box>
+
+       <Button
+          variant="contained"
+           onClick={handleChangePassword}
+           sx={{ marginTop: 2 }}
+           >
+            Change Password
+        </Button>
+      
+      </Box>
+   </Modal>
+)
+}
+export default UserDetailsModal;
+
+/* return (
+    <Modal open={true} onClose={onClose}>
+      <Box
+         sx={{
           position: 'absolute',
           top: '50%',
           left: '50%',
@@ -39,16 +109,30 @@ const UserDetailsModal = ({ onClose }) => {
           flexDirection: 'column',
           alignItems: 'center',
           gap: 3, 
+          borderRadius: 2,
       }}
       >
-        <Typography variant="h6" sx ={{ fontSize: '1.5rem', fontWeight: 'bold' }} >User Details</Typography>
-        <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }} > {user?.username}</Typography>
-        <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }} > {user?.email}</Typography>
+        <Box
+        sx={{
+          width: '100%',
+          bgcolor: blue[500], 
+          padding: 2,
+          borderRadius: '8px 8px 0 0',
+        }}
+        > 
+        <Typography
+            variant="h6"
+            sx={{ fontSize: '1.5rem', fontWeight: 'bold', color: 'white' }}
+        >   Account Details </Typography>
+        <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }} > Username: {user?.username}</Typography>
+        <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }} > Email: {user?.email}</Typography>
+        <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }} > Permissions: {user?.role}</Typography>
 
         <Button
             variant="contained"
-            color="primary"
+            color="secondary"
             onClick={handleChangePassword}
+            sx={{ marginTop: 2 }}
             >
             Change Password
         </Button>
@@ -56,6 +140,4 @@ const UserDetailsModal = ({ onClose }) => {
       </Box>
     </Modal>
   );
-};
-
-export default UserDetailsModal;
+}; */
