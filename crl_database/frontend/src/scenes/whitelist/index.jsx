@@ -3,6 +3,7 @@ import { TextField, Button, Select, MenuItem, Box, Table, TableBody, TableCell, 
 import useStyles from './whitelistPageStyle.js'
 import { useFetchWhitelistedUsers } from '../../hooks/useFetchWhitelistedUsers.js';
 import { useEffect } from 'react';
+import Navbar from '../../components/Navbar.jsx';
 
 
 const Whitelist = () => {
@@ -85,6 +86,12 @@ const Whitelist = () => {
 
 
 return (
+
+    <>
+    <div>
+      <Navbar />
+    </div>
+    
     <Box className="classes" boxShadow={3} p={1}>
     <h1>Whitelist a User Account</h1>
 
@@ -150,7 +157,8 @@ return (
     </TableContainer>
         )}
     </Box>
-);
+   </>
+)
 }
 
 
