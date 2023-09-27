@@ -7,7 +7,7 @@ import { LightModeOutlined,  //For darkmode functionality later
     CountertopsRounded
 } from "@mui/icons-material";
 import FlexBetween from '../../components/FlexBetween';
-import { useDispatch } from 'react-redux';
+import { useDispatch} from 'react-redux';
 import { setMode } from "../../state" //For darkmode functionality later
 import { Box, 
   Grid, 
@@ -22,7 +22,7 @@ import { Box,
 import Navbar from "../../components/Navbar";
 import InstitutionDataService from "../../services/institution";
 import UnitDataService from "../../services/unit";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import Counter from './animate/counter';
 
 const Dashboard = () => {
@@ -32,7 +32,7 @@ const Dashboard = () => {
   const [institutionList, setInstitutionList] = useState([]);
   const [filteredList, setFilteredList] = useState([]);
   const listRef = useRef(null);
-  
+
   // To do after render
   useEffect(() => {
     getInstitutionCount();
@@ -114,7 +114,6 @@ const Dashboard = () => {
   const dispatch = useDispatch();
   const theme = useTheme();
   const navigate = useNavigate();
-
   return (
   <div>
     <div>
@@ -335,15 +334,18 @@ const Dashboard = () => {
         Put Total Rejected Unit Comparisons Here
       </Box>
             <div>
-              <Button style={{
-                       color: '#0070E0',
-                       padding: "8px 10px",
-                       fontSize: "10px",
-                       position: 'relative',
-                       bottom: '0',
-                       left: '-70px'
-                      }}>
-              View Rejected Comparisons</Button>
+            <Button
+              style={{
+                color: '#0070E0',
+                padding: "8px 10px",
+                fontSize: "10px",
+                position: 'relative',
+                bottom: '0',
+                left: '-70px'
+              }}
+            >
+              View Rejected Comparisons
+            </Button>
             </div>
           </Grid>
           <Grid item xs={4} textAlign="center">
