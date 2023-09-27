@@ -10,33 +10,47 @@ export const useSignup = () => {
 
     const { dispatch } = useAuthContext()
 
-    const signup = async (email, password, username, role) => {
+
+    const signup = async (email, password, username, role, curtinID) => {
+
 
         setIsLoading(true)
         setError(null)
 
-        const response = await fetch('http://localhost:5001/api/user/signup', {
+            try {
+
+            const response = await fetch('http://localhost:5001/api/user/signup', {
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({email, password, username, role})
-        })
-        const json = await response.json() 
+            body: JSON.stringify({email, password, username, role, curtinID})
+            })
 
-        if (!response.ok) {
+            if (response.status === 200) {
+                // successful signup
+                const json = await response.json()
+                localStorage.setItem('user', JSON.stringify(json))
+
+                // update the authentication context using authContext hook
+                dispatch({type: 'LOGIN', payload: json})
+
+                setIsLoading(false)
+
+                return true
+
+            } else {
+                const errorResponse = await response.json()
+                setIsLoading(false)
+                setError(errorResponse?.error || 'An error occured when signing up- please contact admin')
+                return false
+
+            }
+        } catch(error) {
             setIsLoading(false)
-            setError(json?.error || 'An error occured')
+            setError('An error occured when signing up - please contact admin')
+            console.error('Signup Error', error)
+            return false
         }
 
-        if(response.ok){
-            //local storage user saving - save json web token to local so when user closes browser and comes back on
-            localStorage.setItem('user', JSON.stringify(json))
-
-            // update the authentication context using authContext hook
-            dispatch({type: 'LOGIN', payload: json})
-
-            setIsLoading(false)
-
-        }
 
     }
 

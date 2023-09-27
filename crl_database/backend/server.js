@@ -9,6 +9,8 @@ import morgan from "morgan";
 import userRoutes from "./routes/user.js"
 import institutionsRoutes from "./routes/institutions.js";
 import unitsRoutes from "./routes/units.js";
+import applicationRoutes from "./routes/application.js";
+import whitelistRoute from "./routes/whitelist.js"
 
 import Test from "./test/testUnit.js";
 
@@ -27,6 +29,9 @@ app.use(cors());
 app.use('/api/user', userRoutes);
 app.use("/institutions", institutionsRoutes);
 app.use("/units", unitsRoutes);
+app.use("/applications", applicationRoutes);
+
+app.use('/api/whitelist', whitelistRoute);
 
 // Connect to the database
 const PORT = process.env.PORT || 9000; // backup port if env does not exist
