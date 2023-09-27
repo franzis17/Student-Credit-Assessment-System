@@ -4,10 +4,13 @@
  */
 
 import React, { useState, useEffect } from 'react';
-import Box from '@mui/material/Box';
-import { DataGrid } from '@mui/x-data-grid';
 import UnitDataService from "../../services/unit";
 import Navbar from "../../components/Navbar";
+
+import { ThemeProvider } from '@mui/material/styles';
+import Box from '@mui/material/Box';
+import { DataGrid } from '@mui/x-data-grid';
+
 
 const UnitList = () => {
   
@@ -50,8 +53,10 @@ const UnitList = () => {
       <Navbar />
     </div>
     <Box sx={{ height: '100%', width: '100%' }}>
+    
       <DataGrid
         rows={units}
+        rowHeight={30}
         columns={columns}
         columnResizable={true}
         getRowId={(row) => row._id}
@@ -66,6 +71,7 @@ const UnitList = () => {
         checkboxSelection
         disableRowSelectionOnClick
       />
+        
     </Box>
     </>
   );
