@@ -18,8 +18,10 @@ const Whitelist = () => {
     const classes = useStyles()
 
     useEffect(() => {
-        setData(whitelistData);
-      }, [whitelistData]);
+        if (Array.isArray(whitelistData)) {
+            setData(whitelistData)
+        }
+      }, [whitelistData])
 
 
 

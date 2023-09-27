@@ -1,14 +1,22 @@
 import { useState, useEffect } from 'react';
+import { useAuthContext } from './useAuthContext.js'
 
 export const useFetchWhitelistedUsers = () => {
     const [whitelistData, setWhitelistData] = useState([])
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState(null)
+    const { user } = useAuthContext()
 
     useEffect(() => {
         async function fetchData() {
+            
+            //Bearer token used to authorise if the user account logged in can view the data
             try {
-                const response = await fetch('http://localhost:5001/api/whitelist/getWhitelistedUsers');
+                const response = await fetch('http://localhost:5001/api/whitelist/getWhitelistedUsers', {
+                    headers: {
+                        'Authorization': `Bearer ${user.token}`
+                    }
+                })
                 const data = await response.json();
                 setWhitelistData(data);
                 setLoading(false);
@@ -17,8 +25,11 @@ export const useFetchWhitelistedUsers = () => {
                 setLoading(false);
             }
         }
-        fetchData();
-    }, [])
+
+        if(user) {
+            fetchData()
+        }
+    }, [user])
 
 
 
