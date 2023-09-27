@@ -4,6 +4,7 @@ import useStyles from './whitelistPageStyle.js'
 import { useFetchWhitelistedUsers } from '../../hooks/useFetchWhitelistedUsers.js';
 import { useEffect } from 'react';
 import Navbar from '../../components/Navbar.jsx';
+import Typography from '@mui/material/Typography';
 
 
 const Whitelist = () => {
@@ -91,9 +92,9 @@ return (
     <div>
       <Navbar />
     </div>
-    
+
     <Box className="classes" boxShadow={3} p={1}>
-    <h1>Whitelist a User Account</h1>
+    <Typography variant="h2">Whitelist a User Account</Typography>
 
     <TextField
         label="CurtinID"

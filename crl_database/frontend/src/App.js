@@ -35,7 +35,7 @@ function App() {
                 <Route path="/login" element={!user ? <Login /> : <Navigate to="/"/>}/>
                 <Route path="/signup" element={!user ? <Signup /> : <Navigate to="/"/>}/>
                 <Route path="/whitelist" element={user ? <Whitelist /> : <Navigate to="/login"/>}/>
-                <Route path="/verifyemail" element={user ? <VerifyEmail /> : <Navigate to="/login"/>}/>
+                <Route path="/verifyemail" element={<VerifyEmail/>}/>
                 <Route path="/dashboard" element={user ? <Dashboard /> : <Navigate to="/login"/>}/>
                 <Route path="/institutions" element={user ? <InstitutionList/> : <Navigate to="/login"/>}/>
                 <Route path="/units" element={user ? <UnitList /> : <Navigate to="/login"/>}/>

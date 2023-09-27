@@ -6,23 +6,22 @@ import requireAuth from '../middleware/requireAuth.js';
 import { addWhitelistedUser, checkWhitelistUser, getUserRole, updateRole } from '../controllers/whitelistController.js';
 
 const router = express.Router();
-router.use(requireAuth)
 
 
-router.post('/addUserID', addWhitelistedUser)
+router.post('/addUserID', requireAuth, addWhitelistedUser)
 router.get('/checkWhitelist', checkWhitelistUser)
 router.get('/getUserRole', getUserRole)
 router.put('/updateRole', updateRole)
 
 //fetch all users
-router.route("/getWhitelistedUsers").get((req, res) => {
+router.route("/getWhitelistedUsers", requireAuth).get((req, res) => {
   WhitelstdUser.find()
     .then((WhitelstdUser) => res.json(WhitelstdUser))
     .catch((err) => res.status(400).json("Error:" + err));
 });
 
 //Delete a user
-router.route("/delete/:id").delete((req, res) => {
+router.route("/delete/:id", requireAuth).delete((req, res) => {
   WhitelstdUser.findByIdAndDelete(req.params.id)
     .then((result) => {
       if(result) {
