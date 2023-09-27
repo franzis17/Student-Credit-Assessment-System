@@ -2,12 +2,30 @@ import React from 'react';
 import Modal from '@mui/material/Modal';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
+import TextField from '@mui/material/TextField';
+import Typography from '@mui/material/Typography';
+import { useAuthContext } from "../hooks/useAuthContext.js";
+import { useState } from 'react';
 
-const UserDetailsModal = ({ user, onClose }) => {
+
+// Username:  EMAIL AND CHANGE PASS BUTTON
+
+const UserDetailsModal = ({ onClose }) => {
+
+  const { user } = useAuthContext()
+  const [password, setPassword] = useState('');
+
+  const handleChangePassword = () => {
+
+    //Call request to change password - use a route
+
+    console.log("Password changed to:", password);
+};
+
   return (
     <Modal open={true} onClose={onClose}>
       <Box
-        sx={{
+         sx={{
           position: 'absolute',
           top: '50%',
           left: '50%',
@@ -17,20 +35,24 @@ const UserDetailsModal = ({ user, onClose }) => {
           p: 4,
           minWidth: 400,
           minHeight: 300,
-        }}
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          gap: 3, 
+      }}
       >
-        <Button
-          variant="outlined"
-          color="error"
-          sx={{ position: 'absolute', top: 0, left: 0 }}
-          onClick={onClose}
-        >
-          X
-        </Button>
+        <Typography variant="h6" sx ={{ fontSize: '1.5rem', fontWeight: 'bold' }} >User Details</Typography>
+        <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }} > {user?.username}</Typography>
+        <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }} > {user?.email}</Typography>
 
-        username
-        email
-        //change password button
+        <Button
+            variant="contained"
+            color="primary"
+            onClick={handleChangePassword}
+            >
+            Change Password
+        </Button>
+        
       </Box>
     </Modal>
   );

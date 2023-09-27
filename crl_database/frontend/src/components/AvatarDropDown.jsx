@@ -10,12 +10,12 @@ import UserDetailsModal from './UserDetailsModal'; // Import your UserDetailsMod
 import { useLogout } from '../hooks/useLogout.js';
 import { useNavigate } from 'react-router-dom';
 
-const user = {
+/*const user = {
   username: 'exampleUser',
   email: 'user@example.com',
   id: '123456',
   avatarUrl: 'https://example.com/avatar.jpg',
-};
+};*/
 
 const AvatarDropDown = () => {
   const [anchorEl, setAnchorEl] = useState(null);
@@ -40,6 +40,7 @@ const AvatarDropDown = () => {
     setOpenModal(false);
   };
 
+  //Logout hook is used here 
   const handleLogout = () => {
     // Perform logout action here, e.g., clear authentication tokens, navigate to login page, etc.
     logout()
@@ -80,7 +81,7 @@ const AvatarDropDown = () => {
       </Menu>
       
       {openModal && (
-        <UserDetailsModal user={user} onClose={handleCloseModal}/>
+        <UserDetailsModal onClose={handleCloseModal}/>
       )}
     </div>
   );
