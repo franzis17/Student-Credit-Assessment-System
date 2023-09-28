@@ -7,17 +7,21 @@ import ListItemIcon from '@mui/material/ListItemIcon';
 import LockIcon from '@mui/icons-material/Lock';
 import ManageAccountsIcon from '@mui/icons-material/ManageAccounts';
 import UserDetailsModal from './UserDetailsModal'; // Import your UserDetailsModal component
+import { useLogout } from '../hooks/useLogout.js';
+import { useNavigate } from 'react-router-dom';
 
-const user = {
+/*const user = {
   username: 'exampleUser',
   email: 'user@example.com',
   id: '123456',
   avatarUrl: 'https://example.com/avatar.jpg',
-};
+};*/
 
 const AvatarDropDown = () => {
   const [anchorEl, setAnchorEl] = useState(null);
   const [openModal, setOpenModal] = useState(false);
+  const {logout} = useLogout()
+  const navigate = useNavigate();
 
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -36,10 +40,11 @@ const AvatarDropDown = () => {
     setOpenModal(false);
   };
 
+  //Logout hook is used here 
   const handleLogout = () => {
     // Perform logout action here, e.g., clear authentication tokens, navigate to login page, etc.
-    //clear localStorage and navigate to login page
-    localStorage.clear();
+    logout()
+    navigate('/login')
     // navigate('/login'); // You can uncomment this line if you have a navigation system set up
   };
 
@@ -76,7 +81,7 @@ const AvatarDropDown = () => {
       </Menu>
       
       {openModal && (
-        <UserDetailsModal user={user} onClose={handleCloseModal}/>
+        <UserDetailsModal onClose={handleCloseModal}/>
       )}
     </div>
   );

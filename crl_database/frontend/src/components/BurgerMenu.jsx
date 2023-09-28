@@ -18,14 +18,24 @@ import CloseIcon from '@mui/icons-material/Close';
 import { useNavigate } from 'react-router-dom';
 import HomeIcon from '@mui/icons-material/Home';
 import ListAltIcon from '@mui/icons-material/ListAlt';
+import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import ChevronDownIcon from '@mui/icons-material/ExpandMore';
 import ChevronUpIcon from '@mui/icons-material/ExpandLess';
 import { Link } from 'react-router-dom';
 import LockIcon from '@mui/icons-material/Lock';
+import { useAuthContext } from '../hooks/useAuthContext.js';
 
 const BurgerMenu = () => {
   const [open, setOpen] = useState(false);
   const navigate = useNavigate();
+  const { user } = useAuthContext();
+  
+  //Conditionally set the menu items 
+  const menuItems = ['Dashboard', 'Lists']
+  //Check if the user is admin
+  if (user && user.role == 'Admin') {
+    menuItems.push('Whistlist')
+  }
 
   const toggleDrawer = () => {
     setOpen(!open);
@@ -65,7 +75,7 @@ const BurgerMenu = () => {
             <CloseIcon />
           </IconButton>
           <List>
-          {['Dashboard', 'Lists'].map((text, index) => (
+          {menuItems.map((text, index) => (
             <React.Fragment key={text}>
               <ListItem disablePadding>
                 {index === 0 ? (
@@ -79,6 +89,17 @@ const BurgerMenu = () => {
                     </ListItemIcon>
                     <ListItemText primary={text} />
                   </ListItemButton>
+                ) :  index == 2 && user && user.role === 'Admin' ? (
+                  <ListItemButton
+                  component={Link}
+                  to="/whitelist"   // <- Direct to the Whitelist route
+                  onClick={toggleDrawer}
+                 >
+                  <ListItemIcon>
+                    <PersonAddIcon/>
+                  </ListItemIcon>
+                  <ListItemText primary={text} />
+                </ListItemButton>
                 ) : (
                   <ListItemButton onClick={() => handleListItemClick(index)}>
                     <ListItemIcon>

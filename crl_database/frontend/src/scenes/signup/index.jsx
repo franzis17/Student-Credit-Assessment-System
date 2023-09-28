@@ -25,6 +25,7 @@ const Signup = () => {
     const handle = async(e) => {
 
 
+
         if(!isWhitelisted)
         {
             setShowAccessDeniedMessage(true);
@@ -33,6 +34,7 @@ const Signup = () => {
         } else {
 
             e.preventDefault()
+
             //Clear local storage for access denied message
             localStorage.removeItem('showAccessDeniedMessage')
 
@@ -106,7 +108,11 @@ const Signup = () => {
                             fullWidth
                             label="Curtin ID"
                             type="text"
-                            onChange={(e) => setCurtinID(e.target.value)}
+                            onChange={(e) => {
+                                setCurtinID(e.target.value)
+                        
+                            }}
+                            
                             value={curtinID}
                         />
                         <Button

@@ -3,6 +3,8 @@ import { TextField, Button, Select, MenuItem, Box, Table, TableBody, TableCell, 
 import useStyles from './whitelistPageStyle.js'
 import { useFetchWhitelistedUsers } from '../../hooks/useFetchWhitelistedUsers.js';
 import { useEffect } from 'react';
+import Navbar from '../../components/Navbar.jsx';
+import Typography from '@mui/material/Typography';
 
 
 const Whitelist = () => {
@@ -18,8 +20,10 @@ const Whitelist = () => {
     const classes = useStyles()
 
     useEffect(() => {
-        setData(whitelistData);
-      }, [whitelistData]);
+        if (Array.isArray(whitelistData)) {
+            setData(whitelistData)
+        }
+      }, [whitelistData])
 
 
 
@@ -28,14 +32,17 @@ const Whitelist = () => {
         setCurtinID(value);
 
         // Validate the CurtinID
-        if (value.length !== 8 || isNaN(value)) {
+        const isValidCurtinID = /^[a-zA-Z]\d{7}$/.test(value);
+
+        if ((!isValidCurtinID) && (value.length !== 8 || isNaN(value))) {
             setInputError(true);
-            setHelperText('Input must be 8 numbers');
+            setHelperText('ID must start with 1 letter followed by 7 numbers and be of length 8');
         } else {
             setInputError(false);
             setHelperText('');
         }
     }
+
 
     const handleWhitelist= async () => {
 
@@ -80,8 +87,14 @@ const Whitelist = () => {
 
 
 return (
+
+    <>
+    <div>
+      <Navbar />
+    </div>
+
     <Box className="classes" boxShadow={3} p={1}>
-    <h1>Whitelist a User Account</h1>
+    <Typography variant="h2">Whitelist a User Account</Typography>
 
     <TextField
         label="CurtinID"
@@ -145,7 +158,8 @@ return (
     </TableContainer>
         )}
     </Box>
-);
+   </>
+)
 }
 
 
