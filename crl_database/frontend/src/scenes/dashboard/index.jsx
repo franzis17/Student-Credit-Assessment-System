@@ -24,6 +24,7 @@ import InstitutionDataService from "../../services/institution";
 import UnitDataService from "../../services/unit";
 import { useNavigate, useLocation } from 'react-router-dom';
 import Counter from './animate/counter';
+import dashboardBackground from '../../assets/dashboard-backdrop.jpg';
 
 const Dashboard = () => {
   const [totalInstitutions, setTotalInstitutions] = useState([]);
@@ -71,6 +72,7 @@ const Dashboard = () => {
     UnitDataService.getCount()
     .then((response) => {
       const unitCount = response.data;
+      console.log('Unit Count:', unitCount);
       setTotalUnits(unitCount);
     })
     .catch((err) => {
@@ -111,23 +113,32 @@ const Dashboard = () => {
     navigate(`/institutions/`); //Change this for return route into institution list
   };
 
+  const dashboardStyle = {
+    backgroundImage: `url(${dashboardBackground})`,
+    backgroundSize: 'cover',
+    backgroundRepeat: 'no-repeat',
+    backgroundPosition: 'center center',
+  };
+
   const dispatch = useDispatch();
   const theme = useTheme();
   const navigate = useNavigate();
   return (
+    <div style={dashboardStyle}>
+      {/* ... (your existing content) */}
   <div>
     <div>
       <Navbar />
     </div>
     <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column', marginTop: '2rem' }}>
-    <div style={{ fontSize: '24px', fontWeight: 'bold', marginBottom: '2rem', textAlign: 'center' }}>
+    <div style={{ fontSize: '32px', fontWeight: 'bold', marginBottom: '2rem', textAlign: 'center' }}>
       Welcome to the CRL Database
     </div>
-    <FlexBetween backgroundColor={theme.palette.background.alt} borderRadius="10px" gap="0.5rem" p="0.1rem 1rem" style={{ position: 'relative' }}>
+    <FlexBetween backgroundColor={theme.palette.background.alt} borderRadius="10px" gap="0.5rem" p="0.1rem 1rem" style={{ position: 'relative', backgroundColor:"white", border:"solid", borderColor:"#D3D3D3" }}>
             <InputBase
               type="text"
               placeholder="Search an institution..."
-              style={{ width: '500px', padding: "0" }}
+              style={{ width: '500px', padding: "0"}}
               onChange={handleSearchChange}
             />
             <IconButton>
@@ -389,5 +400,7 @@ const Dashboard = () => {
         </Grid>
     </div>
   </div>
+</div>
+
   )}
 export default Dashboard;
