@@ -1,13 +1,8 @@
-/**
- * TO DO:
- * - Unit List needs to be displayed only when the user clicks on an institution
- */
-
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import UnitDataService from "../../services/unit";
 import Navbar from "../../components/Navbar";
 
-import { ThemeProvider } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import { DataGrid } from '@mui/x-data-grid';
 
@@ -16,13 +11,14 @@ const UnitList = () => {
   
   // State variables
   const [units, setUnits] = useState([]);
+  const [selectedUnits, setSelectedUnits] = useState([]);
   
   // To do after render
   useEffect(() => {
     retrieveUnits();
   }, []);
   
-  // Use data service to get all institutions from the backend server
+  // Use data service to get all Units from the backend server
   const retrieveUnits = () => {
     UnitDataService.getAll()
       .then((response) => {
@@ -46,20 +42,42 @@ const UnitList = () => {
     // TO DO: Add status here
     { field: 'notes',       headerName: 'Notes',       width: 400 }
   ];
+  
+  // Handle selecting one or more units
+  const handleRowSelectionModelChange = (newSelection) => {
+
+    // newSelection will end being just the id of the unit selected but we want 
+    // the whole Unit object itself
+    const selectedUnitObj = newSelection.map((selectedId) => 
+      units.find((unit) => unit._id === selectedId)
+    );
+
+    setSelectedUnits(selectedUnitObj);
+    console.log("selectedUnitObj = ", selectedUnitObj);
+  };
+
 
   return (
     <>
+
     <div>
       <Navbar />
     </div>
-    <Box sx={{ height: '100%', width: '100%' }}>
     
+    <Link 
+      to="/unitassessmentpage"
+      state={{ selectedUnits: selectedUnits }}
+    >
+      <button>Assess</button>
+    </Link>
+
+    <Box sx={{ height: '100%', width: '100%' }}>
       <DataGrid
         rows={units}
         rowHeight={30}
         columns={columns}
         columnResizable={true}
-        getRowId={(row) => row._id}
+        getRowId={(row) => row._id}  // use the Unit's mongo ID as the row ID
         initialState={{
           pagination: {
             paginationModel: {
@@ -70,9 +88,11 @@ const UnitList = () => {
         pageSizeOptions={[10, 25, 50]}
         checkboxSelection
         disableRowSelectionOnClick
+        selectionModel={selectedUnits}
+        onRowSelectionModelChange={handleRowSelectionModelChange}
       />
-        
     </Box>
+    
     </>
   );
 

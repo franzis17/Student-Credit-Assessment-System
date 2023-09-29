@@ -1,13 +1,25 @@
 import React, { useState, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import './App.css';
 
-function App() {
+const UnitAssessmentPage = () => {
+  
   const [searchedUnit, setSearchedUnit] = useState('');
   const [notes, setNotes] = useState([]);
   const [changeLog, setChangeLog] = useState([]);
   const [showConditionalButton, setShowConditionalButton] = useState(false);
   const [showPrerequisites, setShowPrerequisites] = useState(false);
+  
+  // Get Selected Units
+  const location = useLocation();
+  const { selectedUnits } = location.state;
 
+  // write here what to do with the selected units
+  useEffect(() => {
+    // TO DO: display the list of units selected
+    console.log("Selected Units: ", selectedUnits);
+  }, [selectedUnits]);
+  
   useEffect(() => {
     if (searchedUnit) {
       setShowConditionalButton(true);
@@ -58,6 +70,7 @@ function App() {
   const handleClosePrerequisites = () => {
     setShowPrerequisites(false);
   };
+  
 
   return (
     <div className="App">
@@ -139,5 +152,5 @@ function App() {
   );
 }
 
-export default App;
 
+export default UnitAssessmentPage;
