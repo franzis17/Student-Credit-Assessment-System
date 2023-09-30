@@ -1,5 +1,8 @@
 import React, { useState, useEffect } from 'react';
+import { Link, useLocation } from "react-router-dom";
+import Navbar from "../../components/Navbar";
 import './App.css';
+import './buttonStyles.css';
 
 function App() {
   const [searchedUnit, setSearchedUnit] = useState('');
@@ -7,6 +10,8 @@ function App() {
   const [changeLog, setChangeLog] = useState([]);
   const [showConditionalButton, setShowConditionalButton] = useState(false);
   const [showPrerequisites, setShowPrerequisites] = useState(false);
+  const location = useLocation();
+  const selectedUnits = location.state?.selectedUnits || [];
 
   useEffect(() => {
     if (searchedUnit) {
@@ -15,6 +20,7 @@ function App() {
       setShowConditionalButton(false);
     }
   }, [searchedUnit]);
+  
 
   const handleSearch = () => {
     const searchInput = document.querySelector('.search-input').value;
@@ -61,21 +67,29 @@ function App() {
 
   return (
     <div className="App">
-      <header>
-        {/* Add NavigationMenu component here */}
-      </header>
+     <div>
+      <Navbar />
+    </div>
       <div className="container">
         <div className="columns">
           <div className="left-column">
-            <div className="unit-info">
-              <h2>Selected Unit Information</h2>
-              <p><strong>Unit:</strong> Programming Fundamentals</p>
-              <p><strong>University:</strong> Toyal University of London</p>
-              <p><strong>Stream:</strong> Computer Science</p>
-              <p><strong>Course:</strong> Bachelor Of Computing</p>
-              <p><strong>Unit Outline Document:</strong> <a href="#">View Document</a></p>
-            </div>
-
+          <div className="unit-info">
+          <h2>Selected Unit Information</h2>
+          {selectedUnits.length > 0 ? (
+            selectedUnits.map((unit, index) => (
+              <div key={index}>
+                <p><strong>Unit Code:</strong> {unit.unitCode}</p>
+                <p><strong>Name:</strong> {unit.name}</p>
+                <p><strong>Location:</strong> {unit.location}</p>
+                <p><strong>Major:</strong> {unit.major}</p>
+                <p><strong>Institution:</strong> {unit.institution}</p>
+                <hr />
+              </div>
+            ))
+          ) : (
+            <p>No unit selected</p>
+          )}
+        </div>
             <div className="assessor-actions">
               <h2>Assessor Actions</h2>
               <div className="search-bar">
@@ -84,14 +98,20 @@ function App() {
               </div>
               <div className="selected-unit">
                 <h3>Searched Curtin Unit</h3>
+                {searchedUnit ? (
                 <p id="searched-unit-info">{searchedUnit}</p>
+              ) : (
+                <p id="searched-unit-info">No unit selected</p>
+              )}
                 {showConditionalButton && (
-                  <button className="button secondary conditional-button" onClick={handleShowPrerequisites}>
-                    Show Prerequisites
+                <div>
+                  <button className={`button show-prerequisites ${searchedUnit ? '' : 'hide'}`} onClick={handleShowPrerequisites}>
+                  Conditional
                   </button>
-                )}
-                <button className="button secondary approve-button conditional" onClick={handleApprove}>Approve</button>
-                <button className="button secondary deny-button conditional" onClick={handleDeny}>Deny</button>
+                  <button className={`button approve ${searchedUnit ? '' : 'hide'}`} onClick={handleApprove}>Approve</button>
+                  <button className={`button deny ${searchedUnit ? '' : 'hide'}`} onClick={handleDeny}>Deny</button>
+                </div>
+              )}
               </div>
             </div>
 
@@ -103,26 +123,38 @@ function App() {
           </div>
 
           <div className="right-column">
-            <div className="note-log">
-              <h2>Notes Log</h2>
-              {notes.map((note, index) => (
-                <p key={index}>{note}</p>
-              ))}
-            </div>
+          <div className="note-log">
+            <h2>Notes Log</h2>
+            {notes.length === 0 ? (
+                <p>No notes available.</p>
+            ) : (
+                <div className="log-container">
+                    {notes.map((note, index) => (
+                        <p key={index}>{note}</p>
+                    ))}
+                </div>
+            )}
+        </div>
 
-            <div className="change-log">
-              <h2>Change Log</h2>
-              <div className="log-container">
-                {changeLog.map((entry, index) => (
-                  <p key={index}>{entry}</p>
-                ))}
-              </div>
-            </div>
+        <div className="change-log">
+            <h2>Change Log</h2>
+            {changeLog.length === 0 ? (
+                <p>No change log entries available.</p>
+            ) : (
+                <div className="log-container">
+                    {changeLog.map((entry, index) => (
+                        <p key={index}>{entry}</p>
+                    ))}
+                </div>
+            )}
+        </div>
           </div>
         </div>
 
         <div className="button-container">
-          <button className="button">Save and Submit</button>
+          <Link to="/units">
+            <button className="button">Save</button>
+          </Link>
         </div>
       </div>
 
@@ -140,4 +172,5 @@ function App() {
 }
 
 export default App;
+
 

@@ -1,0 +1,21 @@
+/* 在 app.css 或其他样式文件中添加如下样式 */
+
+/* 隐藏按钮 */
+.button.hide {
+    display: none;
+}
+
+/* 修改 Show Prerequisites 按钮颜色为黄色 */
+.button.show-prerequisites {
+    background-color: yellow;
+}
+
+/* 修改 Approve 按钮颜色为绿色 */
+.button.approve {
+    background-color: green;
+}
+
+/* 修改 Deny 按钮颜色为红色 */
+.button.deny {
+    background-color: red;
+}
