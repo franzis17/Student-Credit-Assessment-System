@@ -69,7 +69,18 @@ router.route("/add").post((req, res) => {
   newUnit
     .save()
     .then(() => res.json(`Unit [${name}] has been added!`))
-    .catch((err) => res.status(400).json("Error: " + err));
+    .catch((error) => {
+
+      console.log(`Error when adding a unit.\n>>> ${error}`);
+      
+      if (error.code === 11000) {
+        // Error: Duplicate key (data already exists)
+        res.status(400).json({ message: `${name} already exists` });
+      } else {
+        // Other errors
+        res.status(500).json(`ERROR when adding a unit. More info: ${error}`);
+      }
+    });
 });
 
 // ---- [UPDATE] -----

@@ -4,6 +4,8 @@ class UnitDataService {
   
   static defaultRoute = `/units`;
   
+  // GET
+  
   getAll() {
     return http.get(UnitDataService.defaultRoute);
   }
@@ -15,6 +17,13 @@ class UnitDataService {
   
   getCount() {
     return http.get(UnitDataService.defaultRoute + "/count");
+  }
+  
+  
+  // POST
+  
+  addUnit(unit) {
+    return http.post((UnitDataService.defaultRoute + "/add"), unit);
   }
   
 }
