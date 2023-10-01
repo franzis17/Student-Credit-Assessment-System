@@ -5,6 +5,7 @@ import { useFetchWhitelistedUsers } from '../../hooks/useFetchWhitelistedUsers.j
 import { useEffect } from 'react';
 import Navbar from '../../components/Navbar.jsx';
 import Typography from '@mui/material/Typography';
+import {useAuthContext} from '../../hooks/useAuthContext.js'
 
 
 const Whitelist = () => {
@@ -16,6 +17,7 @@ const Whitelist = () => {
     const [data, setData] = useState([])
     const [inputError, setInputError] = useState('')
     const [helperText, setHelperText] = useState('')
+    const {user} = useAuthContext()
 
     const classes = useStyles()
 
@@ -55,9 +57,7 @@ const Whitelist = () => {
                 const response = await fetch('http://localhost:5001/api/whitelist/addUserID', {
                     method: 'POST',
                     headers: {
-                        'Content-Type': 'application/json',
-
-
+                        'Content-Type': 'application/json', 'Authorization': `Bearer ${user.token}`
                     },
                     body: JSON.stringify({curtinID, role: userRole}),
      

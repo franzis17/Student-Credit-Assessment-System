@@ -9,7 +9,7 @@ export const useFetchWhitelistedUsers = () => {
 
     useEffect(() => {
         async function fetchData() {
-            
+
             //Bearer token used to authorise if the user account logged in can view the data
             try {
                 const response = await fetch('http://localhost:5001/api/whitelist/getWhitelistedUsers', {
@@ -37,6 +37,9 @@ export const useFetchWhitelistedUsers = () => {
         try {
            const response = await fetch(`http://localhost:5001/api/whitelist/delete/${id}`, {
               method: 'DELETE',
+              headers: {
+                'Authorization': `Bearer ${user.token}`
+            }
            });
            
            if (response.ok) {

@@ -15,6 +15,7 @@ import {
 } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import CloseIcon from '@mui/icons-material/Close';
+import PersonSearchIcon from '@mui/icons-material/PersonSearch';
 import { useNavigate } from 'react-router-dom';
 import HomeIcon from '@mui/icons-material/Home';
 import ListAltIcon from '@mui/icons-material/ListAlt';
@@ -24,14 +25,17 @@ import ChevronUpIcon from '@mui/icons-material/ExpandLess';
 import { Link } from 'react-router-dom';
 import LockIcon from '@mui/icons-material/Lock';
 import { useAuthContext } from '../hooks/useAuthContext.js';
+import StudentSearch from './studentSearch.jsx';
 
 const BurgerMenu = () => {
   const [open, setOpen] = useState(false);
+  const [searchModalOpen, setSearchModalOpen] = useState(false);
   const navigate = useNavigate();
   const { user } = useAuthContext();
+  const [openLists, setOpenLists] = useState(false);
   
   //Conditionally set the menu items 
-  const menuItems = ['Dashboard', 'Lists']
+  const menuItems = ['Dashboard', 'Lists', 'Student Search']
   //Check if the user is admin
   if (user && user.role == 'Admin') {
     menuItems.push('Whistlist')
@@ -46,7 +50,10 @@ const BurgerMenu = () => {
     navigate(route);
   };
 
-  const [openLists, setOpenLists] = useState(false);
+  const toggleSearchModal = () => {
+    setSearchModalOpen(!searchModalOpen);
+  };
+
 
   function handleListItemClick(index) {
     if (index === 1) {
@@ -89,7 +96,7 @@ const BurgerMenu = () => {
                     </ListItemIcon>
                     <ListItemText primary={text} />
                   </ListItemButton>
-                ) :  index == 2 && user && user.role === 'Admin' ? (
+                ) :  index == 3 && user && user.role === 'Admin' ? (
                   <ListItemButton
                   component={Link}
                   to="/whitelist"   // <- Direct to the Whitelist route
@@ -100,6 +107,15 @@ const BurgerMenu = () => {
                   </ListItemIcon>
                   <ListItemText primary={text} />
                 </ListItemButton>
+                ) : index == 2 ? ( 
+                    <ListItemButton 
+                    onClick={toggleSearchModal}
+                    >
+                    <ListItemIcon>
+                    <PersonSearchIcon />
+                    </ListItemIcon>
+                   <ListItemText primary="Student Search" />
+                   </ListItemButton>      
                 ) : (
                   <ListItemButton onClick={() => handleListItemClick(index)}>
                     <ListItemIcon>
@@ -131,6 +147,8 @@ const BurgerMenu = () => {
                         </ListItemButton>
                       </ListItem>
                     ))}
+
+      
                   </List>
                 </Collapse>
               )}
@@ -159,6 +177,7 @@ const BurgerMenu = () => {
           </Button>
         </div>
       </Drawer>
+      <StudentSearch open={searchModalOpen} onClose={toggleSearchModal} />
     </>
   );
 };

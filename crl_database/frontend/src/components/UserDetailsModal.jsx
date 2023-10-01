@@ -6,7 +6,6 @@ import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import { useAuthContext } from "../hooks/useAuthContext.js";
 import { useState } from 'react';
-import { blue } from '@mui/material/colors';
 
 
 // Username:  EMAIL AND CHANGE PASS BUTTON

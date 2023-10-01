@@ -1,9 +1,10 @@
 import express from "express";
 import Institution from "../models/institution.model.js";
 import fs from "fs";
-
+import requireAuth from '../middleware/requireAuth.js';
 
 const router = express.Router();
+router.use(requireAuth)
 
 // ---- [GET] ----
 
