@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import Box from '@mui/material/Box';
-import { DataGrid } from '@mui/x-data-grid';
 import InstitutionDataService from "../../services/institution";
 import Navbar from "../../components/Navbar";
+
+import Box from '@mui/material/Box';
+import { DataGrid } from '@mui/x-data-grid';
 
 const InstitutionList = () => {
   
@@ -14,7 +15,8 @@ const InstitutionList = () => {
     retrieveInstitutions();  // After rendering, retrieve institutions
   }, []);
   
-  /* Use data service to get all institutions from the backend server */
+  
+  // Use data service to get all institutions from the backend server
   const retrieveInstitutions = () => {
     InstitutionDataService.getAll()
       .then((response) => {
@@ -28,6 +30,34 @@ const InstitutionList = () => {
       });
   };
   
+  // Use Axios to add new Institution in the DB by HTTP POST request
+  const handleAddInstitution = () => {
+    
+    // 1. Enter institution details
+    
+    // << Mock new institution >>
+    const name = "Australian Data and Cyber Institute";
+    const rank = 1;
+    const location = "Adelaide Terrace Perth";
+    const major = "DATA-CYBER";
+    const notes = "More into cyber security and data science";
+    
+    const newInstitution = { name, rank, location, major, notes };
+    
+    // 2. Pass newInstitution to axios to HTTP POST request the backend server
+    InstitutionDataService.addInstitution(newInstitution)
+      .then((response) => {
+        console.log(`Successfully added institution in the database.`);
+        retrieveInstitutions();
+      })
+      .catch((error) => {
+        console.log(
+          `ERROR when adding institutions in the DB.\n>>> ${error.response.data.message}`
+        );
+      });
+  };
+  
+  
   const columns = [
     { field: 'name', headerName: 'Name', width: 250 },
     { field: 'rank', headerName: 'Rank' },
@@ -35,12 +65,18 @@ const InstitutionList = () => {
     { field: 'major', headerName: 'Major', width: 150 },
     { field: 'notes', headerName: 'Notes', width: 400 }
   ];
-
+  
+  
   return (
     <>
     <div>
       <Navbar />
     </div>
+    
+    {/* [ TESTING ] - if an Institution is actually added in the DB */}
+    {/* TO BE DELETED - once the "form" button is done to add the institution */}
+    <button onClick={handleAddInstitution}>Add Institution</button>
+    
     <Box sx={{ height: '100%', width: '100%' }}>
       <DataGrid
         rows={institutions}

@@ -1,9 +1,10 @@
 import express from "express";
 import Institution from "../models/institution.model.js";
-import fs from "fs";
-
+// import fs from "fs";  // used by add-mock data
 
 const router = express.Router();
+
+const DUPLICATE = 11000;
 
 // ---- [GET] ----
 
@@ -24,6 +25,7 @@ router.route("/count").get(async (req, res) => {
     res.status(500).json(`ERROR: Failed to fetch institution counts. More details: ${err}`);
   }
 });
+
 
 // ---- [POST] ----
 
@@ -46,8 +48,18 @@ router.route("/add").post((req, res) => {
   newInstitution
     .save()
     .then(() => res.json("The institution has been added"))
-    .catch((err) => res.status(400).json("Error:" + err));
+    .catch((error) => {
+      console.log(`ERROR when adding an institution.\n>>> ${error}`);
+      
+      if (error.code === DUPLICATE) {
+        // Error: Duplicate key / institution name
+        res.status(400).json({ message: `Error: ${name} already exists` });
+      } else {
+        res.status(500).json(`ERROR when adding a Unit. More info: ${error}`);
+      }
+    });
 });
+
 
 // ---- [UPDATE] ----
 
@@ -69,6 +81,7 @@ router.route("/update/:id").post((req, res) => {
     .catch((err) => res.status(400).json("Error when updating institution: " + err));
 });
 
+
 // ---- [DELETE] ----
 
 // Delete an institution = /institutions/delete/:id
@@ -83,17 +96,17 @@ router.route("/delete/:id").delete((req, res) => {
 
 
 // TEST: Mock data to be put in db
-router.route("/add-mock").post(async (req, res) => {
-  try {
-    const rawData = fs.readFileSync("./routes/MOCK-Institutions.json");
-    const jsonData = JSON.parse(rawData);
+// router.route("/add-mock").post(async (req, res) => {
+//   try {
+//     const rawData = fs.readFileSync("./routes/MOCK-Institutions.json");
+//     const jsonData = JSON.parse(rawData);
     
-    await Institution.insertMany(jsonData);
+//     await Institution.insertMany(jsonData);
     
-    res.json("Mock institutions have been added.");
-  } catch (err) {
-    res.status(400).json("Error when adding mock: " + err);
-  }
-});
+//     res.json("Mock institutions have been added.");
+//   } catch (err) {
+//     res.status(400).json("Error when adding mock: " + err);
+//   }
+// });
 
 export default router;

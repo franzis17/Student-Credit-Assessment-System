@@ -7,12 +7,21 @@ class InstitutionDataService {
   
   static defaultRoute = `/institutions`;
   
+  // GET
+  
   getAll() {
     return http.get(InstitutionDataService.defaultRoute);
   }
   
   getCount() {
     return http.get(InstitutionDataService.defaultRoute + "/count");
+  }
+  
+  
+  // POST
+  
+  addInstitution(institution) {
+    return http.post((InstitutionDataService.defaultRoute + "/add"), institution);
   }
   
 }
