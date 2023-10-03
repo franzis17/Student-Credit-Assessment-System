@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useLocation } from "react-router-dom";
-import Navbar from "../../components/Navbar";
+import { Link, useLocation } from 'react-router-dom';
+import Navbar from '../../components/Navbar';
 import './App.css';
 import './buttonStyles.css';
 
@@ -11,15 +11,12 @@ const UnitAssessmentPage = () => {
   const [showConditionalButton, setShowConditionalButton] = useState(false);
   const [showPrerequisites, setShowPrerequisites] = useState(false);
   const [searchResults, setSearchResults] = useState([]);
+  const [showSuggestions, setShowSuggestions] = useState(false);
+  const [selectedItemIndex, setSelectedItemIndex] = useState(-1);
+
   // Get Selected Units
   const location = useLocation();
   const { selectedUnits } = location.state;
-  
-  // write here what to do with the selected units
-  useEffect(() => {
-    // TO DO: display the list of units selected
-    console.log("Selected Units: ", selectedUnits);
-  }, [selectedUnits]);
 
   useEffect(() => {
     if (searchedUnit) {
@@ -29,9 +26,41 @@ const UnitAssessmentPage = () => {
     }
   }, [searchedUnit]);
 
-  const handleSearch = () => {
-    const searchInput = document.querySelector('.search-input').value;
-    setSearchedUnit(`Searched Curtin Unit: ${searchInput}`);
+  const handleSearchInputChange = (event) => {
+    const searchInput = event.target.value;
+
+    // Simulate fetching data from the database (replace with actual fetch)
+    const databaseData = [
+      { id: 1, unitcode: 'IMSAD3000', name: 'Capstone 2' },
+      { id: 2, unitcode: 'COMP3003', name: 'Software Engineering Concepts' },
+      { id: 3, unitcode: 'ICTE3002', name: 'Human Computer Interface' },
+    ];
+
+    // Filter the databaseData based on the search input (both unit code and name)
+    const filteredResults = databaseData.filter(item =>
+      item.name.toLowerCase().includes(searchInput.toLowerCase()) || // Search by name
+      item.unitcode.toLowerCase().includes(searchInput.toLowerCase()) // Search by unit code
+    );
+
+    setSearchResults(filteredResults);
+    setSearchedUnit(searchInput);
+
+    // Show search suggestions if there are results and input is not empty
+    setShowSuggestions(filteredResults.length > 0 && searchInput !== '');
+  };
+
+  const handleMouseEnter = (index) => {
+    setSelectedItemIndex(index);
+  };
+
+  const handleMouseLeave = () => {
+    setSelectedItemIndex(-1);
+  };
+
+  const handleDatabaseItemClick = (item) => {
+    setSearchedUnit(`${item.unitcode} - ${item.name}`);
+    setSelectedItemIndex(-1);
+    setShowSuggestions(false);
   };
 
   const handleAddNote = () => {
@@ -62,7 +91,7 @@ const UnitAssessmentPage = () => {
       </div>
     );
     setChangeLog([...changeLog, logEntry]);
-    }
+  };
 
   const handleDeny = () => {
     const statusSymbol = <span className="status-symbol deny">•</span>;
@@ -89,7 +118,7 @@ const UnitAssessmentPage = () => {
         <Navbar />
       </div>
       <div className="container">
-      <div className="unit-info">
+        <div className="unit-info">
           <h2>Selected Unit Information</h2>
           {selectedUnits.length > 0 ? (
             <table className="custom-table">
@@ -126,8 +155,30 @@ const UnitAssessmentPage = () => {
             <div className="assessor-actions">
               <h2>Assessor Actions</h2>
               <div className="search-bar">
-                <input type="text" className="search-input" placeholder="Search for a Curtin unit..." />
-                <button className="button" onClick={handleSearch}>Search</button>
+                <input
+                  type="text"
+                  className="search-input"
+                  placeholder="Search for a Curtin unit..."
+                  onChange={handleSearchInputChange}
+                  value={searchedUnit}
+                />
+                {showSuggestions && (
+                  <div className="search-suggestions">
+                    <ul>
+                      {searchResults.map((item, index) => (
+                        <li
+                          key={index}
+                          className={`search-result ${index === selectedItemIndex ? 'hovered' : ''}`}
+                          onClick={() => handleDatabaseItemClick(item)}
+                          onMouseEnter={() => handleMouseEnter(index)}
+                          onMouseLeave={handleMouseLeave}
+                        >
+                          {item.unitcode} - {item.name}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
               </div>
               <div className="selected-unit">
                 <h3>Searched Curtin Unit</h3>
@@ -139,7 +190,7 @@ const UnitAssessmentPage = () => {
                 {showConditionalButton && (
                   <div>
                     <button className={`button show-prerequisites ${searchedUnit ? '' : 'hide'}`} onClick={handleShowPrerequisites}>
-                    Show Prerequisites
+                      Show Prerequisites
                     </button>
                     <button className={`button approve ${searchedUnit ? '' : 'hide'}`} onClick={handleApprove}>Approve</button>
                     <button className={`button conditional ${searchedUnit ? '' : 'hide'}`} onClick={handleConditional}>Conditional</button>
@@ -203,8 +254,6 @@ const UnitAssessmentPage = () => {
       )}
     </div>
   );
-}
+};
 
 export default UnitAssessmentPage;
-
-
