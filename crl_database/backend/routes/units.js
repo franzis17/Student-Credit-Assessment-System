@@ -4,7 +4,7 @@ import Unit from "../models/unit.model.js";
 
 const router = express.Router();
 
-// ---- [GET] -----
+// ---- [GET] ----
 
 // Get all units = /units
 router.route("/").get(async (req, res) => {
@@ -30,7 +30,7 @@ router.route("/").get(async (req, res) => {
 
 });
 
-// Get total units count
+// Get total units count =  /units/count
 router.route("/count").get(async (req, res) => {
   try {
     const count = await Unit.countDocuments({});
@@ -41,17 +41,18 @@ router.route("/count").get(async (req, res) => {
   }
 });
 
-// ---- [POST] -----
+
+// ---- [POST] ----
 
 // a unit has this properties = unitCode, name, location, major, institution, status, notes
 // Add a unit = /units/add
 router.route("/add").post((req, res) => {
-  const unitCode = req.body.unitCode;
-  const name = req.body.name;
-  const location = req.body.location;
-  const major = req.body.major;
+  const unitCode    = req.body.unitCode;
+  const name        = req.body.name;
+  const location    = req.body.location;
+  const major       = req.body.major;
   const institution = new mongoose.Types.ObjectId(req.body.institution);
-  const notes = req.body.notes;
+  const notes       = req.body.notes;
   
   // TO DO in the frontend (WHEN adding a Unit):
   // - Implement a dropdown with a search menu, that searches for the institution.
@@ -83,12 +84,14 @@ router.route("/add").post((req, res) => {
     });
 });
 
-// ---- [UPDATE] -----
+
+// ---- [UPDATE] ----
 
 // Update a unit's details = /units/update/:id
 // TO BE DONE
 
-// ---- [DELETE] -----
+
+// ---- [DELETE] ----
 
 // Delete a unit = /units/delete/:id
 router.route("/delete/:id").delete((req, res) => {

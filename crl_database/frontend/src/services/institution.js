@@ -5,7 +5,9 @@ import http from "../http-common";
 
 class InstitutionDataService {
   
+  /* Fields - to be changed as needed */
   static defaultRoute = `/institutions`;
+  static curtinId = "64e08d6f12f5f27fc10f3dcf";
   
   // GET
   
@@ -15,6 +17,15 @@ class InstitutionDataService {
   
   getCount() {
     return http.get(InstitutionDataService.defaultRoute + "/count");
+  }
+  
+  getUnitsOfInstitution(institutionId) {
+    const params = { institution: institutionId };
+    return http.get((InstitutionDataService.defaultRoute + "/units"), { params });
+  }
+  
+  getUnitsOfCurtin() {
+    return this.getUnitsOfInstitution(InstitutionDataService.curtinId);
   }
   
   

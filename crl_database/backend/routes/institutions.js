@@ -1,15 +1,16 @@
 import express from "express";
 import Institution from "../models/institution.model.js";
+import Unit from "../models/unit.model.js";
 // import fs from "fs";  // used by add-mock data
 
 const router = express.Router();
 
-const DUPLICATE = 11000;
+const DUPLICATE_ERROR_CODE = 11000;
 
 // ---- [GET] ----
 
 // Get all institutions = /institutions
-router.route("/").get((req, res) => {
+router.route("/").get(async (req, res) => {
   Institution.find()
     .then((institutions) => res.json(institutions))
     .catch((err) => res.status(400).json("Error:" + err));
@@ -26,11 +27,28 @@ router.route("/count").get(async (req, res) => {
   }
 });
 
+/**
+ * [/institutions/units]
+ * GET the List of Units for a given institution
+ */
+router.route("/units").get((req, res) => {
+  const institution = req.query.institution;
+  
+  Unit.find({ institution: institution })
+    .then((units) => {
+      res.json(units)
+    })
+    .catch((err) => {
+      console.error(`ERROR: ${err}`);
+      res.status(500).json(`ERROR: Failed to retrieve the institution's units.\nMore details: ${err}`);
+    });
+});
+
 
 // ---- [POST] ----
 
 // Add an institution = /institutions/add
-router.route("/add").post((req, res) => {
+router.route("/add").post(async (req, res) => {
   const name = req.body.name;
   const rank = req.body.rank;
   const location = req.body.location;
@@ -51,7 +69,7 @@ router.route("/add").post((req, res) => {
     .catch((error) => {
       console.log(`ERROR when adding an institution.\n>>> ${error}`);
       
-      if (error.code === DUPLICATE) {
+      if (error.code === DUPLICATE_ERROR_CODE) {
         // Error: Duplicate key / institution name
         res.status(400).json({ message: `Error: ${name} already exists` });
       } else {
@@ -64,7 +82,7 @@ router.route("/add").post((req, res) => {
 // ---- [UPDATE] ----
 
 // Update an institution = /institutions/update/:id
-router.route("/update/:id").post((req, res) => {
+router.route("/update/:id").post(async (req, res) => {
   Institution.findById(req.params.id)
     .then((institution) => {
       institution.name = req.body.name;
@@ -85,7 +103,7 @@ router.route("/update/:id").post((req, res) => {
 // ---- [DELETE] ----
 
 // Delete an institution = /institutions/delete/:id
-router.route("/delete/:id").delete((req, res) => {
+router.route("/delete/:id").delete(async (req, res) => {
   Institution.findByIdAndDelete(req.params.id)
     .then(() => res.json("Institution deleted."))
     .catch((err) => res.status(400).json("Error:" + err));

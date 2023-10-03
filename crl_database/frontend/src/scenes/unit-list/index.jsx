@@ -36,16 +36,16 @@ const UnitList = () => {
     // 1. Enter unit details here
     
     // << Creating a Mock "Unit" Object for now >>
-    const unitCode = "COMP2008";
-    const name = "Mobile Application Development";
-    const location = "Bentley";
-    const major = "B Comp";
-    const notes = "Teaches how to make mobile applications";
+    const unitCode = "CITS2200";
+    const name = "Data Structures and Algorithms";
+    const location = "Perth";
+    const major = "B-COMP";
+    const notes = "TEST very Long, very long, very long, very long, very long, very long";
     
     // important note: institution will need to be an objectId
     // how to get id? searched from institution list (or somehow
     // get the institution that is currently displaying this list of units and user their "_id")
-    const institution = "64e08d6f12f5f27fc10f3dcf";
+    const institution = "64e0911b123bc76c05356445";
     
     const unit = {  
       unitCode,

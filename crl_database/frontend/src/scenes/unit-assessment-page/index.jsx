@@ -4,7 +4,10 @@ import Navbar from '../../components/Navbar';
 import './App.css';
 import './buttonStyles.css';
 
+import InstitutionDataService from "../../services/institution";
+
 const UnitAssessmentPage = () => {
+  
   const [searchedUnit, setSearchedUnit] = useState('');
   const [notes, setNotes] = useState([]);
   const [changeLog, setChangeLog] = useState([]);
@@ -13,17 +16,17 @@ const UnitAssessmentPage = () => {
   const [searchResults, setSearchResults] = useState([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [selectedItemIndex, setSelectedItemIndex] = useState(-1);
+  const [curtinUnits, setCurtinUnits] = useState([]);
 
   // Get Selected Units
   const location = useLocation();
   const { selectedUnits } = location.state;
-
-  // write here what to do with the selected units
-  useEffect(() => {
-    // TO DO: display the list of units selected
-    console.log("Selected Units: ", selectedUnits);
-  }, [selectedUnits]);
   
+  // Get Curtin Units when the user goes to the unit assessment page
+  useEffect(() => {
+    retrieveCurtinUnits();
+  }, []);
+
   useEffect(() => {
     if (searchedUnit) {
       setShowConditionalButton(true);
@@ -31,6 +34,17 @@ const UnitAssessmentPage = () => {
       setShowConditionalButton(false);
     }
   }, [searchedUnit]);
+  
+  const retrieveCurtinUnits = () => {
+    InstitutionDataService.getUnitsOfCurtin()
+      .then((response) => {
+        console.log("Retrieved Curtin Units: " + response.data);
+        setCurtinUnits(response.data);
+      })
+      .catch((err) => {
+        console.log(`ERROR: when retrieving Curtin's Units.\nMore info: ${err}`);
+      });
+  };
 
   const handleSearchInputChange = (event) => {
     const searchInput = event.target.value;
@@ -38,16 +52,16 @@ const UnitAssessmentPage = () => {
     // Simulate fetching data from the database (replace with actual fetch)
     // TO DO: Instead of databaseData, I need to make this a state variable
     // and retrieve all Units that are from Curtin in the backend.
-    const databaseData = [
-      { id: 1, unitcode: 'IMSAD3000', name: 'Capstone 2' },
-      { id: 2, unitcode: 'COMP3003', name: 'Software Engineering Concepts' },
-      { id: 3, unitcode: 'ICTE3002', name: 'Human Computer Interface' },
-    ];
+    // const databaseData = [
+    //   { id: 1, unitcode: 'IMSAD3000', name: 'Capstone 2' },
+    //   { id: 2, unitcode: 'COMP3003', name: 'Software Engineering Concepts' },
+    //   { id: 3, unitcode: 'ICTE3002', name: 'Human Computer Interface' },
+    // ];
 
-    // Filter the databaseData based on the search input (both unit code and name)
-    const filteredResults = databaseData.filter(item =>
+    // Filter the curtinUnits based on the search input (both unit code and name)
+    const filteredResults = curtinUnits.filter(item =>
       item.name.toLowerCase().includes(searchInput.toLowerCase()) || // Search by name
-      item.unitcode.toLowerCase().includes(searchInput.toLowerCase()) // Search by unit code
+      item.unitCode.toLowerCase().includes(searchInput.toLowerCase()) // Search by unit code
     );
 
     setSearchResults(filteredResults);
@@ -66,7 +80,7 @@ const UnitAssessmentPage = () => {
   };
 
   const handleDatabaseItemClick = (item) => {
-    setSearchedUnit(`${item.unitcode} - ${item.name}`);
+    setSearchedUnit(`${item.unitCode} - ${item.name}`);
     setSelectedItemIndex(-1);
     setShowSuggestions(false);
   };
@@ -181,7 +195,7 @@ const UnitAssessmentPage = () => {
                           onMouseEnter={() => handleMouseEnter(index)}
                           onMouseLeave={handleMouseLeave}
                         >
-                          {item.unitcode} - {item.name}
+                          {item.unitCode} - {item.name}
                         </li>
                       ))}
                     </ul>
