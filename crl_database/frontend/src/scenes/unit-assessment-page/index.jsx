@@ -36,6 +36,8 @@ const UnitAssessmentPage = () => {
     const searchInput = event.target.value;
 
     // Simulate fetching data from the database (replace with actual fetch)
+    // TO DO: Instead of databaseData, I need to make this a state variable
+    // and retrieve all Units that are from Curtin in the backend.
     const databaseData = [
       { id: 1, unitcode: 'IMSAD3000', name: 'Capstone 2' },
       { id: 2, unitcode: 'COMP3003', name: 'Software Engineering Concepts' },
