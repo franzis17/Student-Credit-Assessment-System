@@ -1,15 +1,19 @@
 import React, { useState, useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
+import Navbar from '../../components/Navbar';
 import './App.css';
+import './buttonStyles.css';
 
 const UnitAssessmentPage = () => {
-  
   const [searchedUnit, setSearchedUnit] = useState('');
   const [notes, setNotes] = useState([]);
   const [changeLog, setChangeLog] = useState([]);
   const [showConditionalButton, setShowConditionalButton] = useState(false);
   const [showPrerequisites, setShowPrerequisites] = useState(false);
-  
+  const [searchResults, setSearchResults] = useState([]);
+  const [showSuggestions, setShowSuggestions] = useState(false);
+  const [selectedItemIndex, setSelectedItemIndex] = useState(-1);
+
   // Get Selected Units
   const location = useLocation();
   const { selectedUnits } = location.state;
@@ -28,9 +32,41 @@ const UnitAssessmentPage = () => {
     }
   }, [searchedUnit]);
 
-  const handleSearch = () => {
-    const searchInput = document.querySelector('.search-input').value;
-    setSearchedUnit(`Searched Curtin Unit: ${searchInput}`);
+  const handleSearchInputChange = (event) => {
+    const searchInput = event.target.value;
+
+    // Simulate fetching data from the database (replace with actual fetch)
+    const databaseData = [
+      { id: 1, unitcode: 'IMSAD3000', name: 'Capstone 2' },
+      { id: 2, unitcode: 'COMP3003', name: 'Software Engineering Concepts' },
+      { id: 3, unitcode: 'ICTE3002', name: 'Human Computer Interface' },
+    ];
+
+    // Filter the databaseData based on the search input (both unit code and name)
+    const filteredResults = databaseData.filter(item =>
+      item.name.toLowerCase().includes(searchInput.toLowerCase()) || // Search by name
+      item.unitcode.toLowerCase().includes(searchInput.toLowerCase()) // Search by unit code
+    );
+
+    setSearchResults(filteredResults);
+    setSearchedUnit(searchInput);
+
+    // Show search suggestions if there are results and input is not empty
+    setShowSuggestions(filteredResults.length > 0 && searchInput !== '');
+  };
+
+  const handleMouseEnter = (index) => {
+    setSelectedItemIndex(index);
+  };
+
+  const handleMouseLeave = () => {
+    setSelectedItemIndex(-1);
+  };
+
+  const handleDatabaseItemClick = (item) => {
+    setSearchedUnit(`${item.unitcode} - ${item.name}`);
+    setSelectedItemIndex(-1);
+    setShowSuggestions(false);
   };
 
   const handleAddNote = () => {
@@ -47,6 +83,17 @@ const UnitAssessmentPage = () => {
       <div className="change-log-entry">
         {statusSymbol}
         {searchedUnit} Approved.
+      </div>
+    );
+    setChangeLog([...changeLog, logEntry]);
+  };
+
+  const handleConditional = () => {
+    const statusSymbol = <span className="status-symbol conditional">•</span>;
+    const logEntry = (
+      <div className="change-log-entry">
+        {statusSymbol}
+        {searchedUnit} Conditional.
       </div>
     );
     setChangeLog([...changeLog, logEntry]);
@@ -70,45 +117,96 @@ const UnitAssessmentPage = () => {
   const handleClosePrerequisites = () => {
     setShowPrerequisites(false);
   };
-  
 
   return (
     <div className="App">
-      <header>
-        {/* Add NavigationMenu component here */}
-      </header>
+      <div>
+        <Navbar />
+      </div>
       <div className="container">
+        <div className="unit-info">
+          <h2>Selected Unit Information</h2>
+          {selectedUnits.length > 0 ? (
+            <table className="custom-table">
+              <thead>
+                <tr>
+                  <th>Unit Code</th>
+                  <th>Name</th>
+                  <th>Location</th>
+                  <th>Major</th>
+                  <th>Institution</th>
+                  <th>Notes</th>
+                </tr>
+              </thead>
+              <tbody>
+                {selectedUnits.map((unit, index) => (
+                  <tr key={index}>
+                    <td>{unit.unitCode}</td>
+                    <td>{unit.name}</td>
+                    <td>{unit.location}</td>
+                    <td>{unit.major}</td>
+                    <td>{unit.institution}</td>
+                    <td>{unit.notes}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          ) : (
+            <p>No unit selected</p>
+          )}
+        </div>
+
         <div className="columns">
           <div className="left-column">
-            <div className="unit-info">
-              <h2>Selected Unit Information</h2>
-              <p><strong>Unit:</strong> Programming Fundamentals</p>
-              <p><strong>University:</strong> Toyal University of London</p>
-              <p><strong>Stream:</strong> Computer Science</p>
-              <p><strong>Course:</strong> Bachelor Of Computing</p>
-              <p><strong>Unit Outline Document:</strong> <a href="#">View Document</a></p>
-            </div>
-
             <div className="assessor-actions">
               <h2>Assessor Actions</h2>
               <div className="search-bar">
-                <input type="text" className="search-input" placeholder="Search for a Curtin unit..." />
-                <button className="button" onClick={handleSearch}>Search</button>
+                <input
+                  type="text"
+                  className="search-input"
+                  placeholder="Search for a Curtin unit..."
+                  onChange={handleSearchInputChange}
+                  value={searchedUnit}
+                />
+                {showSuggestions && (
+                  <div className="search-suggestions">
+                    <ul>
+                      {searchResults.map((item, index) => (
+                        <li
+                          key={index}
+                          className={`search-result ${index === selectedItemIndex ? 'hovered' : ''}`}
+                          onClick={() => handleDatabaseItemClick(item)}
+                          onMouseEnter={() => handleMouseEnter(index)}
+                          onMouseLeave={handleMouseLeave}
+                        >
+                          {item.unitcode} - {item.name}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
               </div>
               <div className="selected-unit">
                 <h3>Searched Curtin Unit</h3>
-                <p id="searched-unit-info">{searchedUnit}</p>
-                {showConditionalButton && (
-                  <button className="button secondary conditional-button" onClick={handleShowPrerequisites}>
-                    Show Prerequisites
-                  </button>
+                {searchedUnit ? (
+                  <p id="searched-unit-info">{searchedUnit}</p>
+                ) : (
+                  <p id="searched-unit-info">No unit selected</p>
                 )}
-                <button className="button secondary approve-button conditional" onClick={handleApprove}>Approve</button>
-                <button className="button secondary deny-button conditional" onClick={handleDeny}>Deny</button>
+                {showConditionalButton && (
+                  <div>
+                    <button className={`button show-prerequisites ${searchedUnit ? '' : 'hide'}`} onClick={handleShowPrerequisites}>
+                      Show Prerequisites
+                    </button>
+                    <button className={`button approve ${searchedUnit ? '' : 'hide'}`} onClick={handleApprove}>Approve</button>
+                    <button className={`button conditional ${searchedUnit ? '' : 'hide'}`} onClick={handleConditional}>Conditional</button>
+                    <button className={`button deny ${searchedUnit ? '' : 'hide'}`} onClick={handleDeny}>Deny</button>
+                  </div>
+                )}
               </div>
             </div>
 
-            <div className="notes-section">
+            <div className="notes-section assessor-notes">
               <h2>Assessor Notes</h2>
               <textarea rows="4" cols="50" placeholder="Add notes here..." />
               <button className="button" onClick={handleAddNote}>Add Note</button>
@@ -118,24 +216,36 @@ const UnitAssessmentPage = () => {
           <div className="right-column">
             <div className="note-log">
               <h2>Notes Log</h2>
-              {notes.map((note, index) => (
-                <p key={index}>{note}</p>
-              ))}
+              {notes.length === 0 ? (
+                <p>No notes available.</p>
+              ) : (
+                <div className="log-container">
+                  {notes.map((note, index) => (
+                    <p key={index}>{note}</p>
+                  ))}
+                </div>
+              )}
             </div>
 
             <div className="change-log">
               <h2>Change Log</h2>
-              <div className="log-container">
-                {changeLog.map((entry, index) => (
-                  <p key={index}>{entry}</p>
-                ))}
-              </div>
+              {changeLog.length === 0 ? (
+                <p>No change log entries available.</p>
+              ) : (
+                <div className="log-container">
+                  {changeLog.map((entry, index) => (
+                    <p key={index}>{entry}</p>
+                  ))}
+                </div>
+              )}
             </div>
           </div>
         </div>
 
         <div className="button-container">
-          <button className="button">Save and Submit</button>
+          <Link to="/units">
+            <button className="button">Save</button>
+          </Link>
         </div>
       </div>
 
@@ -150,7 +260,6 @@ const UnitAssessmentPage = () => {
       )}
     </div>
   );
-}
-
+};
 
 export default UnitAssessmentPage;
