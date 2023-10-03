@@ -22,7 +22,8 @@ const UnitAssessmentPage = () => {
   const location = useLocation();
   const { selectedUnits } = location.state;
   
-  // Get Curtin Units when the user goes to the unit assessment page
+  // Retrieve all Curtin Units when the user first lands at the Unit Assessment Page.
+  // Used by search dropdown to list all the Curtin Units that the user can select.
   useEffect(() => {
     retrieveCurtinUnits();
   }, []);
@@ -48,15 +49,6 @@ const UnitAssessmentPage = () => {
 
   const handleSearchInputChange = (event) => {
     const searchInput = event.target.value;
-
-    // Simulate fetching data from the database (replace with actual fetch)
-    // TO DO: Instead of databaseData, I need to make this a state variable
-    // and retrieve all Units that are from Curtin in the backend.
-    // const databaseData = [
-    //   { id: 1, unitcode: 'IMSAD3000', name: 'Capstone 2' },
-    //   { id: 2, unitcode: 'COMP3003', name: 'Software Engineering Concepts' },
-    //   { id: 3, unitcode: 'ICTE3002', name: 'Human Computer Interface' },
-    // ];
 
     // Filter the curtinUnits based on the search input (both unit code and name)
     const filteredResults = curtinUnits.filter(item =>

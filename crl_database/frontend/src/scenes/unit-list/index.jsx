@@ -76,7 +76,6 @@ const UnitList = () => {
     { field: 'location',    headerName: 'Location',    width: 300 },
     { field: 'major',       headerName: 'Major',       width: 150 },
     { field: 'institution', headerName: 'Institution', width: 250 },
-    // TO DO: Add status here
     { field: 'notes',       headerName: 'Notes',       width: 400 }
   ];
   
