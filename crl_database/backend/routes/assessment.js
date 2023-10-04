@@ -54,4 +54,19 @@ router.get("/searchStudent", async (req, res) => {
 
 })
 
-export default router;
+/*
+// TEST: Mock data to be put in db
+router.route("/add-appMock").post(async (req, res) => {
+  try {
+    const rawData = fs.readFileSync("./routes/MOCK-Assessment.json");
+    const jsonData = JSON.parse(rawData);
+    
+    await Assessment.insertMany(jsonData);
+    
+    res.json("Mock Assessments have been added.");
+  } catch (err) {
+    res.status(400).json("Error when adding mock: " + err);
+  }
+});
+
+export default router; */

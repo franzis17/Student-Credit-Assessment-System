@@ -1,11 +1,11 @@
 import { useState } from 'react';
 import { TextField, Button, Select, MenuItem, Box, Table, TableBody, TableCell, TableHead, TableRow, Paper, TableContainer } from '@material-ui/core';
-import useStyles from './whitelistPageStyle.js'
 import { useFetchWhitelistedUsers } from '../../hooks/useFetchWhitelistedUsers.js';
 import { useEffect } from 'react';
 import Navbar from '../../components/Navbar.jsx';
 import Typography from '@mui/material/Typography';
 import {useAuthContext} from '../../hooks/useAuthContext.js'
+import useStyles from './whitelistPageStyle.js'
 
 
 const Whitelist = () => {
