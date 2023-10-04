@@ -50,27 +50,27 @@ const InstitutionModal = ({ user, onClose }) => {
           margin="normal"
           value={unitName}
           onChange={(e) => setUnitName(e.target.value)}
-          placeholder="Unit Name"
-          sx={{ width: '100%', marginBottom: '16px' }} // Adjust the width and margin
-        />
-
-        <TextField
-          label="Country"
-          fullWidth
-          margin="normal"
-          value={institutionName}
-          onChange={(e) => setInstitutionName(e.target.value)}
           placeholder="Institution Name"
           sx={{ width: '100%', marginBottom: '16px' }} // Adjust the width and margin
         />
 
         <TextField
-          label="Institution rank"
+          label="Institution Location"
+          fullWidth
+          margin="normal"
+          value={institutionName}
+          onChange={(e) => setInstitutionName(e.target.value)}
+          placeholder="Institution Location"
+          sx={{ width: '100%', marginBottom: '16px' }} // Adjust the width and margin
+        />
+
+        <TextField
+          label="Institution Rank"
           fullWidth
           margin="normal"
           value={unitCode}
           onChange={(e) => setUnitCode(e.target.value)}
-          placeholder="Unit Code"
+          placeholder="Institution Rank"
           sx={{ width: '100%', marginBottom: '16px' }} // Adjust the width and margin
         />
 

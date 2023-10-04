@@ -40,46 +40,46 @@ const UnitModal = ({ user, onClose }) => {
       >
 
         {/* Title */}
-        <Typography variant="h2" sx={{ fontWeight: 'bold', marginBottom: '16px' }}>
+        <Typography variant="h2" sx={{ fontWeight: 'bold', marginBottom: '14px' }}>
           Add a Unit
         </Typography>
-
-        <TextField
-          label="Unit Name"
-          fullWidth
-          margin="normal"
-          value={unitName}
-          onChange={(e) => setUnitName(e.target.value)}
-          placeholder="Unit Name"
-          sx={{ width: '100%', marginBottom: '16px' }} // Adjust the width and margin
-        />
-
-        <TextField
-          label="Institution Name"
-          fullWidth
-          margin="normal"
-          value={institutionName}
-          onChange={(e) => setInstitutionName(e.target.value)}
-          placeholder="Institution Name"
-          sx={{ width: '100%', marginBottom: '16px' }} // Adjust the width and margin
-        />
 
         <TextField
           label="Unit Code"
           fullWidth
           margin="normal"
-          value={unitCode}
-          onChange={(e) => setUnitCode(e.target.value)}
+          value={unitName}
+          onChange={(e) => setUnitName(e.target.value)}
           placeholder="Unit Code"
           sx={{ width: '100%', marginBottom: '16px' }} // Adjust the width and margin
         />
+
         <TextField
-          label="Course"
+          label="Unit Name"
+          fullWidth
+          margin="normal"
+          value={institutionName}
+          onChange={(e) => setInstitutionName(e.target.value)}
+          placeholder="Unit Name"
+          sx={{ width: '100%', marginBottom: '16px' }} // Adjust the width and margin
+        />
+
+        <TextField
+          label="Institution"
           fullWidth
           margin="normal"
           value={unitCode}
           onChange={(e) => setUnitCode(e.target.value)}
-          placeholder="Unit Code"
+          placeholder="Institution"
+          sx={{ width: '100%', marginBottom: '16px' }} // Adjust the width and margin
+        />
+        <TextField
+          label="Course Major"
+          fullWidth
+          margin="normal"
+          value={unitCode}
+          onChange={(e) => setUnitCode(e.target.value)}
+          placeholder="Course Major"
           sx={{ width: '100%', marginBottom: '16px' }} // Adjust the width and margin
         />
 
