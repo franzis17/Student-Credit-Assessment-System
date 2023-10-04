@@ -1,100 +1,95 @@
 import { useState } from 'react';
 import { TextField, Button, Select, MenuItem, Box, Table, TableBody, TableCell, TableHead, TableRow, Paper, TableContainer } from '@material-ui/core';
-import useStyles from './whitelistPageStyle.js'
 import { useFetchWhitelistedUsers } from '../../hooks/useFetchWhitelistedUsers.js';
 import { useEffect } from 'react';
 import Navbar from '../../components/Navbar.jsx';
 import Typography from '@mui/material/Typography';
+import { makeStyles } from '@mui/styles';
 
 
-const Whitelist = () => {
 
-    const [curtinID, setCurtinID] = useState('')
-    const [userRole, setUserRole] = useState('')
-    const [isLoading, setIsLoading] = useState(false)
-    const { whitelistData, loading, error, handleRemove } = useFetchWhitelistedUsers()
-    const [data, setData] = useState([])
-    const [inputError, setInputError] = useState('')
-    const [helperText, setHelperText] = useState('')
+const useStyles = makeStyles((theme) => ({
+    container: {
+      boxShadow: theme.shadows[3],
+      padding: theme.spacing(1),
+    },
+    header: {
+      fontSize: '1rem',
+    },
+    // Add more styles specific to the Whitelist component here
+  }));
 
-    const classes = useStyles()
 
+  const Whitelist = () => {
+    const classes = useStyles();
+  
+    const [curtinID, setCurtinID] = useState('');
+    const [userRole, setUserRole] = useState('');
+    const [isLoading, setIsLoading] = useState(false);
+    const { whitelistData, loading, error, handleRemove } = useFetchWhitelistedUsers();
+    const [data, setData] = useState([]);
+    const [inputError, setInputError] = useState('');
+    const [helperText, setHelperText] = useState('');
+  
     useEffect(() => {
-        if (Array.isArray(whitelistData)) {
-            setData(whitelistData)
-        }
-      }, [whitelistData])
-
-
-
+      if (Array.isArray(whitelistData)) {
+        setData(whitelistData);
+      }
+    }, [whitelistData]);
+  
     const handleInputChange = (e) => {
-        const value = e.target.value;
-        setCurtinID(value);
-
-        // Validate the CurtinID
-        const isValidCurtinID = /^[a-zA-Z]\d{7}$/.test(value);
-
-        if ((!isValidCurtinID) && (value.length !== 8 || isNaN(value))) {
-            setInputError(true);
-            setHelperText('ID must start with 1 letter followed by 7 numbers and be of length 8');
-        } else {
-            setInputError(false);
-            setHelperText('');
+      const value = e.target.value;
+      setCurtinID(value);
+  
+      // Validate the CurtinID
+      const isValidCurtinID = /^[a-zA-Z]\d{7}$/.test(value);
+  
+      if ((!isValidCurtinID) && (value.length !== 8 || isNaN(value))) {
+        setInputError(true);
+        setHelperText('ID must start with 1 letter followed by 7 numbers and be of length 8');
+      } else {
+        setInputError(false);
+        setHelperText('');
+      }
+    };
+  
+    const handleWhitelist = async () => {
+      if (curtinID && userRole) {
+        setIsLoading(true);
+  
+        try {
+          const response = await fetch('http://localhost:5001/api/whitelist/addUserID', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ curtinID, role: userRole }),
+          });
+  
+          if (response.ok) {
+            const addedUser = await response.json();
+            setData((prevData) => [...prevData, addedUser]);
+            console.log(addedUser);
+  
+            setCurtinID('');
+            setUserRole('');
+          } else {
+            console.error('Failed to add whitelist');
+          }
+        } catch (error) {
+          console.error('Error: ', error);
+        } finally {
+          setIsLoading(false);
         }
     }
-
-
-    const handleWhitelist= async () => {
-
-        if(curtinID && userRole)
-        {
-            setIsLoading(true);
-
-            try {
-
-                const response = await fetch('http://localhost:5001/api/whitelist/addUserID', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-
-
-                    },
-                    body: JSON.stringify({curtinID, role: userRole}),
-     
-                });
-
-                if(response.ok) {
-
-                const addedUser = await response.json();
-                setData(prevData => [...prevData, addedUser]);
-                console.log(addedUser)
-
-                setCurtinID('')
-                setUserRole('')
-                }
-                else {
-                    console.error('Failed to add whitelist')
-                }
-                
-            } catch(error) {
-                console.error('Error: ', error)
-            } finally {
-                setIsLoading(false)
-            }
-
-        }
-    }
+};
 
 
 return (
-
     <>
-    <div>
-      <Navbar />
-    </div>
-
-    <Box className="classes" boxShadow={3} p={1}>
-    <Typography variant="h2">Whitelist a User Account</Typography>
+    <Navbar />
+    <Box className={classes.container} p={1}>
+        <Typography variant="h2" className={classes.header}></Typography>
 
     <TextField
         label="CurtinID"
@@ -117,7 +112,7 @@ return (
         margin="normal"
     >
         <MenuItem value="">
-            <em>Select an option</em>
+            Select an option
         </MenuItem>
         <MenuItem value="Staff">Staff</MenuItem>
         <MenuItem value="Moderator">Moderator</MenuItem>
@@ -134,7 +129,7 @@ return (
         ) : (
 
     <TableContainer component={Paper}>
-    <Table className={classes.table} size="small" aria-label="whitelist table">
+    <Table size="small" aria-label="whitelist table">
           <TableHead>
           <TableRow>
               <TableCell>Curtin ID</TableCell>
@@ -162,8 +157,6 @@ return (
    </>
 )
 }
-
-
 export default Whitelist
 
 

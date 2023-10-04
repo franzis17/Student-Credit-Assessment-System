@@ -10,11 +10,15 @@ class UnitDataService {
   
   /** Get all units of a specific institution */
   getUnitsOfAnInstitution() {
-    
+    return http.get(UnitDataService.defaultRoute + "/sortedunits");
   }
   
   getCount() {
     return http.get(UnitDataService.defaultRoute + "/count");
+  }
+
+  addUnit() {
+    return http.post(UnitDataService.defaultRoute + "/add")
   }
   
 }

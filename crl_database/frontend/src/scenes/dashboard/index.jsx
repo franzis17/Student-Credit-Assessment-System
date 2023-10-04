@@ -22,7 +22,7 @@ import { Box,
 import Navbar from "../../components/Navbar";
 import InstitutionDataService from "../../services/institution";
 import UnitDataService from "../../services/unit";
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation} from 'react-router-dom';
 import Counter from './animate/counter';
 import dashboardBackground from '../../assets/dashboard-backdrop.jpg';
 
@@ -32,6 +32,7 @@ const Dashboard = () => {
   const [searchInput, setSearchInput] = useState('');
   const [institutionList, setInstitutionList] = useState([]);
   const [filteredList, setFilteredList] = useState([]);
+  const [selectedInstitution, setSelectedInstitution] = useState([]);
   const listRef = useRef(null);
 
   // To do after render
@@ -96,21 +97,28 @@ const Dashboard = () => {
     });
   }
 
-  const handleSearchChange = (event) => {
+  const handleSearchChange = (event, institutionId) => {
     const query = event.target.value.toLowerCase();
     if (query === "") {
-      setFilteredList([]); //hides list
-    }
-    else{
-      var filteredList = institutionList.filter((institution) =>
+      setFilteredList([]);
+      setSelectedInstitution(null); // Clear selected institution when input is empty
+    } else {
+      const filteredList = institutionList.filter((institution) =>
         institution.name.toLowerCase().includes(query)
       );
       setFilteredList(filteredList);
     }
   };
 
+
   const navigateToInstitutionList = (institutionId) => {
     navigate(`/institutions/`); //Change this for return route into institution list
+  };
+
+  const navigateToSortedUnitList = () => {
+    if (selectedInstitution !== null) {
+      navigate(`/units?institutionId=${selectedInstitution}`);
+    }
   };
 
   const dashboardStyle = {
@@ -135,11 +143,11 @@ const Dashboard = () => {
       Welcome to the CRL Database
     </div>
     <FlexBetween backgroundColor={theme.palette.background.alt} borderRadius="10px" gap="0.5rem" p="0.1rem 1rem" style={{ position: 'relative', backgroundColor:"white", border:"solid", borderColor:"#D3D3D3" }}>
-            <InputBase
+          <InputBase
               type="text"
               placeholder="Search an institution..."
               style={{ width: '500px', padding: "0"}}
-              onChange={handleSearchChange}
+              onChange={(event) => handleSearchChange(event, institution.id)}
             />
             <IconButton>
               <Search />
@@ -174,7 +182,10 @@ const Dashboard = () => {
                   <React.Fragment key={institution.id}>
                     <ListItem
                       button
-                      onClick={() => navigateToInstitutionList(institution.name)}
+                      onClick={() => {
+                        setSelectedInstitution(institution.id); // Set the selected institution
+                        handleSearchChange(event, institution.id); // Pass the institution ID
+                      }}
                     >
                       <ListItemText primary={institution.name} />
                     </ListItem>
