@@ -34,6 +34,7 @@ const Dashboard = () => {
   const [filteredList, setFilteredList] = useState([]);
   const [selectedInstitution, setSelectedInstitution] = useState([]);
   const listRef = useRef(null);
+  
   // To do after render
   useEffect(() => {
     getInstitutionCount();
@@ -146,7 +147,7 @@ const Dashboard = () => {
               type="text"
               placeholder="Search an institution..."
               style={{ width: '500px', padding: "0"}}
-              onChange={(event) => handleSearchChange(event, institution.id)}
+              // onChange={(event) => handleSearchChange(event, institution.id)}
             />
             <IconButton>
               <Search />
@@ -183,7 +184,7 @@ const Dashboard = () => {
                       button
                       onClick={() => {
                         setSelectedInstitution(institution.id); // Set the selected institution
-                        handleSearchChange(event, institution.id); // Pass the institution ID
+                        // handleSearchChange(event, institution.id); // Pass the institution ID
                       }}
                     >
                       <ListItemText primary={institution.name} />
