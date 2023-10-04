@@ -20,15 +20,16 @@ const Navbar = () => {
   const currentPage = useLocation();
   const currentState = useState();
 
+  const navbarStyle = {
+    position: 'static',
+    background: 'none',
+    boxShadow: 'none',
+    height: '75px',
+    // Add any other styles specific to your Navbar component here
+  };
+
   return (
-    <AppBar
-      sx={{
-        position: 'static',
-        background: 'none',
-        boxShadow: 'none',
-        height:"75px"
-      }}
-    >
+    <AppBar sx={navbarStyle}>
       <Toolbar sx={{ justifyContent: 'space-between' }}>
         {/* Left side top bar */}
         <FlexBetween>

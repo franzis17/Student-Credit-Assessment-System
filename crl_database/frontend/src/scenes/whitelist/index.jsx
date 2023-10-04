@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { TextField, Button, Select, MenuItem, Box, Table, TableBody, TableCell, TableHead, TableRow, Paper, TableContainer } from '@material-ui/core';
+import { TextField, Select, MenuItem, Box, Table, TableBody, TableCell, TableHead, TableRow, Paper, TableContainer } from '@material-ui/core';
+import { Button } from "@mui/material";
 import { useFetchWhitelistedUsers } from '../../hooks/useFetchWhitelistedUsers.js';
 import { useEffect } from 'react';
 import Navbar from '../../components/Navbar.jsx';
@@ -86,83 +87,85 @@ const Whitelist = () => {
     }
 
 
-return (
+    return (
+        <>
+        
+        <div>
+            <Navbar />
+        </div>
 
-    <>
-    <div>
-      <Navbar />
-    </div>
+        <Box className="classes" boxShadow={3} p={1}>
+        
+          <Typography variant="h2">Whitelist a User Account</Typography>
 
-    <Box className="classes" boxShadow={3} p={1}>
-    <Typography variant="h2">Whitelist a User Account</Typography>
+          <TextField
+              label="CurtinID"
+              value={curtinID}
+              size="small"
+              onChange={handleInputChange} //Handle curtinID
+              placeholder="Enter the user's Curtin ID..."
+              fullWidth
+              margin="normal"
+              helperText={helperText}
+              error={inputError}
+          />
 
-    <TextField
-        label="CurtinID"
-        value={curtinID}
-        size="small"
-        onChange={handleInputChange} //Handle curtinID
-        placeholder="Enter the user's Curtin ID..."
-        fullWidth
-        margin="normal"
-        helperText={helperText}
-        error={inputError}
-    />
+          <Select
+              value={userRole}
+              onChange={(e) => setUserRole(e.target.value)}
+              fullWidth
+              displayEmpty
+              margin="normal"
+          >
+              <MenuItem value="">
+                  <em>Select an option</em>
+              </MenuItem>
+              <MenuItem value="Staff">Staff</MenuItem>
+              <MenuItem value="Moderator">Moderator</MenuItem>
+          </Select>
 
-    <Select
-        value={userRole}
-        onChange={(e) => setUserRole(e.target.value)}
-        fullWidth
-        displayEmpty
-        margin="normal"
-    >
-        <MenuItem value="">
-            <em>Select an option</em>
-        </MenuItem>
-        <MenuItem value="Staff">Staff</MenuItem>
-        <MenuItem value="Moderator">Moderator</MenuItem>
-    </Select>
+          <Button variant="contained" color="primary" disabled={isLoading} onClick={handleWhitelist}>
+              Add user to whitelist
+          </Button>
+        
+          {loading ? (
+                  <p>Loading whitelisted users...</p>
+              ) : error ? (
+                  <p>Error fetching data: {error.message}</p>
+              ) : (
 
-    <Button variant="contained" color="primary" disabled={isLoading} onClick={handleWhitelist}>
-        Add user to whitelist
-    </Button>
-  
-    {loading ? (
-            <p>Loading whitelisted users...</p>
-        ) : error ? (
-            <p>Error fetching data: {error.message}</p>
-        ) : (
-
-    <TableContainer component={Paper}>
-    <Table className={classes.table} size="small" aria-label="whitelist table">
-          <TableHead>
-          <TableRow>
-              <TableCell>Curtin ID</TableCell>
-              <TableCell align="right">Role</TableCell>
-              <TableCell align="right">Action</TableCell>
-             </TableRow>
-         </TableHead>
-          <TableBody>
-          {data.map((row) => (
-             <TableRow key={row._id}>
-                  <TableCell component="th" scope="row">
-                    {row.curtinID}
-                 </TableCell>
-                 <TableCell align="right">{row.role}</TableCell>
-                  <TableCell align="right">
-                   <Button variant="contained" color="secondary" onClick={() => handleRemove(row._id)}>Remove</Button>
-                 </TableCell>
-              </TableRow>
-             ))}
-         </TableBody>
-    </Table>
-    </TableContainer>
-        )}
-    </Box>
-   </>
-)
+                <TableContainer component={Paper}>
+                <Table className={classes.table} size="small" aria-label="whitelist table">
+                      <TableHead>
+                      <TableRow>
+                          <TableCell>Curtin ID</TableCell>
+                          <TableCell align="right">Role</TableCell>
+                          <TableCell align="right">Action</TableCell>
+                         </TableRow>
+                     </TableHead>
+                      <TableBody>
+                      {data.map((row) => (
+                         <TableRow key={row._id}>
+                              <TableCell component="th" scope="row">
+                                {row.curtinID}
+                             </TableCell>
+                             <TableCell align="right">{row.role}</TableCell>
+                              <TableCell align="right">
+                               <Button variant="contained" color="primary" onClick={() => handleRemove(row._id)}>Remove</Button>
+                             </TableCell>
+                          </TableRow>
+                         ))}
+                     </TableBody>
+                </Table>
+                </TableContainer>
+          )}
+            
+        </Box>
+       </>
+    )
 }
 
 
-export default Whitelist
+export default Whitelist;
 
 

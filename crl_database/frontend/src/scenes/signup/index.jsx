@@ -25,7 +25,6 @@ const Signup = () => {
     const handle = async(e) => {
 
 
-
         if(!isWhitelisted)
         {
             setShowAccessDeniedMessage(true);
@@ -34,7 +33,6 @@ const Signup = () => {
         } else {
 
             e.preventDefault()
-
             //Clear local storage for access denied message
             localStorage.removeItem('showAccessDeniedMessage')
 

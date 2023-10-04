@@ -4,7 +4,7 @@ import requireAuth from '../middleware/requireAuth.js';
 
 const router = express.Router();
 //Authenticated Routing
-router.use(requireAuth)
+//router.use(requireAuth)
 
 /**
  * Add application

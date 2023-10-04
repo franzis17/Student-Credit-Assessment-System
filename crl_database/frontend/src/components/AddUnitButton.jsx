@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import Button from '@mui/material/Button';
-import InstitutionModal from './InstitutionModal';
+import UnitModal from './UnitModal';
 
 const AddUnitButton = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -22,7 +22,7 @@ return (
       >
         Add Unit
       </Button>
-      {isModalOpen && <InstitutionModal onClose={closeModal} />}
+      {isModalOpen && <UnitModal onClose={closeModal} />}
     </div>
     )
 }
