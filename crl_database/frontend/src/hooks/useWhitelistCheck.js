@@ -27,5 +27,5 @@ export const useWhitelistCheck = (initialCurtinID) => {
     }, [initialCurtinID]);
 
     return { isWhitelisted };
-};
+}
 

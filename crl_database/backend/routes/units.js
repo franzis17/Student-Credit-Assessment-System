@@ -1,10 +1,12 @@
 import express from "express";
 import mongoose from "mongoose";
 import Unit from "../models/unit.model.js";
+import requireAuth from '../middleware/requireAuth.js';
 
 const router = express.Router();
+//router.use(requireAuth)
 
-// ---- [GET] ----
+// ---- [GET] -----
 
 // Get all units = /units
 router.route("/").get(async (req, res) => {
@@ -30,7 +32,24 @@ router.route("/").get(async (req, res) => {
 
 });
 
-// Get total units count =  /units/count
+//get units specific to an institution
+router.route("/sortedunits").get(async (req, res) => {
+  const institutionId = req.query.id; // Get the institution ID from the query parameter
+
+  try {
+    // Get all units from the DB that belong to the specified institution
+    const units = await Unit.find({ institution: institutionId });
+
+    // Return the list of units
+    res.json(units);
+  } catch (err) {
+    console.error(`ERROR: ${err}`);
+    res.status(500).json(`ERROR: Failed to fetch units. More details: ${err}`);
+  }
+});
+
+
+// Get total units count
 router.route("/count").get(async (req, res) => {
   try {
     const count = await Unit.countDocuments({});

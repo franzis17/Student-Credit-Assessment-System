@@ -42,17 +42,41 @@ export const useVerifyEmail = () => {
     return { isLoading, error, isVerified: hasVerified };
 };
 
+export const useResendVerification = async (userEmail) => {
+  
+     const [isLoading, setIsLoading] = useState(false);
+     const [error, setError] = useState(null);
+
+     const resendVerification = async () => {
+        setIsLoading(true);
+        setError(null);
+
+        try {
+
+         const response = await fetch('http://localhost:5001/api/user/resend-email', {
+            method: 'POST',
+            heaers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({ email: userEmail})
+         })
+
+         const data = await response.json()
+
+        if(!response.ok) {
+         setError(data.message || 'failed to resend')
+         }
+
+     } catch (err) {
+         setError(err.message || 'Error occured')
+        }
+
+        setIsLoading(false)
+        }   
 
 
-                /*const responseData = await response.json();
-                console.log(responseData)
-                if (responseData.error) {
-                    setError(responseData);
-                    return;
-                }*/
+        return { resendVerification, isLoading, error }
 
-                /*const updateResponse = await fetch(`http://localhost:5001/api/user/update-user`, {
-                    method: 'POST',
-                    headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify({ isVerified: true })
-                });*/
+}
+
+
+
+              

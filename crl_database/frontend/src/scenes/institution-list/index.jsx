@@ -92,7 +92,7 @@ const InstitutionList = () => {
         }}
         pageSizeOptions={[10, 25, 50]}
         checkboxSelection
-        disableRowSelectionOnClick
+        //disableRowSelectionOnClick
       />
     </Box>
     </>

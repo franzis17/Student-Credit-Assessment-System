@@ -1,9 +1,11 @@
 import express from "express";
 import Institution from "../models/institution.model.js";
 import Unit from "../models/unit.model.js";
+import requireAuth from '../middleware/requireAuth.js';
 // import fs from "fs";  // used by add-mock data
 
 const router = express.Router();
+//router.use(requireAuth)
 
 const DUPLICATE_ERROR_CODE = 11000;
 

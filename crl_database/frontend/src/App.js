@@ -4,6 +4,7 @@ import { useMemo } from "react";
 import { useSelector } from "react-redux";
 import { themeSettings } from "./theme"
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom"
+import { useAuthContext } from './hooks/useAuthContext'
 
 import Login from "./scenes/login";
 import Signup from "./scenes/signup";
@@ -19,6 +20,7 @@ import Layout from "./scenes/layout";
 function App() {
   const mode = useSelector((state) => state.global.mode);
   const theme = useMemo(() => createTheme(themeSettings(mode)), [mode]);
+  const {user} = useAuthContext()
   
   //initialising routes for landing page (dashbaord) after sign in 
   return (
@@ -29,15 +31,15 @@ function App() {
           <CssBaseline />
           
               <Routes>
-                <Route path="/" element={<Dashboard />}/>
-                <Route path="/login" element={<Login />}/>
-                <Route path="/signup" element={<Signup />}/>
-                <Route path="/whitelist" element={<Whitelist />}/>
-                <Route path="/verifyemail" element={<VerifyEmail />}/>
-                <Route path="/dashboard" element={<Dashboard />}/>
-                <Route path="/institutions" element={<InstitutionList/> }/>
-                <Route path="/units" element={<UnitList />}/>
-                <Route path="/unitassessmentpage" element={<UnitAssessmentPage />}/>
+                <Route path="/" element={user ? <Dashboard /> : <Navigate to="/login"/>}/>
+                <Route path="/login" element={!user ? <Login /> : <Navigate to="/"/>}/>
+                <Route path="/signup" element={!user ? <Signup /> : <Navigate to="/"/>}/>
+                <Route path="/whitelist" element={user && user.role === 'admin' ? <Whitelist /> : <Navigate to="/login"/>}/>
+                <Route path="/verifyemail" element={<VerifyEmail/>}/>
+                <Route path="/dashboard" element={user ? <Dashboard /> : <Navigate to="/login"/>}/>
+                <Route path="/institutions" element={user ? <InstitutionList/> : <Navigate to="/login"/>}/>
+                <Route path="/units" element={user ? <UnitList /> : <Navigate to="/login"/>}/>
+                <Route path="/unitassessmentpage" element={user ? <UnitAssessmentPage /> : <Navigate to="/login"/>}/>
               </Routes> 
               
         </ThemeProvider>

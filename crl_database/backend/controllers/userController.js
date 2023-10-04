@@ -23,11 +23,13 @@ const loginUser = async (req, res) => {
 
         const user = await User.login(email,password)
 
+        const { role, username } = user;
+
         //create a token for user
         const token = createJsonToken(user._id)
 
         //token -> payload encoded, headers encoded, secret_token encoded
-        res.status(200).json({email, token})
+        res.status(200).json({username, email, token, role})
 
     } catch (error) {
         res.status(400).json({error: error.message})
@@ -112,6 +114,41 @@ const verifyEmail = async (req, res) => {
         
 }
 
+const resendVerification = async (req, res) => {
+
+    try {
+        const { email } = req.body
+
+        if (!email) {
+            return res.status(400).json({ message: "Email not found." })
+        }
+
+        const user = await User.findOne({ email });
+
+        if (!user) {
+            return res.status(404).json({ message: "User not found." })
+        }
+
+        if (user.isVerified) {
+            return res.status(400).json({ message: "Email is already verified." })
+        }
+
+
+        user.emailToken = createJsonToken()
+        await user.save();
+
+        // Send the verification email with the new token
+        // Implement this function to send the email
+        sendVerificationEmail(user)
+
+        res.status(200).json({ message: "Verification email resent successfully." });
+
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ message: error.message });
+    }
+}
+
 
 const updateUserFields = async (req, res) => {
 
@@ -138,6 +175,6 @@ const updateUserFields = async (req, res) => {
 
 }
 
-export {signupUser, loginUser, verifyEmail, updateUserFields};
+export {signupUser, loginUser, verifyEmail, updateUserFields, resendVerification};
 
 

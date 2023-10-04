@@ -6,24 +6,30 @@ import { LightModeOutlined,
 import FlexBetween from './FlexBetween';
 import { useDispatch } from 'react-redux';
 import { setMode } from "../state"
-import { Box, Grid, AppBar, Toolbar, IconButton, InputBase, Button, useTheme, Avatar} from '@mui/material';
-import { Link } from "react-router-dom";
+import { useLocation } from 'react-router-dom';
+import { AppBar, Toolbar, IconButton, useTheme, Button} from '@mui/material';
 import BurgerMenu from './BurgerMenu';
 import AvatarDropDown from './AvatarDropDown';
 import SettingsDropDown from './SettingsDropdown';
+import AddUnitButton from './AddUnitButton';
+import AddInstitutionButton from './AddInstitutionButton';
 
 const Navbar = () => {
   const dispatch = useDispatch();
   const theme = useTheme();
+  const currentPage = useLocation();
+  const currentState = useState();
+
+  const navbarStyle = {
+    position: 'static',
+    background: 'none',
+    boxShadow: 'none',
+    height: '75px',
+    // Add any other styles specific to your Navbar component here
+  };
 
   return (
-    <AppBar
-      sx={{
-        position: 'static',
-        background: 'none',
-        boxShadow: 'none',
-      }}
-    >
+    <AppBar sx={navbarStyle}>
       <Toolbar sx={{ justifyContent: 'space-between' }}>
         {/* Left side top bar */}
         <FlexBetween>
@@ -64,6 +70,12 @@ const Navbar = () => {
         </FlexBetween> */}
         {/* Right Side Top Bar */}
         <FlexBetween gap="1.0rem">
+          {currentPage.pathname === '/units' && ( //currentState === 'admin' &&
+              <AddUnitButton/>
+            )}
+          {currentPage.pathname === '/institutions' && (
+              <AddInstitutionButton/>
+            )}  
           <IconButton onClick={() => dispatch(setMode())}>
             {theme.palette.mode === 'light' ? (
               <DarkModeOutlined sx={{ fontSize: '25px' }} />

@@ -7,7 +7,7 @@ const Schema = mongoose.Schema
 const whitelistedUsersSchema = new Schema({
 
     curtinID: {
-        type: Number,
+        type: String,
         required: true,
         unique: true,
         /*validate: {

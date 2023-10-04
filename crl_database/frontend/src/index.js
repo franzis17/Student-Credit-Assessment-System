@@ -10,7 +10,6 @@ import { AuthContextProvider } from './context/AuthContext.js';
 const store = configureStore({
   reducer: {
     global: globalReducer,
-
   },
 })
 
