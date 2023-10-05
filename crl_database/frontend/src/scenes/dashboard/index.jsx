@@ -7,7 +7,7 @@ import { LightModeOutlined,  //For darkmode functionality later
     CountertopsRounded
 } from "@mui/icons-material";
 import FlexBetween from '../../components/FlexBetween';
-import { useDispatch } from 'react-redux';
+import { useDispatch} from 'react-redux';
 import { setMode } from "../../state" //For darkmode functionality later
 import { Box, 
   Grid, 
@@ -22,8 +22,9 @@ import { Box,
 import Navbar from "../../components/Navbar";
 import InstitutionDataService from "../../services/institution";
 import UnitDataService from "../../services/unit";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation} from 'react-router-dom';
 import Counter from './animate/counter';
+import dashboardBackground from '../../assets/dashboard-backdrop.jpg';
 
 const Dashboard = () => {
   const [totalInstitutions, setTotalInstitutions] = useState([]);
@@ -31,8 +32,8 @@ const Dashboard = () => {
   const [searchInput, setSearchInput] = useState('');
   const [institutionList, setInstitutionList] = useState([]);
   const [filteredList, setFilteredList] = useState([]);
+  const [selectedInstitution, setSelectedInstitution] = useState([]);
   const listRef = useRef(null);
-  
   // To do after render
   useEffect(() => {
     getInstitutionCount();
@@ -71,6 +72,7 @@ const Dashboard = () => {
     UnitDataService.getCount()
     .then((response) => {
       const unitCount = response.data;
+      console.log('Unit Count:', unitCount);
       setTotalUnits(unitCount);
     })
     .catch((err) => {
@@ -94,42 +96,57 @@ const Dashboard = () => {
     });
   }
 
-  const handleSearchChange = (event) => {
+  const handleSearchChange = (event, institutionId) => {
     const query = event.target.value.toLowerCase();
     if (query === "") {
-      setFilteredList([]); //hides list
-    }
-    else{
-      var filteredList = institutionList.filter((institution) =>
+      setFilteredList([]);
+      setSelectedInstitution(null); // Clear selected institution when input is empty
+    } else {
+      const filteredList = institutionList.filter((institution) =>
         institution.name.toLowerCase().includes(query)
       );
       setFilteredList(filteredList);
     }
   };
 
+
   const navigateToInstitutionList = (institutionId) => {
     navigate(`/institutions/`); //Change this for return route into institution list
+  };
+
+  const navigateToSortedUnitList = () => {
+    if (selectedInstitution !== null) {
+      navigate(`/units?institutionId=${selectedInstitution}`);
+    }
+  };
+
+  const dashboardStyle = {
+    backgroundImage: `url(${dashboardBackground})`,
+    backgroundSize: 'cover',
+    backgroundRepeat: 'no-repeat',
+    backgroundPosition: 'center center',
   };
 
   const dispatch = useDispatch();
   const theme = useTheme();
   const navigate = useNavigate();
-
   return (
+    <div style={dashboardStyle}>
+      {/* ... (your existing content) */}
   <div>
     <div>
       <Navbar />
     </div>
     <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column', marginTop: '2rem' }}>
-    <div style={{ fontSize: '24px', fontWeight: 'bold', marginBottom: '2rem', textAlign: 'center' }}>
+    <div style={{ fontSize: '32px', fontWeight: 'bold', marginBottom: '2rem', textAlign: 'center' }}>
       Welcome to the CRL Database
     </div>
-    <FlexBetween backgroundColor={theme.palette.background.alt} borderRadius="10px" gap="0.5rem" p="0.1rem 1rem" style={{ position: 'relative' }}>
-            <InputBase
+    <FlexBetween backgroundColor={theme.palette.background.alt} borderRadius="10px" gap="0.5rem" p="0.1rem 1rem" style={{ position: 'relative', backgroundColor:"white", border:"solid", borderColor:"#D3D3D3" }}>
+          <InputBase
               type="text"
               placeholder="Search an institution..."
-              style={{ width: '500px', padding: "0" }}
-              onChange={handleSearchChange}
+              style={{ width: '500px', padding: "0"}}
+              //onChange={(event) => handleSearchChange(event, institution.id)}
             />
             <IconButton>
               <Search />
@@ -164,7 +181,10 @@ const Dashboard = () => {
                   <React.Fragment key={institution.id}>
                     <ListItem
                       button
-                      onClick={() => navigateToInstitutionList(institution.name)}
+                      onClick={() => {
+                        setSelectedInstitution(institution.id); // Set the selected institution
+                        // handleSearchChange(event, institution.id); // Pass the institution ID
+                      }}
                     >
                       <ListItemText primary={institution.name} />
                     </ListItem>
@@ -335,15 +355,18 @@ const Dashboard = () => {
         Put Total Rejected Unit Comparisons Here
       </Box>
             <div>
-              <Button style={{
-                       color: '#0070E0',
-                       padding: "8px 10px",
-                       fontSize: "10px",
-                       position: 'relative',
-                       bottom: '0',
-                       left: '-70px'
-                      }}>
-              View Rejected Comparisons</Button>
+            <Button
+              style={{
+                color: '#0070E0',
+                padding: "8px 10px",
+                fontSize: "10px",
+                position: 'relative',
+                bottom: '0',
+                left: '-70px'
+              }}
+            >
+              View Rejected Comparisons
+            </Button>
             </div>
           </Grid>
           <Grid item xs={4} textAlign="center">
@@ -387,5 +410,7 @@ const Dashboard = () => {
         </Grid>
     </div>
   </div>
+</div>
+
   )}
 export default Dashboard;

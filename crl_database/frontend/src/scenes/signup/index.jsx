@@ -106,7 +106,11 @@ const Signup = () => {
                             fullWidth
                             label="Curtin ID"
                             type="text"
-                            onChange={(e) => setCurtinID(e.target.value)}
+                            onChange={(e) => {
+                                setCurtinID(e.target.value)
+                        
+                            }}
+                            
                             value={curtinID}
                         />
                         <Button

@@ -1,22 +1,42 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import Navbar from '../../components/Navbar';
 import './App.css';
 import './buttonStyles.css';
+
+import InstitutionDataService from "../../services/institution";
 
 const UnitAssessmentPage = () => {
   const [searchedUnit, setSearchedUnit] = useState('');
   const [notes, setNotes] = useState([]);
   const [changeLog, setChangeLog] = useState([]);
   const [showConditionalButton, setShowConditionalButton] = useState(false);
-  const [showPrerequisites, setShowPrerequisites] = useState(false);
   const [searchResults, setSearchResults] = useState([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [selectedItemIndex, setSelectedItemIndex] = useState(-1);
+  const [curtinUnits, setCurtinUnits] = useState([]);
+  const [selectedUnits, setSelectedUnits] = useState([]); // Add selectedUnits state
+  const [showModal, setShowModal] = useState(false);
+  const [studentInfo, setStudentInfo] = useState({ name: '', studentNumber: '' });
+  const [nameError, setNameError] = useState(false);
+  const navigate = useNavigate();
 
   // Get Selected Units
   const location = useLocation();
-  const { selectedUnits } = location.state;
+  const { selectedUnits: initialSelectedUnits } = location.state;
+
+  useEffect(() => {
+    if (initialSelectedUnits && initialSelectedUnits.length > 0) {
+      setSelectedUnits(initialSelectedUnits);
+    }
+  }, [initialSelectedUnits]);
+
+  
+  // Retrieve all Curtin Units when the user first lands at the Unit Assessment Page.
+  // Used by search dropdown to list all the Curtin Units that the user can select.
+  useEffect(() => {
+    retrieveCurtinUnits();
+  }, []);
 
   useEffect(() => {
     if (searchedUnit) {
@@ -25,21 +45,25 @@ const UnitAssessmentPage = () => {
       setShowConditionalButton(false);
     }
   }, [searchedUnit]);
+  
+  const retrieveCurtinUnits = () => {
+    InstitutionDataService.getUnitsOfCurtin()
+      .then((response) => {
+        console.log("Retrieved Curtin Units: " + response.data);
+        setCurtinUnits(response.data);
+      })
+      .catch((err) => {
+        console.log(`ERROR: when retrieving Curtin's Units.\nMore info: ${err}`);
+      });
+  };
 
   const handleSearchInputChange = (event) => {
     const searchInput = event.target.value;
 
-    // Simulate fetching data from the database (replace with actual fetch)
-    const databaseData = [
-      { id: 1, unitcode: 'IMSAD3000', name: 'Capstone 2' },
-      { id: 2, unitcode: 'COMP3003', name: 'Software Engineering Concepts' },
-      { id: 3, unitcode: 'ICTE3002', name: 'Human Computer Interface' },
-    ];
-
-    // Filter the databaseData based on the search input (both unit code and name)
-    const filteredResults = databaseData.filter(item =>
+    // Filter the curtinUnits based on the search input (both unit code and name)
+    const filteredResults = curtinUnits.filter(item =>
       item.name.toLowerCase().includes(searchInput.toLowerCase()) || // Search by name
-      item.unitcode.toLowerCase().includes(searchInput.toLowerCase()) // Search by unit code
+      item.unitCode.toLowerCase().includes(searchInput.toLowerCase()) // Search by unit code
     );
 
     setSearchResults(filteredResults);
@@ -58,7 +82,7 @@ const UnitAssessmentPage = () => {
   };
 
   const handleDatabaseItemClick = (item) => {
-    setSearchedUnit(`${item.unitcode} - ${item.name}`);
+    setSearchedUnit(`${item.unitCode} - ${item.name}`);
     setSelectedItemIndex(-1);
     setShowSuggestions(false);
   };
@@ -104,12 +128,37 @@ const UnitAssessmentPage = () => {
     setChangeLog([...changeLog, logEntry]);
   };
 
-  const handleShowPrerequisites = () => {
-    setShowPrerequisites(true);
+  const handleSave = () => {
+    if (!initialSelectedUnits || initialSelectedUnits.length === 0) {
+      alert("No information received from 'units' page.");
+    } else if (!showConditionalButton) {
+      alert("Please select an action (Deny, Conditional, or Approve) first.");
+    } else {
+      toggleModal();
+    }
   };
 
-  const handleClosePrerequisites = () => {
-    setShowPrerequisites(false);
+
+  const handleRemoveUnit = (indexToRemove) => {
+    const updatedUnits = [...selectedUnits];
+    updatedUnits.splice(indexToRemove, 1);
+    setSelectedUnits(updatedUnits);
+  };
+
+  const toggleModal = () => {
+    setShowModal(!showModal);
+  };
+
+  const handleStudentInfoSubmit = () => {
+    if (studentInfo.name.trim() !== '') {
+      console.log('Student Info:', studentInfo);
+      navigate('/units');
+    } else {
+      setNameError(true);
+      setTimeout(() => {
+        setNameError(false);
+      }, 5000);
+    }
   };
 
   return (
@@ -129,7 +178,7 @@ const UnitAssessmentPage = () => {
                   <th>Location</th>
                   <th>Major</th>
                   <th>Institution</th>
-                  <th>Notes</th>
+                  <th>Action</th>
                 </tr>
               </thead>
               <tbody>
@@ -140,7 +189,16 @@ const UnitAssessmentPage = () => {
                     <td>{unit.location}</td>
                     <td>{unit.major}</td>
                     <td>{unit.institution}</td>
-                    <td>{unit.notes}</td>
+                    <td>
+                      {selectedUnits.length > 1 && (
+                        <button
+                          className="remove-button"
+                          onClick={() => handleRemoveUnit(index)}
+                        >
+                          Remove
+                        </button>
+                      )}
+                    </td>
                   </tr>
                 ))}
               </tbody>
@@ -173,7 +231,7 @@ const UnitAssessmentPage = () => {
                           onMouseEnter={() => handleMouseEnter(index)}
                           onMouseLeave={handleMouseLeave}
                         >
-                          {item.unitcode} - {item.name}
+                          {item.unitCode} - {item.name}
                         </li>
                       ))}
                     </ul>
@@ -189,9 +247,9 @@ const UnitAssessmentPage = () => {
                 )}
                 {showConditionalButton && (
                   <div>
-                    <button className={`button show-prerequisites ${searchedUnit ? '' : 'hide'}`} onClick={handleShowPrerequisites}>
+                    {/*<button className={`button show-prerequisites ${searchedUnit ? '' : 'hide'}`} onClick={handleShowPrerequisites}>
                       Show Prerequisites
-                    </button>
+                </button>*/}
                     <button className={`button approve ${searchedUnit ? '' : 'hide'}`} onClick={handleApprove}>Approve</button>
                     <button className={`button conditional ${searchedUnit ? '' : 'hide'}`} onClick={handleConditional}>Conditional</button>
                     <button className={`button deny ${searchedUnit ? '' : 'hide'}`} onClick={handleDeny}>Deny</button>
@@ -237,21 +295,63 @@ const UnitAssessmentPage = () => {
         </div>
 
         <div className="button-container">
-          <Link to="/units">
-            <button className="button">Save</button>
-          </Link>
-        </div>
+        <button className="button" onClick={handleSave}>
+          Save
+        </button>
+      </div>
       </div>
 
-      {showPrerequisites && (
+      {/*{showPrerequisites && (
         <div className="prerequisites-modal">
           <div className="prerequisites-content">
             <span className="close-button" onClick={handleClosePrerequisites}>&times;</span>
             <h2>Prerequisites for {searchedUnit}</h2>
-            {/* Add prerequisite information here */}
           </div>
         </div>
-      )}
+      )}*/}
+
+      {showModal && (
+        <div className="modal-overlay">
+          <div className="modal">
+            <div className="modal-content">
+              <h2>Enter Student Information</h2>
+              <input
+                type="text"
+                placeholder="Name"
+                value={studentInfo.name}
+                onChange={(e) => {
+                  setStudentInfo({ ...studentInfo, name: e.target.value });
+                  setNameError(false);
+                }}
+              />
+              <input
+                type="text"
+                placeholder="Student Number"
+                value={studentInfo.studentNumber}
+                onChange={(e) =>
+                  setStudentInfo({
+                    ...studentInfo,
+                    studentNumber: e.target.value,
+                  })
+                }
+              />
+              {nameError && (
+                <p className="error-message">
+                  Name field cannot be empty. Please enter a name.
+                </p>
+              )}
+
+              <button className="button" onClick={handleStudentInfoSubmit}>
+                Submit
+              </button>
+
+              <button className="button" onClick={toggleModal}>
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      )}  
     </div>
   );
 };

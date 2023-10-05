@@ -1,14 +1,18 @@
 import express from "express";
 import Institution from "../models/institution.model.js";
-import fs from "fs";
-
+import Unit from "../models/unit.model.js";
+import requireAuth from '../middleware/requireAuth.js';
+// import fs from "fs";  // used by add-mock data
 
 const router = express.Router();
+//router.use(requireAuth)
+
+const DUPLICATE_ERROR_CODE = 11000;
 
 // ---- [GET] ----
 
 // Get all institutions = /institutions
-router.route("/").get((req, res) => {
+router.route("/").get(async (req, res) => {
   Institution.find()
     .then((institutions) => res.json(institutions))
     .catch((err) => res.status(400).json("Error:" + err));
@@ -25,10 +29,28 @@ router.route("/count").get(async (req, res) => {
   }
 });
 
+/**
+ * [/institutions/units]
+ * GET the List of Units for a given institution
+ */
+router.route("/units").get((req, res) => {
+  const institution = req.query.institution;
+  
+  Unit.find({ institution: institution })
+    .then((units) => {
+      res.json(units)
+    })
+    .catch((err) => {
+      console.error(`ERROR: ${err}`);
+      res.status(500).json(`ERROR: Failed to retrieve the institution's units.\nMore details: ${err}`);
+    });
+});
+
+
 // ---- [POST] ----
 
 // Add an institution = /institutions/add
-router.route("/add").post((req, res) => {
+router.route("/add").post(async (req, res) => {
   const name = req.body.name;
   const rank = req.body.rank;
   const location = req.body.location;
@@ -46,13 +68,23 @@ router.route("/add").post((req, res) => {
   newInstitution
     .save()
     .then(() => res.json("The institution has been added"))
-    .catch((err) => res.status(400).json("Error:" + err));
+    .catch((error) => {
+      console.log(`ERROR when adding an institution.\n>>> ${error}`);
+      
+      if (error.code === DUPLICATE_ERROR_CODE) {
+        // Error: Duplicate key / institution name
+        res.status(400).json({ message: `Error: ${name} already exists` });
+      } else {
+        res.status(500).json(`ERROR when adding a Unit. More info: ${error}`);
+      }
+    });
 });
+
 
 // ---- [UPDATE] ----
 
 // Update an institution = /institutions/update/:id
-router.route("/update/:id").post((req, res) => {
+router.route("/update/:id").post(async (req, res) => {
   Institution.findById(req.params.id)
     .then((institution) => {
       institution.name = req.body.name;
@@ -69,10 +101,11 @@ router.route("/update/:id").post((req, res) => {
     .catch((err) => res.status(400).json("Error when updating institution: " + err));
 });
 
+
 // ---- [DELETE] ----
 
 // Delete an institution = /institutions/delete/:id
-router.route("/delete/:id").delete((req, res) => {
+router.route("/delete/:id").delete(async (req, res) => {
   Institution.findByIdAndDelete(req.params.id)
     .then(() => res.json("Institution deleted."))
     .catch((err) => res.status(400).json("Error:" + err));
@@ -83,17 +116,17 @@ router.route("/delete/:id").delete((req, res) => {
 
 
 // TEST: Mock data to be put in db
-router.route("/add-mock").post(async (req, res) => {
-  try {
-    const rawData = fs.readFileSync("./routes/MOCK-Institutions.json");
-    const jsonData = JSON.parse(rawData);
+// router.route("/add-mock").post(async (req, res) => {
+//   try {
+//     const rawData = fs.readFileSync("./routes/MOCK-Institutions.json");
+//     const jsonData = JSON.parse(rawData);
     
-    await Institution.insertMany(jsonData);
+//     await Institution.insertMany(jsonData);
     
-    res.json("Mock institutions have been added.");
-  } catch (err) {
-    res.status(400).json("Error when adding mock: " + err);
-  }
-});
+//     res.json("Mock institutions have been added.");
+//   } catch (err) {
+//     res.status(400).json("Error when adding mock: " + err);
+//   }
+// });
 
 export default router;
