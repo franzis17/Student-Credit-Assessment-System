@@ -46,7 +46,7 @@ const UnitAssessmentPage = () => {
         setCurtinUnits(response.data);
       })
       .catch((err) => {
-        console.log(`ERROR: when retrieving Curtin's Units.\nMore info: ${err}`);
+        console.log(`ERROR: when retrieving Curtin's Units.\nMore info: ${err.response.data.error}`);
       });
   };
 

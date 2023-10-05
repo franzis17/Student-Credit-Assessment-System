@@ -4,7 +4,7 @@ import Unit from "../models/unit.model.js";
 import requireAuth from '../middleware/requireAuth.js';
 
 const router = express.Router();
-//router.use(requireAuth)
+router.use(requireAuth)
 
 // ---- [GET] -----
 
@@ -95,7 +95,7 @@ router.route("/add").post((req, res) => {
       
       if (error.code === 11000) {
         // Error: Duplicate key (data already exists)
-        res.status(400).json({ message: `${name} already exists` });
+        res.status(400).json({ error: `the unit "${name}" already exists` });
       } else {
         // Other errors
         res.status(500).json(`ERROR when adding a unit. More info: ${error}`);

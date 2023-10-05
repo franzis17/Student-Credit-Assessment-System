@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import UnitDataService from "../../services/unit";
 import Navbar from "../../components/Navbar";
+import { useAuthContext } from "../../hooks/useAuthContext";
 
 import Box from '@mui/material/Box';
 import { DataGrid } from '@mui/x-data-grid';
@@ -13,6 +14,10 @@ const UnitList = () => {
   const [units, setUnits] = useState([]);
   const [selectedUnits, setSelectedUnits] = useState([]);
   
+  const { user } = useAuthContext();
+  
+  console.log("In Unit List, user = " + JSON.stringify(user));
+  
   // To do after render
   useEffect(() => {
     retrieveUnits();
@@ -20,13 +25,13 @@ const UnitList = () => {
   
   // Use Axios to GET all Units from the backend server
   const retrieveUnits = () => {
-    UnitDataService.getAll()
+    UnitDataService.getAll(user.token)
       .then((response) => {
         console.log("Retrieved units: " + response.data);
         setUnits(response.data);
       })
       .catch((err) => {
-        console.log(`ERROR when retrieving institutions. \nError: ${err}`);
+        console.log(`ERROR when retrieving units. \nError: ${err}`);
       });
   };
   
@@ -57,15 +62,16 @@ const UnitList = () => {
     };
     
     // 2. Pass it to axios to HTTP POST request to backend route
-    UnitDataService.addUnit(unit)
+    UnitDataService.addUnit(unit, user.token)
       .then((response) => {
         console.log("Successfully added the mock unit in the database");
         retrieveUnits();  // refresh list to display newly added data
       })
       .catch((error) => {
         console.log(
-          `ERROR when adding units in the DB.\nError: ${error.response.data.message}`
+          `ERROR when adding units in the DB.\nError: ${error.response.data.error}`
         );
+        window.alert("Error: Cannot add a unit, " + error.response.data.error);
       });
   };
   

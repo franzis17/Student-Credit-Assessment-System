@@ -76,7 +76,7 @@ router.route("/add").post(async (req, res) => {
       
       if (error.code === DUPLICATE_ERROR_CODE) {
         // Error: Duplicate key / institution name
-        res.status(400).json({ message: `Error: ${name} already exists` });
+        res.status(400).json({ error: `the institution "${name}" already exists` });
       } else {
         res.status(500).json(`ERROR when adding an Institution. More info: ${error}`);
       }

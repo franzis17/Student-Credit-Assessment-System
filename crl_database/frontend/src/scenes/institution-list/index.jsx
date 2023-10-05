@@ -12,8 +12,6 @@ const InstitutionList = () => {
   const [institutions, setInstitutions] = useState([]);
   const { user } = useAuthContext();
   
-  console.log("In institution list, user.token = " + JSON.stringify(user.token));
-  
   // To do after render
   useEffect(() => {
     retrieveInstitutions();  // After rendering, retrieve institutions
@@ -29,7 +27,7 @@ const InstitutionList = () => {
       })
       .catch((err) => {
         console.log(
-          `ERROR when retrieving institutions. \nError: ${err}`
+          `ERROR when retrieving institutions. \nError: ${err}\nError response: ${err.response.data}`
         );
       });
   };
@@ -41,7 +39,7 @@ const InstitutionList = () => {
     
     // << Mock new institution >>
     const name = "Australian Data and Cyber Institute";
-    const rank = 1;
+    const rank = 15;
     const location = "Adelaide Terrace Perth";
     const major = "DATA-CYBER";
     const notes = "More into cyber security and data science";
@@ -56,8 +54,9 @@ const InstitutionList = () => {
       })
       .catch((error) => {
         console.log(
-          `ERROR when adding institutions in the DB.\n>>> ${error}\nError Message: ${error.response.data.message}`
+          `ERROR when adding institutions in the DB.\n>${error}\n>Error response: ${error.response.data.error}`
         );
+        window.alert("Error: Cannot add an institution, " + error.response.data.error);
       });
   };
   

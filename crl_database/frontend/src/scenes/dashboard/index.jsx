@@ -70,35 +70,34 @@ const Dashboard = () => {
       })
       .catch((err) => {
         console.log(
-          `ERROR when retrieving institutions. \nError: ${err}`
+          `ERROR when retrieving institution's count. \nError: ${err}`
         );
       });
   };
 
   const getUnitCount = () => {
-    UnitDataService.getCount()
+    UnitDataService.getCount(user.token)
     .then((response) => {
       const unitCount = response.data;
-      console.log('Unit Count:', unitCount);
       setTotalUnits(unitCount);
     })
     .catch((err) => {
       console.log(
-        `ERROR when retrieving institutions. \nError: ${err}`
+        `ERROR when retrieving unit's count. \nError: ${err}`
       );
     });
-  }
+  };
 
 
   const getAllInstitutions = () => {
-    InstitutionDataService.getAll()
+    InstitutionDataService.getAll(user.token)
     .then((response) => {
       const institutions = response.data;
       setInstitutionList(institutions);
     })
       .catch((err) => {
         console.log(
-          `ERROR when retrieving institutions. \nError: ${err}`
+          `ERROR when retrieving all institutions. \nError: ${err}`
         );
     });
   }

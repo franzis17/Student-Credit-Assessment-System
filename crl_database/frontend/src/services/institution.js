@@ -10,36 +10,37 @@ class InstitutionDataService {
   static defaultRoute = `/institutions`;
   static curtinId = "64e08d6f12f5f27fc10f3dcf";
   
+  /**
+   * Header used to add the user's token and verified by API Provider
+   */
+  static getHeader(userToken) {
+    return {
+      headers: {
+        Authorization: ( "Bearer " + userToken )
+      }
+    };
+  }
+  
   // GET
   
   getAll(userToken) {
-    return http.get(InstitutionDataService.defaultRoute,
-      {
-        headers: { 
-          Authorization: ( "Bearer " + userToken )
-        },
-      }
-    );
+    const headers = InstitutionDataService.getHeader(userToken);
+    return http.get(InstitutionDataService.defaultRoute, headers);
   }
   
   getCount(userToken) {
-    return http.get((InstitutionDataService.defaultRoute + "/count"),
-      {
-        headers: {
-          Authorization: ( "Bearer " + userToken )
-        },
-      }
-    );
+    const headers = InstitutionDataService.getHeader(userToken);
+    return http.get((InstitutionDataService.defaultRoute + "/count"), headers);
   }
   
   getUnitsOfInstitution(institutionId, userToken) {
-    const params = { institution: institutionId, };
+    const params = { institution: institutionId };
     return http.get((InstitutionDataService.defaultRoute + "/units"),
-      { 
+      {
         params,
         headers: {
           Authorization: ( "Bearer " + userToken )
-        },
+        }
       }
     );
   }
@@ -52,13 +53,10 @@ class InstitutionDataService {
   // POST
   
   addInstitution(newInstitution, userToken) {
+    const headers = InstitutionDataService.getHeader(userToken);
     return http.post((InstitutionDataService.defaultRoute + "/add"),
       newInstitution,
-      {
-        headers: {
-          Authorization: ( "Bearer " + userToken )
-        },
-      }
+      headers
     );
   }
   
