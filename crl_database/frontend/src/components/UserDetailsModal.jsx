@@ -45,7 +45,7 @@ const UserDetailsModal = ({ onClose }) => {
         <Box
         sx={{
          width: '100%',
-         bgcolor: '#0d47a1',
+         bgcolor: '#3169c3',
          padding: 2,
          borderRadius: '8px 8px 0 0',
          display: 'flex',

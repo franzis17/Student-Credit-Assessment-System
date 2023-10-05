@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { IconButton, Menu, MenuItem, ListItemIcon, Avatar } from '@mui/material';
-import { QuestionMarkOutlined, QuestionMarkRounded, SettingsOutlined } from '@mui/icons-material';
+import { QuestionMarkRounded, SettingsOutlined } from '@mui/icons-material';
 import LockIcon from '@mui/icons-material/Lock';
 
 const SettingsDropDown = () => {
@@ -31,9 +31,10 @@ const SettingsDropDown = () => {
         open={Boolean(anchorEl)}
         onClose={handleClose}
       >
-        <MenuItem onClick={handleClose}>
+        <MenuItem onClick={() => {
+           handleClose()
+           }}>
           <ListItemIcon>
-            <QuestionMarkRounded />
           </ListItemIcon>
           Preferences
         </MenuItem>
