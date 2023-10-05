@@ -23,7 +23,6 @@ export const AuthContextProvider = ({children}) => {
     const [state, dispatch] = useReducer(authReducer, {
         user: null
     })
-
     /* make sure user stays logged in after refreshing page*/
     /*use effect once - check for token just once in local storage*/
     useEffect(() => {

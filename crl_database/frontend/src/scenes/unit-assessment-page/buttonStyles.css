@@ -1,0 +1,15 @@
+.button.hide {
+    display: none;
+}
+
+.button.conditional {
+    background-color: yellow;
+}
+
+.button.approve {
+    background-color: green;
+}
+
+.button.deny {
+    background-color: red;
+}
