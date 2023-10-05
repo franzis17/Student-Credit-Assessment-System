@@ -26,6 +26,10 @@ import { useNavigate, useLocation} from 'react-router-dom';
 import Counter from './animate/counter';
 import dashboardBackground from '../../assets/dashboard-backdrop.jpg';
 
+// Hook Imports
+import { useAuthContext } from "../../hooks/useAuthContext";
+
+
 const Dashboard = () => {
   const [totalInstitutions, setTotalInstitutions] = useState([]);
   const [totalUnits, setTotalUnits] = useState([]);
@@ -34,6 +38,8 @@ const Dashboard = () => {
   const [filteredList, setFilteredList] = useState([]);
   const [selectedInstitution, setSelectedInstitution] = useState([]);
   const listRef = useRef(null);
+  
+  const { user } = useAuthContext();
   
   // To do after render
   useEffect(() => {
@@ -57,7 +63,7 @@ const Dashboard = () => {
   }, []);
 
   const getInstitutionCount = () => {
-    InstitutionDataService.getCount()
+    InstitutionDataService.getCount(user.token)
       .then((response) => {
         const instCount = response.data;
         setTotalInstitutions(instCount);

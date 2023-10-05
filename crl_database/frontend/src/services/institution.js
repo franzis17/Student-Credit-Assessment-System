@@ -1,5 +1,6 @@
 /**
- * Contains functions that does API calls to retrieve information from the backend server
+ * Contains functions that does API calls to retrieve information from the backend server.
+ * As seen from each methods, each API request requires a user token. 
  */
 import http from "../http-common";
 
@@ -11,28 +12,54 @@ class InstitutionDataService {
   
   // GET
   
-  getAll() {
-    return http.get(InstitutionDataService.defaultRoute);
+  getAll(userToken) {
+    return http.get(InstitutionDataService.defaultRoute,
+      {
+        headers: { 
+          Authorization: ( "Bearer " + userToken )
+        },
+      }
+    );
   }
   
-  getCount() {
-    return http.get(InstitutionDataService.defaultRoute + "/count");
+  getCount(userToken) {
+    return http.get((InstitutionDataService.defaultRoute + "/count"),
+      {
+        headers: {
+          Authorization: ( "Bearer " + userToken )
+        },
+      }
+    );
   }
   
-  getUnitsOfInstitution(institutionId) {
-    const params = { institution: institutionId };
-    return http.get((InstitutionDataService.defaultRoute + "/units"), { params });
+  getUnitsOfInstitution(institutionId, userToken) {
+    const params = { institution: institutionId, };
+    return http.get((InstitutionDataService.defaultRoute + "/units"),
+      { 
+        params,
+        headers: {
+          Authorization: ( "Bearer " + userToken )
+        },
+      }
+    );
   }
   
-  getUnitsOfCurtin() {
-    return this.getUnitsOfInstitution(InstitutionDataService.curtinId);
+  getUnitsOfCurtin(userToken) {
+    return this.getUnitsOfInstitution(InstitutionDataService.curtinId, userToken);
   }
   
   
   // POST
   
-  addInstitution(institution) {
-    return http.post((InstitutionDataService.defaultRoute + "/add"), institution);
+  addInstitution(newInstitution, userToken) {
+    return http.post((InstitutionDataService.defaultRoute + "/add"),
+      newInstitution,
+      {
+        headers: {
+          Authorization: ( "Bearer " + userToken )
+        },
+      }
+    );
   }
   
 }

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import InstitutionDataService from "../../services/institution";
 import Navbar from "../../components/Navbar";
+import { useAuthContext } from "../../hooks/useAuthContext";
 
 import Box from '@mui/material/Box';
 import { DataGrid } from '@mui/x-data-grid';
@@ -9,6 +10,9 @@ const InstitutionList = () => {
   
   // State variables
   const [institutions, setInstitutions] = useState([]);
+  const { user } = useAuthContext();
+  
+  console.log("In institution list, user.token = " + JSON.stringify(user.token));
   
   // To do after render
   useEffect(() => {
@@ -18,7 +22,7 @@ const InstitutionList = () => {
   
   // Use data service to get all institutions from the backend server
   const retrieveInstitutions = () => {
-    InstitutionDataService.getAll()
+    InstitutionDataService.getAll(user.token)
       .then((response) => {
         console.log("Retrieved institutions: " + response.data);
         setInstitutions(response.data);
@@ -45,14 +49,14 @@ const InstitutionList = () => {
     const newInstitution = { name, rank, location, major, notes };
     
     // 2. Pass newInstitution to axios to HTTP POST request the backend server
-    InstitutionDataService.addInstitution(newInstitution)
+    InstitutionDataService.addInstitution(newInstitution, user.token)
       .then((response) => {
         console.log(`Successfully added institution in the database.`);
         retrieveInstitutions();
       })
       .catch((error) => {
         console.log(
-          `ERROR when adding institutions in the DB.\n>>> ${error.response.data.message}`
+          `ERROR when adding institutions in the DB.\n>>> ${error}\nError Message: ${error.response.data.message}`
         );
       });
   };
