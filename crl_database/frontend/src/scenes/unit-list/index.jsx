@@ -16,10 +16,9 @@ const UnitList = () => {
   
   const { user } = useAuthContext();
   
-  console.log("In Unit List, user = " + JSON.stringify(user));
-  
   // To do after render
   useEffect(() => {
+    console.log("In Unit List, user = " + JSON.stringify(user));
     retrieveUnits();
   }, []);
   
@@ -27,7 +26,14 @@ const UnitList = () => {
   const retrieveUnits = () => {
     UnitDataService.getAll(user.token)
       .then((response) => {
-        console.log("Retrieved units: " + response.data);
+        console.log("Retrieved units: " + JSON.stringify(response.data));
+        
+        console.log("> Listing each Unit's institution's name:");
+        const tempUnits = response.data;
+        tempUnits.forEach((unit) => {
+          console.log("unit name = " + unit.name + " | institution = " + unit.institution.name);
+        });
+        
         setUnits(response.data);
       })
       .catch((err) => {
@@ -81,21 +87,26 @@ const UnitList = () => {
     { field: 'name',        headerName: 'Name',        width: 350 },
     { field: 'location',    headerName: 'Location',    width: 300 },
     { field: 'major',       headerName: 'Major',       width: 150 },
-    { field: 'institution', headerName: 'Institution', width: 250 },
+    { 
+      field: 'institution', headerName: 'Institution', width: 250,
+      // map the institution's name
+      valueGetter: (params) => params.row.institution.name,
+    },
     { field: 'notes',       headerName: 'Notes',       width: 400 }
   ];
   
   // Handle selecting one or more units
-  const handleRowSelectionModelChange = (newSelection) => {
+  const handleRowSelectionModelChange = (newSelections) => {
+    console.log("newSelections = " + newSelections);
 
-    // "newSelection" will end being just the id of the unit selected but we want 
-    // the whole Unit object itself, so find it in the Array of "Units"
-    const selectedUnitObj = newSelection.map((selectedId) => 
+    // > "newSelections" are the id's of the units selected but we want the Unit object itself
+    // > replace the unit id's with the actual unit objects that are selected
+    const selectedUnitObj = newSelections.map((selectedId) => 
       units.find((unit) => unit._id === selectedId)
     );
 
     setSelectedUnits(selectedUnitObj);
-    console.log("selectedUnitObj = ", selectedUnitObj);
+    console.log("Selected a unit, updated selectedUnitObj to:", selectedUnitObj);
   };
 
 

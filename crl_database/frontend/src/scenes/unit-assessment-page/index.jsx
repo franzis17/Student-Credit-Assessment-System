@@ -42,7 +42,8 @@ const UnitAssessmentPage = () => {
   const retrieveCurtinUnits = () => {
     InstitutionDataService.getUnitsOfCurtin(user.token)
       .then((response) => {
-        console.log("Retrieved Curtin Units: " + response.data);
+        console.log("> Retrieved Curtin units:");
+        console.log(response.data);
         setCurtinUnits(response.data);
       })
       .catch((err) => {
@@ -156,7 +157,7 @@ const UnitAssessmentPage = () => {
                     <td>{unit.name}</td>
                     <td>{unit.location}</td>
                     <td>{unit.major}</td>
-                    <td>{unit.institution}</td>
+                    <td>{unit.institution.name}</td>
                     <td>{unit.notes}</td>
                   </tr>
                 ))}

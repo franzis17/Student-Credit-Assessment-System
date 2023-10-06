@@ -6,30 +6,30 @@ import requireAuth from '../middleware/requireAuth.js';
 const router = express.Router();
 router.use(requireAuth)
 
-// ---- [GET] -----
+// ---- [GET] ----
 
 // Get all units = /units
 router.route("/").get(async (req, res) => {
-  
   try {
     // Get all units from the DB and populate with the reference institution object
     const units = await Unit.find({}).populate("institution", "name");
     
+    console.log("Units = " + units);
+    
     // Replace the institution field with JUST the institution's
     // name instead of the institution object
-    const unitsWithInstitutionNames = units.map(unit => ({
-      ...unit.toObject(),
-      institution: unit.institution.name,  // replace the institution field
-    }));
+    // const unitsWithInstitutionNames = units.map(unit => ({
+    //   ...unit.toObject(),
+    //   institution: unit.institution.name,  // replace the institution field
+    // }));
     
     // Return the list of units with the changed institution field
-    res.json(unitsWithInstitutionNames);
+    res.json(units);
     
   } catch (err) {
     console.error(`ERROR: ${err}`);
     res.status(500).json(`ERROR: Failed to fetch units. More details: ${err}`);
   }
-
 });
 
 //get units specific to an institution

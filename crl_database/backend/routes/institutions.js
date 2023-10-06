@@ -36,7 +36,7 @@ router.route("/count").get(async (req, res) => {
 router.route("/units").get((req, res) => {
   const institution = req.query.institution;
   
-  console.log("querying an institution's units, institution = " + institution);
+  console.log("querying an institution's units, institution id = " + institution);
   
   Unit.find({ institution: institution })
     .then((units) => {

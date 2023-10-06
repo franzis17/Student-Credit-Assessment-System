@@ -15,6 +15,7 @@ const applicationSchema = new Schema(
     },
     aqf: {
       type: Number,
+      required: false,
     },
     location: {
       type: String,
@@ -26,16 +27,19 @@ const applicationSchema = new Schema(
       type: String,
       required: false,
     },
-    previousUnit: {
-      type: Schema.Types.ObjectId,
-      ref: "Unit",
-    },
+    unitsToAssess: [  // Array of Units, that was selected to be assessed
+      {
+        type: Schema.Types.ObjectId,
+        ref: "Unit",
+      },
+    ],
     curtinUnit: {
       type: Schema.Types.ObjectId,
       ref: "Unit",
     },
     notes: {
       type: String,
+      required: false,
     },
   },
   {
