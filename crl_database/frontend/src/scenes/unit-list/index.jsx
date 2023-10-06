@@ -90,6 +90,9 @@ const UnitList = () => {
 
     setSelectedUnits(selectedUnitObj);
     console.log("selectedUnitObj = ", selectedUnitObj);
+
+    //add selected units to local storage incase of refresh
+    localStorage.setItem('selectedUnits', JSON.stringify(selectedUnitObj))
   };
 
 
