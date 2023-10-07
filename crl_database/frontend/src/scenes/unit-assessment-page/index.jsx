@@ -23,7 +23,10 @@ const UnitAssessmentPage = () => {
 
   // Get Selected Units
   const location = useLocation();
-  const { selectedUnits } = location.state;
+  // const { selectedUnits } = location.state;
+  
+  //provide fall back so if state is undefined it can handle blank units or get from local storage
+  const { selectedUnits } = location.state || { selectedUnits: JSON.parse(localStorage.getItem('selectedUnits') || '[]') }
   
   // Retrieve all Curtin Units when the user first lands at the Unit Assessment Page.
   // Used by search dropdown to list all the Curtin Units that the user can select.

@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import App from './App';
+import AppRoot from './App';
 import './index.css';
 import { configureStore } from "@reduxjs/toolkit"
 import globalReducer from "./state"
@@ -18,7 +18,7 @@ root.render(
   <React.StrictMode>
     <AuthContextProvider>
       <Provider store={store}>
-        <App />
+        <AppRoot />
       </Provider>
     </AuthContextProvider>
   </React.StrictMode>

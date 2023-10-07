@@ -20,7 +20,7 @@ const UnitList = () => {
   
   // To do after render
   useEffect(() => {
-    console.log("In Unit List, user = " + JSON.stringify(user));
+    console.log("In Unit List, user:\n", user);
     retrieveUnits();
   }, []);
   
@@ -139,7 +139,11 @@ const UnitList = () => {
 
     setSelectedUnits(selectedUnitObj);
     console.log("Selected a unit, updated selectedUnitObj to:\n", selectedUnitObj);
+    
+    // add selected units to local storage incase of refresh
+    localStorage.setItem('selectedUnits', JSON.stringify(selectedUnitObj));
   };
+  
   
 
   return (
