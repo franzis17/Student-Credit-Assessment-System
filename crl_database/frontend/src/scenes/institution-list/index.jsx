@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import InstitutionDataService from "../../services/institution";
 import Navbar from "../../components/Navbar";
-
+import DeleteIcon from '@mui/icons-material/Delete';
 import Box from '@mui/material/Box';
 import { DataGrid } from '@mui/x-data-grid';
+import { IconButton } from '@mui/material';
+import AddInstitutionButton from '../../components/AddInstitutionButton';
 
 const InstitutionList = () => {
   
@@ -31,31 +33,33 @@ const InstitutionList = () => {
   };
   
   // Use Axios to add new Institution in the DB by HTTP POST request
-  const handleAddInstitution = () => {
-    
-    // 1. Enter institution details
-    
-    // << Mock new institution >>
-    const name = "Australian Data and Cyber Institute";
-    const rank = 1;
-    const location = "Adelaide Terrace Perth";
-    const major = "DATA-CYBER";
-    const notes = "More into cyber security and data science";
-    
-    const newInstitution = { name, rank, location, major, notes };
-    
-    // 2. Pass newInstitution to axios to HTTP POST request the backend server
-    InstitutionDataService.addInstitution(newInstitution)
+  const handleInstitutionSave = (institutionData) => {
+    console.log("Received Institution Data: " + institutionData.name);
+  
+    InstitutionDataService.addInstitution(institutionData)
       .then((response) => {
         console.log(`Successfully added institution in the database.`);
         retrieveInstitutions();
       })
       .catch((error) => {
-        console.log(
-          `ERROR when adding institutions in the DB.\n>>> ${error.response.data.message}`
-        );
+        if (error.response) {
+          console.log(
+            `Error Response Data: ${JSON.stringify(error.response.data)}`
+          );
+          console.log(`Error Status: ${error.response.status}`);
+          console.log(`Error Headers: ${JSON.stringify(error.response.headers)}`);
+        } else if (error.request) {
+          console.log(`No Response Received. Error Request: ${error.request}`);
+        } else {
+          console.log(`Error Message: ${error.message}`);
+        }
+        console.error("An error occurred while adding the institution:", error);
       });
   };
+  
+  const handleDeleteClick = () => {
+
+  }
   
   
   const columns = [
@@ -63,20 +67,31 @@ const InstitutionList = () => {
     { field: 'rank', headerName: 'Rank' },
     { field: 'location', headerName: 'Location', width: 300 },
     { field: 'major', headerName: 'Major', width: 150 },
-    { field: 'notes', headerName: 'Notes', width: 400 }
+    { field: 'notes', headerName: 'Notes', width: 400 },
+    {
+      field: 'delete',
+      headerName: 'Delete',
+      width: 100,
+      renderCell: (params) => (
+        <IconButton
+          style={{ color: '#DB6A6C' }}
+          onClick={() => handleDeleteClick(params.row._id)}
+          
+        >
+          <DeleteIcon />
+        </IconButton>
+      ),
+    },
   ];
+  
   
   
   return (
     <>
     <div>
       <Navbar />
+      <AddInstitutionButton onInstitutionSave={handleInstitutionSave}/>
     </div>
-    
-    {/* [ TESTING ] - if an Institution is actually added in the DB */}
-    {/* TO BE DELETED - once the "form" button is done to add the institution */}
-    <button onClick={handleAddInstitution}>Add Institution</button>
-    
     <Box sx={{ height: '100%', width: '100%' }}>
       <DataGrid
         rows={institutions}

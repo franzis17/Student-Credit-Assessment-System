@@ -19,12 +19,12 @@ class InstitutionDataService {
     return http.get(InstitutionDataService.defaultRoute + "/count");
   }
   
-  getUnitsOfInstitution(institutionId) {
+  getUnitsOfCurtin(institutionId) {
     const params = { institution: institutionId };
     return http.get((InstitutionDataService.defaultRoute + "/units"), { params });
   }
   
-  getUnitsOfCurtin() {
+  getUnitsOfAnInstitution() {
     return this.getUnitsOfInstitution(InstitutionDataService.curtinId);
   }
   
@@ -32,6 +32,7 @@ class InstitutionDataService {
   // POST
   
   addInstitution(institution) {
+    console.log("Institution to go to backend: " + institution.name)
     return http.post((InstitutionDataService.defaultRoute + "/add"), institution);
   }
   

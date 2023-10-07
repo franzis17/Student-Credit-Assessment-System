@@ -13,9 +13,13 @@ const DUPLICATE_ERROR_CODE = 11000;
 
 // Get all institutions = /institutions
 router.route("/").get(async (req, res) => {
-  Institution.find()
-    .then((institutions) => res.json(institutions))
-    .catch((err) => res.status(400).json("Error:" + err));
+  try {
+    const institutions = await Institution.find();
+    res.json(institutions);
+  } catch (err) {
+    console.error(`ERROR: ${err}`);
+    res.status(500).json(`ERROR: Failed to fetch institutions. More details: ${err}`);
+  }
 });
 
 // Get total institution count
@@ -50,12 +54,17 @@ router.route("/units").get((req, res) => {
 // ---- [POST] ----
 
 // Add an institution = /institutions/add
-router.route("/add").post(async (req, res) => {
+router.route("/add").post((req, res) => {
   const name = req.body.name;
   const rank = req.body.rank;
   const location = req.body.location;
   const major = req.body.major;
   const notes = req.body.notes;
+
+  console.log("New institution name: " + name)
+  console.log("New institution rank: " + rank)
+  console.log("New institution location: " + location)
+  console.log("New institution major: " + major)
 
   const newInstitution = new Institution({
     name,
@@ -67,7 +76,7 @@ router.route("/add").post(async (req, res) => {
 
   newInstitution
     .save()
-    .then(() => res.json("The institution has been added"))
+    .then(() => res.json(`Institution: [${name}] has been added!`))
     .catch((error) => {
       console.log(`ERROR when adding an institution.\n>>> ${error}`);
       
@@ -75,7 +84,7 @@ router.route("/add").post(async (req, res) => {
         // Error: Duplicate key / institution name
         res.status(400).json({ message: `Error: ${name} already exists` });
       } else {
-        res.status(500).json(`ERROR when adding a Unit. More info: ${error}`);
+        res.status(500).json(`ERROR when adding a institution. More info: ${error}`);
       }
     });
 });

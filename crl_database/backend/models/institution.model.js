@@ -7,6 +7,7 @@ const institutionSchema = new Schema(
     name: {
       type: String,
       unique: true,
+      trim: true,
       required: true,
       minlength: 5,
     },
@@ -27,13 +28,14 @@ const institutionSchema = new Schema(
     },
     notes: {
       type: String,
-      required: true,
+      required: false,
     },
   },
   {
     timestamps: true,
   }
 );
+
 
 const Institution = mongoose.model("Institution", institutionSchema);
 
