@@ -44,6 +44,17 @@ class UnitDataService {
     );
   }
   
+  
+  // DELETE
+  
+  deleteUnit(unitID, userToken) {
+    const headers = UnitDataService.getHeader(userToken);
+    return http.delete((UnitDataService.defaultRoute + "/delete"),
+      unitID,
+      headers
+    );
+  }
+  
 }
 
 const unitDataService = new UnitDataService();

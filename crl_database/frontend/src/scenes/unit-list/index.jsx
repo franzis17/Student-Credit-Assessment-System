@@ -6,6 +6,7 @@ import { useAuthContext } from "../../hooks/useAuthContext";
 
 import Box from '@mui/material/Box';
 import { DataGrid } from '@mui/x-data-grid';
+import Button from '@mui/material/Button';
 import SimpleButton from "../../components/buttons/SimpleButton";
 
 
@@ -27,7 +28,7 @@ const UnitList = () => {
   const retrieveUnits = () => {
     UnitDataService.getAll(user.token)
       .then((response) => {
-        console.log("Retrieved units: " + JSON.stringify(response.data));
+        console.log("Retrieved units:\n", response.data);
         
         console.log("> Listing each Unit's institution's name:");
         const tempUnits = response.data;
@@ -59,7 +60,7 @@ const UnitList = () => {
     // get the institution that is currently displaying this list of units and user their "_id")
     const institution = "64e0911b123bc76c05356445";
     
-    const unit = {  
+    const unit = {
       unitCode,
       name,
       location,
@@ -76,10 +77,40 @@ const UnitList = () => {
       })
       .catch((error) => {
         console.log(
-          `ERROR when adding units in the DB.\nError: ${error.response.data.error}`
+          `ERROR when adding units.\nError: ${error.response.data.error}`
         );
         window.alert("Error: Cannot add a unit, " + error.response.data.error);
       });
+  };
+  
+  const handleDeleteUnit = () => {
+    try {
+      var unitID;
+      
+      selectedUnits.forEach((unit) => {
+        unitID = unit._id;
+      });
+      
+      console.log("Unit to delete:", unitID);
+      
+      if (selectedUnits.length === 0) {
+        window.alert("ERROR: Must select at least one unit to delete.");
+        throw Error("Must select at least one unit to delete.");
+      }
+      
+      // UnitDataService.deleteUnit(unitID, user.token)
+      //   .then((response) => {
+      //     console.log("Successfully deleted units.");
+      //     retrieveUnits();
+      //   })
+      //   .catch((error) => {
+      //     console.log(
+      //       `ERROR when deleting units.\nError: ${error.response.data.error}`
+      //     );
+      //   });
+    } catch (error) {
+      console.error("ERROR when deleting units:\n", error);
+    }
   };
   
   // Column fields of Units in the DataGrid
@@ -107,26 +138,39 @@ const UnitList = () => {
     );
 
     setSelectedUnits(selectedUnitObj);
-    console.log("Selected a unit, updated selectedUnitObj to:", selectedUnitObj);
+    console.log("Selected a unit, updated selectedUnitObj to:\n", selectedUnitObj);
   };
-
+  
 
   return (
     <>
-
     <div>
       <Navbar />
     </div>
     
-    <Link 
-      to="/unitassessmentpage"
-      state={{ selectedUnits: selectedUnits }}
-    >
-      <SimpleButton content="Assess"/>
-    </Link>
+    { /* FOR TESTING - Add/Delete Unit Buttons */ }
+    <SimpleButton content="Add Unit" onClick={handleAddUnit} />
     
-    <SimpleButton content="Add Unit" onClick={handleAddUnit}/>
-
+    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+      <Link
+        to="/unitassessmentpage"
+        state={{ selectedUnits: selectedUnits }}
+      >
+        <SimpleButton content="Assess" />
+      </Link>
+      <Button
+        variant="contained"
+        sx={
+          {
+            color: 'white', borderRadius: '10px', background: '#24a0ed',
+            marginRight: '10px',
+          }
+        }
+        onClick={handleDeleteUnit}
+      >
+        Delete
+      </Button>
+    </div>
     <Box sx={{ height: '100%', width: '100%' }}>
       <DataGrid
         rows={units}
@@ -148,7 +192,6 @@ const UnitList = () => {
         onRowSelectionModelChange={handleRowSelectionModelChange}
       />
     </Box>
-    
     </>
   );
 

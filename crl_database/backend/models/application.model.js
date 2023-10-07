@@ -4,7 +4,6 @@ const Schema = mongoose.Schema;
 
 const applicationSchema = new Schema(
   {
-    // MUST verify if the institution exists
     institution: {
       type: Schema.Types.ObjectId,
       ref: "Institution",
@@ -37,7 +36,11 @@ const applicationSchema = new Schema(
       type: Schema.Types.ObjectId,
       ref: "Unit",
     },
-    notes: {
+    assessorNotes: {
+      type: String,
+      required: false,
+    },
+    studentNotes: {
       type: String,
       required: false,
     },
