@@ -1,0 +1,15 @@
+{
+    "institution": "64e0911b123bc76c05356445",
+    "status": 1,
+    "aqf": "10",
+    "location": "Perth",
+    "award": "Diploma in Information Technology",
+    "assessor": "Franz",
+    "unitsToAssess": [
+        "651ff94f729f7e37e28d7cb5",
+        "65214a22fc4bb7f540f1f735"
+    ],
+    "curtinUnit": "6509da41cbeea77421b29ee3",
+    "assessorNotes": "Has fundamental knowledge of programming",
+    "studentNotes": "Michael. Still does not have an id."
+}

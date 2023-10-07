@@ -10,7 +10,9 @@ const router = express.Router();
 
 router.route("/").get(async (req, res) => {
   try {
-    const applications = await Application.find({}).populate("institution");
+    console.log(">>> Getting applications...");
+    const applications = await Application.find({}).populate("institution unitsToAssess");
+    console.log("applications =", applications);
     res.json(applications);
   } catch (e) {
     console.error(`ERROR: ${e}`);
@@ -21,17 +23,17 @@ router.route("/").get(async (req, res) => {
 
 // ---- [ POST ] ----
 
+/** 
+ * [ /applications/add ]
+ */
 router.route("/add").post((req, res) => {
-  const institution = new mongoose.Types.ObjectId(req.body.institution);
-  const status      = req.body.status;
-  const aqf         = req.body.aqf;
-  const location    = req.body.location;
-  const award       = req.body.award;
-  const assessor    = req.body.assessor;
-  
-  // need to be object id's, idk if this will work plainly (need to test)
+  const institution   = req.body.institution;
+  const status        = req.body.status;
+  const aqf           = req.body.aqf;
+  const location      = req.body.location;
+  const award         = req.body.award;
+  const assessor      = req.body.assessor;
   const unitsToAssess = req.body.unitsToAssess;
-  
   const curtinUnit    = req.body.curtinUnit;
   const assessorNotes = req.body.assessorNotes;
   const studentNotes  = req.body.studentNotes;
@@ -49,10 +51,13 @@ router.route("/add").post((req, res) => {
     studentNotes,
   });
   
+  console.log("Adding new application:");
+  console.log("newApplication =", newApplication);
+  
   newApplication
     .save()
     .then(() => {
-      console.log("Successfully added a new application!");
+      console.log("SUCCESS: Added a new application!");
       res.json(`Application has been added!`);
     })
     .catch((e) => {
