@@ -1,6 +1,8 @@
 import { createContext, useReducer, useEffect} from 'react';
 
+
 export const AuthContext = createContext()
+
 
 //Export to use in other files later
 export const authReducer = (state, action) => { 
@@ -23,6 +25,7 @@ export const AuthContextProvider = ({children}) => {
     const [state, dispatch] = useReducer(authReducer, {
         user: null
     })
+
     /* make sure user stays logged in after refreshing page*/
     /*use effect once - check for token just once in local storage*/
     useEffect(() => {
@@ -30,6 +33,7 @@ export const AuthContextProvider = ({children}) => {
 
         if (user) {
             dispatch({type: 'LOGIN', payload: user})
+
         }
 
     }, []) 
@@ -44,3 +48,4 @@ export const AuthContextProvider = ({children}) => {
 
     
 }
+
