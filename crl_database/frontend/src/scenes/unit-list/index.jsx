@@ -6,6 +6,7 @@ import { useAuthContext } from "../../hooks/useAuthContext";
 
 import Box from '@mui/material/Box';
 import { DataGrid } from '@mui/x-data-grid';
+import SimpleButton from "../../components/buttons/SimpleButton";
 
 
 const UnitList = () => {
@@ -121,14 +122,10 @@ const UnitList = () => {
       to="/unitassessmentpage"
       state={{ selectedUnits: selectedUnits }}
     >
-      <button>Assess</button>
+      <SimpleButton content="Assess"/>
     </Link>
     
-    {/*  [TESTING] - if a Unit is actually added in the DB  */}
-    {/*  TO BE DELETED once other button is done  */}
-    <button onClick={handleAddUnit}>
-      Add Unit
-    </button>
+    <SimpleButton content="Add Unit" onClick={handleAddUnit}/>
 
     <Box sx={{ height: '100%', width: '100%' }}>
       <DataGrid
