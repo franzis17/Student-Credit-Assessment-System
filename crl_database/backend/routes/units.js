@@ -10,37 +10,29 @@ const router = express.Router();
 
 // Get all units = /units
 router.route("/").get(async (req, res) => {
-  
   try {
-    // Get all units from the DB and populate with the reference institution object
-    const units = await Unit.find({}).populate("institution", "name");
-    
-    // Replace the institution field with JUST the institution's
-    // name instead of the institution object
-    const unitsWithInstitutionNames = units.map(unit => ({
-      ...unit.toObject(),
-      institution: unit.institution.name,  // replace the institution field
-    }));
-    
-    // Return the list of units with the changed institution field
-    res.json(unitsWithInstitutionNames);
-    
+    let units;
+    units = await Unit.find().populate("institution");
+    res.json(units);
   } catch (err) {
     console.error(`ERROR: ${err}`);
     res.status(500).json(`ERROR: Failed to fetch units. More details: ${err}`);
   }
-
 });
+
+
+
 
 //get units specific to an institution
 router.route("/sortedunits").get(async (req, res) => {
-  const institutionId = req.query.id; // Get the institution ID from the query parameter
+  const institutionId = req.query.institutionId;
+  console.log('Received institutionId:', institutionId); // Log the received institutionId for debugging
 
   try {
-    // Get all units from the DB that belong to the specified institution
-    const units = await Unit.find({ institution: institutionId });
+    const units = await Unit.find({ institution: institutionId }).populate("institution");
 
-    // Return the list of units
+    console.log('Retrieved units:', units); // Log the retrieved units for debugging
+
     res.json(units);
   } catch (err) {
     console.error(`ERROR: ${err}`);

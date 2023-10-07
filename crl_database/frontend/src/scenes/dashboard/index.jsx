@@ -8,7 +8,7 @@ import { LightModeOutlined,  //For darkmode functionality later
 } from "@mui/icons-material";
 import FlexBetween from '../../components/FlexBetween';
 import { useDispatch} from 'react-redux';
-import { setMode } from "../../state" //For darkmode functionality later
+import { setMode } from "../../state" //For darkmode functionality later maybe
 import { Box, 
   Grid, 
   IconButton, 
@@ -37,7 +37,7 @@ const Dashboard = () => {
   // To do after render
   useEffect(() => {
     getInstitutionCount();
-    getUnitCount(); // After rendering, retrieve institutions
+    getUnitCount();
     getAllInstitutions();
 
 
@@ -96,11 +96,13 @@ const Dashboard = () => {
     });
   }
 
-  const handleSearchChange = (event, institutionId) => {
-    const query = event.target.value.toLowerCase();
+  const handleSearchChange = (ev) => {
+    const query = ev.target.value ? ev.target.value.toLowerCase() : "";
+    console.log("Query:", query);
+  
     if (query === "") {
       setFilteredList([]);
-      setSelectedInstitution(null); // Clear selected institution when input is empty
+      setSelectedInstitution(null);
     } else {
       const filteredList = institutionList.filter((institution) =>
         institution.name.toLowerCase().includes(query)
@@ -108,15 +110,21 @@ const Dashboard = () => {
       setFilteredList(filteredList);
     }
   };
-
-
+  
+  const handleInstitutionClick = (institutionId) => {
+    setSelectedInstitution(institutionId);
+    navigateToSortedUnitList(institutionId);
+  };
+  
+  
   const navigateToInstitutionList = (institutionId) => {
-    navigate(`/institutions/`); //Change this for return route into institution list
+    navigate(`/institutions/`);
   };
 
-  const navigateToSortedUnitList = () => {
-    if (selectedInstitution !== null) {
-      navigate(`/units?institutionId=${selectedInstitution}`);
+  const navigateToSortedUnitList = (institutionId) => {
+    console.log("here is the instition id: " + institutionId)
+    if (institutionId) {
+      navigate(`/units?institutionId=${institutionId}`);
     }
   };
 
@@ -131,8 +139,7 @@ const Dashboard = () => {
   const theme = useTheme();
   const navigate = useNavigate();
   return (
-    <div style={dashboardStyle}>
-      {/* ... (your existing content) */}
+  <div style={dashboardStyle}>
   <div>
     <div>
       <Navbar />
@@ -146,7 +153,7 @@ const Dashboard = () => {
               type="text"
               placeholder="Search an institution..."
               style={{ width: '500px', padding: "0"}}
-              //onChange={(event) => handleSearchChange(event, institution.id)}
+              onChange={(event) => handleSearchChange(event)}
             />
             <IconButton>
               <Search />
@@ -181,13 +188,13 @@ const Dashboard = () => {
                   <React.Fragment key={institution.id}>
                     <ListItem
                       button
-                      onClick={() => {
-                        setSelectedInstitution(institution.id); // Set the selected institution
-                        // handleSearchChange(event, institution.id); // Pass the institution ID
+                      onClick={(event) => {
+                        handleInstitutionClick(institution._id);
                       }}
                     >
                       <ListItemText primary={institution.name} />
                     </ListItem>
+
                     {index < 7 && <Divider />}
                   </React.Fragment>
                 ))}

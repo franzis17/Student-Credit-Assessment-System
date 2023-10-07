@@ -11,16 +11,12 @@ class UnitDataService {
   }
   
   /** Get all units of a specific institution */
-  getUnitsOfAnInstitution() {
-    return http.get(UnitDataService.defaultRoute + "/sortedunits");
+  getUnitsOfAnInstitution(institutionId) {
+    return http.get(`${UnitDataService.defaultRoute}/sortedunits?institutionId=${institutionId}`);
   }
   
   getCount() {
     return http.get(UnitDataService.defaultRoute + "/count");
-  }
-
-  addUnit() {
-    return http.post(UnitDataService.defaultRoute + "/add")
   }
   
   
