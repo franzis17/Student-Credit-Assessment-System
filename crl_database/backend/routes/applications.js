@@ -11,7 +11,7 @@ const router = express.Router();
 router.route("/").get(async (req, res) => {
   try {
     console.log(">>> Getting applications...");
-    const applications = await Application.find({}).populate("institution unitsToAssess");
+    const applications = await Application.find({}).populate("institution assessedUnits curtinUnit");
     console.log("applications =", applications);
     res.json(applications);
   } catch (e) {
@@ -33,7 +33,7 @@ router.route("/add").post((req, res) => {
   const location      = req.body.location;
   const award         = req.body.award;
   const assessor      = req.body.assessor;
-  const unitsToAssess = req.body.unitsToAssess;
+  const assessedUnits = req.body.assessedUnits;
   const curtinUnit    = req.body.curtinUnit;
   const assessorNotes = req.body.assessorNotes;
   const studentNotes  = req.body.studentNotes;
@@ -45,7 +45,7 @@ router.route("/add").post((req, res) => {
     location,
     award,
     assessor,
-    unitsToAssess,
+    assessedUnits,
     curtinUnit,
     assessorNotes,
     studentNotes,

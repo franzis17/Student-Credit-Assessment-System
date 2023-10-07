@@ -14,6 +14,7 @@ import UnitList from "./scenes/unit-list";
 import Whitelist from "./scenes/whitelist";
 import VerifyEmail from "./scenes/verifyEmail";
 import UnitAssessmentPage from "./scenes/unit-assessment-page";
+import ApplicationList from "./scenes/application-list";
 import Layout from "./scenes/layout";
 
 
@@ -40,6 +41,7 @@ function App() {
                 <Route path="/institutions" element={user ? <InstitutionList/> : <Navigate to="/login"/>}/>
                 <Route path="/units" element={user ? <UnitList /> : <Navigate to="/login"/>}/>
                 <Route path="/unitassessmentpage" element={user ? <UnitAssessmentPage /> : <Navigate to="/login"/>}/>
+                <Route path="/applications" element={user ? <ApplicationList /> : <Navigate to="/login"/>}/>
               </Routes> 
               
         </ThemeProvider>

@@ -26,7 +26,7 @@ const applicationSchema = new Schema(
       type: String,
       required: false,
     },
-    unitsToAssess: [  // Array of Units, that was selected to be assessed
+    assessedUnits: [  // Array of Units, that was selected to be assessed
       {
         type: Schema.Types.ObjectId,
         ref: "Unit",
