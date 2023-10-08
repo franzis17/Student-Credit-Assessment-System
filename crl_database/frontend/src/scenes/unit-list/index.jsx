@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import UnitDataService from "../../services/unit";
 import Navbar from "../../components/Navbar";
 import { useAuthContext } from "../../hooks/useAuthContext";
+import DataUtils from "../../utils/dataUtils";
 
 import Box from '@mui/material/Box';
 import { DataGrid } from '@mui/x-data-grid';
@@ -18,6 +19,8 @@ const UnitList = () => {
   
   const { user } = useAuthContext();
   
+  const dataUtils = new DataUtils();
+  
   // To do after render
   useEffect(() => {
     console.log("In Unit List, user:\n", user);
@@ -28,21 +31,21 @@ const UnitList = () => {
   const retrieveUnits = () => {
     UnitDataService.getAll(user.token)
       .then((response) => {
-        console.log("Retrieved units:\n", response.data);
+        const unitsFromResponse = response.data;
+        const unitFields = ['unitCode', 'name', 'location', 'major', 'institution', 'notes'];
         
-        console.log("> Listing each Unit's institution's name:");
-        const tempUnits = response.data;
-        tempUnits.forEach((unit) => {
-          console.log("unit name = " + unit.name + " | institution = " + unit.institution.name);
-        });
+        console.log("Retrieved units:\n", unitsFromResponse);
         
-        setUnits(response.data);
+        // replace the null fields of Units with text "NO DATA"
+        dataUtils.replaceNullFields(unitsFromResponse, unitFields);
+        
+        setUnits(unitsFromResponse);
       })
       .catch((err) => {
         console.log(`ERROR when retrieving units. \nError: ${err}`);
       });
   };
-  
+
   // Use Axios to add Unit in the DB by POST request
   const handleAddUnit = () => {
     
@@ -122,7 +125,13 @@ const UnitList = () => {
     { 
       field: 'institution', headerName: 'Institution', width: 250,
       // map the institution's name
-      valueGetter: (params) => params.row.institution.name,
+      valueGetter: (params) => {
+        if (params.row.institution.toString().includes("NO DATA")) {
+          return "NO DATA";
+        } else {
+          return params.row.institution.name;
+        }
+      },
     },
     { field: 'notes',       headerName: 'Notes',       width: 400 }
   ];
