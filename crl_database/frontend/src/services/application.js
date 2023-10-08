@@ -15,9 +15,22 @@ class ApplicationDataService {
     };
   }
   
+  // ---- [ GET ] ----
+  
   getAll(userToken) {
     const headers = ApplicationDataService.getHeader(userToken);
     return http.get(ApplicationDataService.defaultRoute, userToken);
+  }
+  
+  
+  // ---- [ POST ] ----
+  
+  addApplication(newApplication, userToken) {
+    const headers = ApplicationDataService.getHeader(userToken);
+    return http.post((ApplicationDataService.defaultRoute + "/add"),
+      newApplication,
+      headers,
+    );
   }
   
 }

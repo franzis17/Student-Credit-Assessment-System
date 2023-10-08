@@ -25,10 +25,9 @@ const InstitutionList = () => {
         console.log("Retrieved institutions: " + response.data);
         setInstitutions(response.data);
       })
-      .catch((err) => {
-        console.log(
-          `ERROR when retrieving institutions. \nError: ${err}\nError response: ${err.response.data}`
-        );
+      .catch((error) => {
+        console.log("ERROR when retrieving institutions. \nError: ", error);
+        console.log("Error response:\n", error.response.data);
       });
   };
   
