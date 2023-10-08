@@ -14,6 +14,12 @@ const institutionSchema = new Schema(
     rank: {
       type: Number,
       required: true,
+      validate: {
+        validator: function (value) {
+          return value > 0;
+        },
+        message: "Rank must be greater than 0.",
+      },
     },
     location: {
       type: String,

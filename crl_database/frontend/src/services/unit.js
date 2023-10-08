@@ -25,6 +25,11 @@ class UnitDataService {
   addUnit(unit) {
     return http.post((UnitDataService.defaultRoute + "/add"), unit);
   }
+
+  //DELETE
+  removeUnit(unitId) {
+    return http.delete(`${UnitDataService.defaultRoute}/delete/${unitId}`);
+  }
   
 }
 

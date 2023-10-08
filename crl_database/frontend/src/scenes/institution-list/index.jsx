@@ -6,17 +6,35 @@ import Box from '@mui/material/Box';
 import { DataGrid } from '@mui/x-data-grid';
 import { IconButton } from '@mui/material';
 import AddInstitutionButton from '../../components/AddInstitutionButton';
+import Button from '@mui/material/Button'; 
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText'; 
+import DialogTitle from '@mui/material/DialogTitle';
 
 const InstitutionList = () => {
   
   // State variables
   const [institutions, setInstitutions] = useState([]);
-  
+  const [institutionToDelete, setInstitutionToDelete] = useState('');
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+
   // To do after render
   useEffect(() => {
     retrieveInstitutions();  // After rendering, retrieve institutions
   }, []);
   
+  //modal stuff
+  const openConfirmationModal = (institutionId) => {
+    setInstitutionToDelete(institutionId);
+    setIsDeleteModalOpen(true);
+  };
+
+  const closeConfirmationModal = () => {
+    setIsDeleteModalOpen(false);
+  };
+
   
   // Use data service to get all institutions from the backend server
   const retrieveInstitutions = () => {
@@ -58,8 +76,25 @@ const InstitutionList = () => {
   };
   
   const handleDeleteClick = () => {
-
-  }
+    InstitutionDataService.removeInstitution(institutionToDelete)
+      .then((response) => {
+        console.log(`Successfully removed institution from the database`);
+        retrieveInstitutions();
+      })
+      .catch((error) => {
+        console.error("An error occurred while removing the institution:", error);
+        if (error.response) {
+          console.log("Response data:", error.response.data);
+          console.log("Response status:", error.response.status);
+        } else if (error.request) {
+          console.log("No response received. Request:", error.request);
+        } else {
+          console.log("Error message:", error.message);
+        }
+      });
+  };
+  
+  
   
   
   const columns = [
@@ -75,11 +110,12 @@ const InstitutionList = () => {
       renderCell: (params) => (
         <IconButton
           style={{ color: '#DB6A6C' }}
-          onClick={() => handleDeleteClick(params.row._id)}
-          
+          onClick={() => openConfirmationModal(params.row._id)}
         >
           <DeleteIcon />
         </IconButton>
+
+        
       ),
     },
   ];
@@ -110,6 +146,28 @@ const InstitutionList = () => {
         //disableRowSelectionOnClick
       />
     </Box>
+
+    <Dialog
+      open={isDeleteModalOpen}
+      onClose={closeConfirmationModal}
+      aria-labelledby="delete-dialog-title"
+      aria-describedby="delete-dialog-description"
+>
+        <DialogTitle id="delete-dialog-title">Confirm Deletion</DialogTitle>
+        <DialogContent>
+          <DialogContentText id="delete-dialog-description">
+            Are you sure you want to delete this institution?
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={closeConfirmationModal} sx={{color:"#DB6A6C"}}>
+            No
+          </Button>
+          <Button onClick={() => { handleDeleteClick(); closeConfirmationModal(); }} sx={{color:"#52a832"}}>
+            Yes
+          </Button>
+        </DialogActions>
+      </Dialog>
     </>
   );
 

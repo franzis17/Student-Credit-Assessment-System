@@ -98,8 +98,19 @@ router.route("/add").post((req, res) => {
 
 // ---- [UPDATE] ----
 
-// Update a unit's details = /units/update/:id
-// TO BE DONE
+router.route("/update/:id").put((req, res) => {
+  const unitId = req.params.id;
+  const updatedUnitData = req.body;
+
+  Unit.findByIdAndUpdate(unitId, updatedUnitData, { new: true })
+    .then((updatedUnit) => {
+      if (!updatedUnit) {
+        return res.status(404).json("Unit not found.");
+      }
+      res.json(updatedUnit);
+    })
+    .catch((err) => res.status(500).json("Error: " + err));
+});
 
 
 // ---- [DELETE] ----

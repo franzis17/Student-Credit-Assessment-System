@@ -35,6 +35,12 @@ class InstitutionDataService {
     console.log("Institution to go to backend: " + institution.name)
     return http.post((InstitutionDataService.defaultRoute + "/add"), institution);
   }
+
+
+  //DELETE 
+  removeInstitution(institutionId) {
+    return http.delete(`${InstitutionDataService.defaultRoute}/delete/${institutionId}`);
+  }
   
 }
 

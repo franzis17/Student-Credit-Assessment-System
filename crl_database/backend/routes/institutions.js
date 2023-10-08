@@ -115,9 +115,17 @@ router.route("/update/:id").post(async (req, res) => {
 
 // Delete an institution = /institutions/delete/:id
 router.route("/delete/:id").delete(async (req, res) => {
-  Institution.findByIdAndDelete(req.params.id)
-    .then(() => res.json("Institution deleted."))
-    .catch((err) => res.status(400).json("Error:" + err));
+  console.log("Here is the parameter: " + req.params.id)
+  try {
+    const deletedInstitution = await Institution.findByIdAndDelete(req.params.id);
+    if (!deletedInstitution) {
+      return res.status(404).json("Institution not found.");
+    }
+    res.json("Institution deleted.");
+  } catch (error) {
+    console.error("Error deleting institution:", error);
+    res.status(500).json("Error deleting institution: " + error.message);
+  }
 });
 
 
