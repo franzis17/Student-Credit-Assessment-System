@@ -59,7 +59,7 @@ const ApplicationList = () => {
     { 
       field: 'assessedUnits',  headerName: 'Assessed Unit(s)',  width: 400,
       valueGetter: (params) => {
-        // Extract the names from the unitsToAssess array and join them with a comma
+        // Extract the each names and join them with a comma
         const unitNames = params.row.assessedUnits.map((unit) => unit.name).join(', ');
         return unitNames;
       },

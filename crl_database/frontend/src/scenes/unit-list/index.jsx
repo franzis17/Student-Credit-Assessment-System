@@ -32,7 +32,6 @@ const UnitList = () => {
     UnitDataService.getAll(user.token)
       .then((response) => {
         const data = response.data;
-        
         console.log("Retrieved units:\n", data);
         
         // replace the null fields of with text "NO DATA"

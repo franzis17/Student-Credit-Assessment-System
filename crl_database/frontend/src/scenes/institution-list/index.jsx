@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import InstitutionDataService from "../../services/institution";
 import Navbar from "../../components/Navbar";
 import { useAuthContext } from "../../hooks/useAuthContext";
+import DataUtils from "../../utils/dataUtils";
 
 import Box from '@mui/material/Box';
 import { DataGrid } from '@mui/x-data-grid';
@@ -12,18 +13,24 @@ const InstitutionList = () => {
   const [institutions, setInstitutions] = useState([]);
   const { user } = useAuthContext();
   
+  const dataUtils = new DataUtils();
+  
   // To do after render
   useEffect(() => {
     retrieveInstitutions();  // After rendering, retrieve institutions
   }, []);
   
-  
   // Use data service to get all institutions from the backend server
   const retrieveInstitutions = () => {
     InstitutionDataService.getAll(user.token)
       .then((response) => {
-        console.log("Retrieved institutions: " + response.data);
-        setInstitutions(response.data);
+        const data = response.data;
+        console.log("Retrieved institutions:", data);
+        
+        // replace the null fields of with text "NO DATA"
+        dataUtils.replaceNullFields(data);
+        
+        setInstitutions(data);
       })
       .catch((error) => {
         console.log("ERROR when retrieving institutions. \nError: ", error);
