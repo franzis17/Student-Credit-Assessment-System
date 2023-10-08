@@ -5,7 +5,7 @@ import requireAuth from '../middleware/requireAuth.js';
 // import fs from "fs";  // used by add-mock data
 
 const router = express.Router();
-//router.use(requireAuth)
+router.use(requireAuth)
 
 const DUPLICATE_ERROR_CODE = 11000;
 
@@ -36,6 +36,8 @@ router.route("/count").get(async (req, res) => {
 router.route("/units").get((req, res) => {
   const institution = req.query.institution;
   
+  console.log("querying an institution's units, institution id = " + institution);
+  
   Unit.find({ institution: institution })
     .then((units) => {
       res.json(units)
@@ -51,6 +53,7 @@ router.route("/units").get((req, res) => {
 
 // Add an institution = /institutions/add
 router.route("/add").post(async (req, res) => {
+  console.log("add institution backend, institution = " + JSON.stringify(req.body));
   const name = req.body.name;
   const rank = req.body.rank;
   const location = req.body.location;
@@ -73,9 +76,9 @@ router.route("/add").post(async (req, res) => {
       
       if (error.code === DUPLICATE_ERROR_CODE) {
         // Error: Duplicate key / institution name
-        res.status(400).json({ message: `Error: ${name} already exists` });
+        res.status(400).json({ error: `the institution "${name}" already exists` });
       } else {
-        res.status(500).json(`ERROR when adding a Unit. More info: ${error}`);
+        res.status(500).json(`ERROR when adding an Institution. More info: ${error}`);
       }
     });
 });

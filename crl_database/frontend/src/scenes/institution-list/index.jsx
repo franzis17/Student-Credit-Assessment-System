@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import InstitutionDataService from "../../services/institution";
 import Navbar from "../../components/Navbar";
+import { useAuthContext } from "../../hooks/useAuthContext";
 
 import Box from '@mui/material/Box';
 import { DataGrid } from '@mui/x-data-grid';
@@ -9,6 +10,7 @@ const InstitutionList = () => {
   
   // State variables
   const [institutions, setInstitutions] = useState([]);
+  const { user } = useAuthContext();
   
   // To do after render
   useEffect(() => {
@@ -18,15 +20,14 @@ const InstitutionList = () => {
   
   // Use data service to get all institutions from the backend server
   const retrieveInstitutions = () => {
-    InstitutionDataService.getAll()
+    InstitutionDataService.getAll(user.token)
       .then((response) => {
         console.log("Retrieved institutions: " + response.data);
         setInstitutions(response.data);
       })
-      .catch((err) => {
-        console.log(
-          `ERROR when retrieving institutions. \nError: ${err}`
-        );
+      .catch((error) => {
+        console.log("ERROR when retrieving institutions. \nError: ", error);
+        console.log("Error response:\n", error.response.data);
       });
   };
   
@@ -37,7 +38,7 @@ const InstitutionList = () => {
     
     // << Mock new institution >>
     const name = "Australian Data and Cyber Institute";
-    const rank = 1;
+    const rank = 15;
     const location = "Adelaide Terrace Perth";
     const major = "DATA-CYBER";
     const notes = "More into cyber security and data science";
@@ -45,15 +46,16 @@ const InstitutionList = () => {
     const newInstitution = { name, rank, location, major, notes };
     
     // 2. Pass newInstitution to axios to HTTP POST request the backend server
-    InstitutionDataService.addInstitution(newInstitution)
+    InstitutionDataService.addInstitution(newInstitution, user.token)
       .then((response) => {
         console.log(`Successfully added institution in the database.`);
         retrieveInstitutions();
       })
       .catch((error) => {
         console.log(
-          `ERROR when adding institutions in the DB.\n>>> ${error.response.data.message}`
+          `ERROR when adding institutions in the DB.\n>${error}\n>Error response: ${error.response.data.error}`
         );
+        window.alert("Error: Cannot add an institution, " + error.response.data.error);
       });
   };
   

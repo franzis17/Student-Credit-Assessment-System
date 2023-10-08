@@ -2,9 +2,12 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import UnitDataService from "../../services/unit";
 import Navbar from "../../components/Navbar";
+import { useAuthContext } from "../../hooks/useAuthContext";
 
 import Box from '@mui/material/Box';
 import { DataGrid } from '@mui/x-data-grid';
+import Button from '@mui/material/Button';
+import SimpleButton from "../../components/buttons/SimpleButton";
 
 
 const UnitList = () => {
@@ -13,20 +16,30 @@ const UnitList = () => {
   const [units, setUnits] = useState([]);
   const [selectedUnits, setSelectedUnits] = useState([]);
   
+  const { user } = useAuthContext();
+  
   // To do after render
   useEffect(() => {
+    console.log("In Unit List, user:\n", user);
     retrieveUnits();
   }, []);
   
   // Use Axios to GET all Units from the backend server
   const retrieveUnits = () => {
-    UnitDataService.getAll()
+    UnitDataService.getAll(user.token)
       .then((response) => {
-        console.log("Retrieved units: " + response.data);
+        console.log("Retrieved units:\n", response.data);
+        
+        console.log("> Listing each Unit's institution's name:");
+        const tempUnits = response.data;
+        tempUnits.forEach((unit) => {
+          console.log("unit name = " + unit.name + " | institution = " + unit.institution.name);
+        });
+        
         setUnits(response.data);
       })
       .catch((err) => {
-        console.log(`ERROR when retrieving institutions. \nError: ${err}`);
+        console.log(`ERROR when retrieving units. \nError: ${err}`);
       });
   };
   
@@ -36,8 +49,8 @@ const UnitList = () => {
     // 1. Enter unit details here
     
     // << Creating a Mock "Unit" Object for now >>
-    const unitCode = "CITS2200";
-    const name = "Data Structures and Algorithms";
+    const unitCode = "CITS1001";
+    const name = "Software Engineering with Java";
     const location = "Perth";
     const major = "B-COMP";
     const notes = "TEST very Long, very long, very long, very long, very long, very long";
@@ -45,9 +58,9 @@ const UnitList = () => {
     // important note: institution will need to be an objectId
     // how to get id? searched from institution list (or somehow
     // get the institution that is currently displaying this list of units and user their "_id")
-    const institution = "64e0911b123bc76c05356445";
+    const institution = "64e0911b123bc76c05356445";  // UWA
     
-    const unit = {  
+    const unit = {
       unitCode,
       name,
       location,
@@ -57,16 +70,47 @@ const UnitList = () => {
     };
     
     // 2. Pass it to axios to HTTP POST request to backend route
-    UnitDataService.addUnit(unit)
+    UnitDataService.addUnit(unit, user.token)
       .then((response) => {
         console.log("Successfully added the mock unit in the database");
         retrieveUnits();  // refresh list to display newly added data
       })
       .catch((error) => {
         console.log(
-          `ERROR when adding units in the DB.\nError: ${error.response.data.message}`
+          `ERROR when adding units.\nError: ${error.response.data.error}`
         );
+        window.alert("Error: Cannot add a unit, " + error.response.data.error);
       });
+  };
+  
+  const handleDeleteUnit = () => {
+    try {
+      var unitID;
+      
+      selectedUnits.forEach((unit) => {
+        unitID = unit._id;
+      });
+      
+      console.log("Unit to delete:", unitID);
+      
+      if (selectedUnits.length === 0) {
+        window.alert("ERROR: Must select at least one unit to delete.");
+        throw Error("Must select at least one unit to delete.");
+      }
+      
+      // UnitDataService.deleteUnit(unitID, user.token)
+      //   .then((response) => {
+      //     console.log("Successfully deleted units.");
+      //     retrieveUnits();
+      //   })
+      //   .catch((error) => {
+      //     console.log(
+      //       `ERROR when deleting units.\nError: ${error.response.data.error}`
+      //     );
+      //   });
+    } catch (error) {
+      console.error("ERROR when deleting units:\n", error);
+    }
   };
   
   // Column fields of Units in the DataGrid
@@ -75,47 +119,62 @@ const UnitList = () => {
     { field: 'name',        headerName: 'Name',        width: 350 },
     { field: 'location',    headerName: 'Location',    width: 300 },
     { field: 'major',       headerName: 'Major',       width: 150 },
-    { field: 'institution', headerName: 'Institution', width: 250 },
+    { 
+      field: 'institution', headerName: 'Institution', width: 250,
+      // map the institution's name
+      valueGetter: (params) => params.row.institution.name,
+    },
     { field: 'notes',       headerName: 'Notes',       width: 400 }
   ];
   
   // Handle selecting one or more units
-  const handleRowSelectionModelChange = (newSelection) => {
+  const handleRowSelectionModelChange = (newSelections) => {
+    console.log("newSelections = " + newSelections);
 
-    // "newSelection" will end being just the id of the unit selected but we want 
-    // the whole Unit object itself, so find it in the Array of "Units"
-    const selectedUnitObj = newSelection.map((selectedId) => 
+    // > "newSelections" are the id's of the units selected but we want the Unit object itself
+    // > replace the unit id's with the actual unit objects that are selected
+    const selectedUnitObj = newSelections.map((selectedId) => 
       units.find((unit) => unit._id === selectedId)
     );
 
     setSelectedUnits(selectedUnitObj);
-    console.log("selectedUnitObj = ", selectedUnitObj);
-
-    //add selected units to local storage incase of refresh
-    localStorage.setItem('selectedUnits', JSON.stringify(selectedUnitObj))
+    console.log("Selected a unit, updated selectedUnitObj to:\n", selectedUnitObj);
+    
+    // add selected units to local storage incase of refresh
+    localStorage.setItem('selectedUnits', JSON.stringify(selectedUnitObj));
   };
-
+  
+  
 
   return (
     <>
-
     <div>
       <Navbar />
     </div>
     
-    <Link 
-      to="/unitassessmentpage"
-      state={{ selectedUnits: selectedUnits }}
-    >
-      <button>Assess</button>
-    </Link>
+    { /* FOR TESTING - Add/Delete Unit Buttons */ }
+    <SimpleButton content="Add Unit" onClick={handleAddUnit} />
     
-    {/*  [TESTING] - if a Unit is actually added in the DB  */}
-    {/*  TO BE DELETED once other button is done  */}
-    <button onClick={handleAddUnit}>
-      Add Unit
-    </button>
-
+    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+      <Link
+        to="/unitassessmentpage"
+        state={{ selectedUnits: selectedUnits }}
+      >
+        <SimpleButton content="Assess" />
+      </Link>
+      <Button
+        variant="contained"
+        sx={
+          {
+            color: 'white', borderRadius: '10px', background: '#24a0ed',
+            marginRight: '10px',
+          }
+        }
+        onClick={handleDeleteUnit}
+      >
+        Delete
+      </Button>
+    </div>
     <Box sx={{ height: '100%', width: '100%' }}>
       <DataGrid
         rows={units}
@@ -137,7 +196,6 @@ const UnitList = () => {
         onRowSelectionModelChange={handleRowSelectionModelChange}
       />
     </Box>
-    
     </>
   );
 

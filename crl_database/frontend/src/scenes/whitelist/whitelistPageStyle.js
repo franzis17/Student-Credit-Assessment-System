@@ -10,7 +10,7 @@ export const useStyles = makeStyles((theme) => ({
       flexDirection: 'column',
       alignItems: 'center',
       justifyContent: 'center',
-      height: '100vh',  // Takes up the full height of the viewport
+      height: '100vh'  // Takes up the full height of the viewport
     },
     compactTable: {
       padding: theme.spacing(0.5),

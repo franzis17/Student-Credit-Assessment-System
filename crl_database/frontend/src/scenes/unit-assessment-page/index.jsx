@@ -5,6 +5,7 @@ import './App.css';
 import './buttonStyles.css';
 
 import InstitutionDataService from "../../services/institution";
+import { useAuthContext } from "../../hooks/useAuthContext";
 
 const UnitAssessmentPage = () => {
   
@@ -17,9 +18,12 @@ const UnitAssessmentPage = () => {
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [selectedItemIndex, setSelectedItemIndex] = useState(-1);
   const [curtinUnits, setCurtinUnits] = useState([]);
+  
+  const { user } = useAuthContext();
 
   // Get Selected Units
   const location = useLocation();
+  // const { selectedUnits } = location.state;
   
   //provide fall back so if state is undefined it can handle blank units or get from local storage
   const { selectedUnits } = location.state || { selectedUnits: JSON.parse(localStorage.getItem('selectedUnits') || '[]') }
@@ -39,13 +43,14 @@ const UnitAssessmentPage = () => {
   }, [searchedUnit]);
   
   const retrieveCurtinUnits = () => {
-    InstitutionDataService.getUnitsOfCurtin()
+    InstitutionDataService.getUnitsOfCurtin(user.token)
       .then((response) => {
-        console.log("Retrieved Curtin Units: " + response.data);
+        console.log("> Retrieved Curtin units:");
+        console.log(response.data);
         setCurtinUnits(response.data);
       })
       .catch((err) => {
-        console.log(`ERROR: when retrieving Curtin's Units.\nMore info: ${err}`);
+        console.log(`ERROR: when retrieving Curtin's Units.\nMore info: ${err.response.data.error}`);
       });
   };
 
@@ -155,7 +160,7 @@ const UnitAssessmentPage = () => {
                     <td>{unit.name}</td>
                     <td>{unit.location}</td>
                     <td>{unit.major}</td>
-                    <td>{unit.institution}</td>
+                    <td>{unit.institution.name}</td>
                     <td>{unit.notes}</td>
                   </tr>
                 ))}

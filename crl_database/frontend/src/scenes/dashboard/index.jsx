@@ -26,6 +26,10 @@ import { useNavigate, useLocation} from 'react-router-dom';
 import Counter from './animate/counter';
 import dashboardBackground from '../../assets/dashboard-backdrop.jpg';
 
+// Hook Imports
+import { useAuthContext } from "../../hooks/useAuthContext";
+
+
 const Dashboard = () => {
   const [totalInstitutions, setTotalInstitutions] = useState([]);
   const [totalUnits, setTotalUnits] = useState([]);
@@ -34,6 +38,9 @@ const Dashboard = () => {
   const [filteredList, setFilteredList] = useState([]);
   const [selectedInstitution, setSelectedInstitution] = useState([]);
   const listRef = useRef(null);
+  
+  const { user } = useAuthContext();
+  
   // To do after render
   useEffect(() => {
     getInstitutionCount();
@@ -56,42 +63,41 @@ const Dashboard = () => {
   }, []);
 
   const getInstitutionCount = () => {
-    InstitutionDataService.getCount()
+    InstitutionDataService.getCount(user.token)
       .then((response) => {
         const instCount = response.data;
         setTotalInstitutions(instCount);
       })
       .catch((err) => {
         console.log(
-          `ERROR when retrieving institutions. \nError: ${err}`
+          `ERROR when retrieving institution's count. \nError: ${err}`
         );
       });
   };
 
   const getUnitCount = () => {
-    UnitDataService.getCount()
+    UnitDataService.getCount(user.token)
     .then((response) => {
       const unitCount = response.data;
-      console.log('Unit Count:', unitCount);
       setTotalUnits(unitCount);
     })
     .catch((err) => {
       console.log(
-        `ERROR when retrieving institutions. \nError: ${err}`
+        `ERROR when retrieving unit's count. \nError: ${err}`
       );
     });
-  }
+  };
 
 
   const getAllInstitutions = () => {
-    InstitutionDataService.getAll()
+    InstitutionDataService.getAll(user.token)
     .then((response) => {
       const institutions = response.data;
       setInstitutionList(institutions);
     })
       .catch((err) => {
         console.log(
-          `ERROR when retrieving institutions. \nError: ${err}`
+          `ERROR when retrieving all institutions. \nError: ${err}`
         );
     });
   }
@@ -146,7 +152,7 @@ const Dashboard = () => {
               type="text"
               placeholder="Search an institution..."
               style={{ width: '500px', padding: "0"}}
-              //onChange={(event) => handleSearchChange(event, institution.id)}
+              // onChange={(event) => handleSearchChange(event, institution.id)}
             />
             <IconButton>
               <Search />
