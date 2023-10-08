@@ -31,15 +31,14 @@ const UnitList = () => {
   const retrieveUnits = () => {
     UnitDataService.getAll(user.token)
       .then((response) => {
-        const unitsFromResponse = response.data;
-        const unitFields = ['unitCode', 'name', 'location', 'major', 'institution', 'notes'];
+        const data = response.data;
         
-        console.log("Retrieved units:\n", unitsFromResponse);
+        console.log("Retrieved units:\n", data);
         
-        // replace the null fields of Units with text "NO DATA"
-        dataUtils.replaceNullFields(unitsFromResponse, unitFields);
+        // replace the null fields of with text "NO DATA"
+        dataUtils.replaceNullFields(data);
         
-        setUnits(unitsFromResponse);
+        setUnits(data);
       })
       .catch((err) => {
         console.log(`ERROR when retrieving units. \nError: ${err}`);
