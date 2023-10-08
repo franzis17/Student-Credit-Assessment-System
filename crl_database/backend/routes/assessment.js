@@ -25,34 +25,6 @@ router.post("/add", async (req, res) => {
   .catch(err => res.status(500).json("Error: " + err));
 });
 
-router.get("/searchStudent", async (req, res) => {
-
-  const query = req.query.q;
-
-  try {
-
-    const assessments = await Assessment.find({ 
-      studentNotes: new RegExp(query, 'i')
-   }) 
-  
-       const results = assessments.map(assessment => {
-         const match = assessment.studentNotes.match(/(\w+)\s(\d+)/)  //Map based on regex for name and ID
-          if (match) {
-           return {
-             name: match[1],
-             id: match[2]
-           }
-          }
-
-          return null
-       }).filter(Boolean) //filter null values
-
-       res.status(200).json(results)
-  } catch (err) {
-    res.status(500).json({error: err.message})
-  }
-
-})
 
 /*
 // TEST: Mock data to be put in db
