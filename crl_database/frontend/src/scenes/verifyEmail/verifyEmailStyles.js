@@ -1,6 +1,12 @@
 import { makeStyles } from "@mui/styles";
 
 export const useStyles = makeStyles((theme) => ({
+  boldText: {
+    fontWeight: "bold"
+  },
+  largerText: {
+    fontSize: "2rem" 
+  },
     root: {
       display: 'flex',
       flexDirection: 'column',
