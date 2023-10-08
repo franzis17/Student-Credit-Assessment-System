@@ -4,6 +4,7 @@ import TextField from '@mui/material/TextField';
 import { List, ListItem, ListItemText, Button } from '@mui/material';
 import Typography from '@mui/material/Typography';
 import {useAuthContext} from "../hooks/useAuthContext.js"
+import useStyles from "./studentSearchStyles.js"
 
 const StudentSearch = ({ open, onClose}) => {
 
@@ -12,6 +13,9 @@ const StudentSearch = ({ open, onClose}) => {
     const [suggestedResults, setSuggestedResults] = useState([])
     const [showExtraInfo, setShowExtraInfo] = useState(false);
     const [selectedCase, setSelectedCase] = useState(null);
+
+    const styles = useStyles()
+
     const {user} = useAuthContext()
 
     useEffect(() => {
@@ -80,32 +84,16 @@ const StudentSearch = ({ open, onClose}) => {
           onClose={onClose}
           aria-labelledby="student-search-modal"
           aria-describedby="search-for-students"
-          maxWidth="xs"
+          maxWidth="sm"
+          maxHeight="xs"
           fullWidth
       >
-          <div style={{
-              position: 'absolute',
-              top: '50%',
-              left: '50%',
-              transform: 'translate(-50%, -50%)',
-              width: '50%',
-              backgroundColor: 'white',
-              padding: '20px',
-              boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
-              overflowY: 'auto',
-              maxHeight: '90%',
-              borderRadius: '8px',
-              height: '500px',
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center'
-          }}>
-              <Button 
-                  style={{ position: 'absolute', top: '10px', right: '10px', backgroundColor: '#3169c3', color: 'white'}}
-                  onClick={() => setShowExtraInfo(true)}
-              >
-                  Extra Info
-              </Button>
+          
+              <div className={styles.modalContainer}>
+              <div className={styles.closeButton} onClick={() => setShowExtraInfo(true)}>
+              Extra Info
+              </div>
+                
 
               <TextField 
                   value={searchInput} 
@@ -113,7 +101,7 @@ const StudentSearch = ({ open, onClose}) => {
                   placeholder="Search by ID or Name" 
               />
 
-              <div style={{ border: '1px solid #aaa', maxHeight: '150px', overflowY: 'auto' }}>
+              <div className={styles.resultList}>
                   {suggestedResults.map(student => (
                       <ListItem 
                           key={student._id} 
@@ -124,7 +112,9 @@ const StudentSearch = ({ open, onClose}) => {
                               setSuggestedResults([]); 
                           }}
                       >
+                           <Typography variant="body1" className={styles.noteText}>
                           {student.studentNotes}
+                          </Typography>
                       </ListItem>
                   ))}
               </div>
@@ -132,7 +122,7 @@ const StudentSearch = ({ open, onClose}) => {
               {/* Displaying selected student's notes */}
               {selectedCase && (
               <div style={{ marginTop: '20px' }}>
-                <Typography variant="h4">
+                <Typography variant="h4" className={styles.noteText}>
                   {selectedCase.studentNotes}
                 </Typography>
               </div>
@@ -143,10 +133,10 @@ const StudentSearch = ({ open, onClose}) => {
                       if (student && student.studentNotes) {
                           const { id, note } = extractNote(student.studentNotes);
                           return (
-                              <ListItem key={student._id}>
+                              <ListItem key={student._id} className={styles.listItem}>
                                   <div>
-                                      {id && <Typography variant="h6">ID: {id}</Typography>}
-                                      <Typography variant="body1">Note: {note}</Typography>
+                                      {id && <Typography variant="body1" className={styles.idText}>ID: {id}</Typography>}
+                                      <Typography variant="body1" className={styles.noteText}>Note: {note}</Typography>
                                   </div>
                               </ListItem>
                           );
@@ -170,7 +160,7 @@ const StudentSearch = ({ open, onClose}) => {
               transform: 'translate(-50%, -50%)',
               width: '40%',
               height: 'auto',
-              backgroundColor: 'rgba(0, 0, 0, 0.8)',
+              backgroundColor: 'white',
               padding: '20px',
               borderRadius: '8px',
               display: 'flex',
@@ -179,7 +169,7 @@ const StudentSearch = ({ open, onClose}) => {
           }}>
               {selectedCase && (
                   <>
-                      <Typography variant="h2" style={{ color: 'white', marginBottom: '15px' }}>
+                      <Typography variant="h2" style={{ color: 'black', marginBottom: '15px' }}>
                           Assessed Units:
                           <ul>
                               {selectedCase.assessedUnits.map((unit, index) => (
@@ -187,7 +177,7 @@ const StudentSearch = ({ open, onClose}) => {
                               ))}
                           </ul>
                       </Typography>
-                      <Typography variant="h2" style={{ color: 'white', marginBottom: '15px' }}>
+                      <Typography variant="h2" style={{ color: 'black', marginBottom: '15px' }}>
                           Assessor: {selectedCase.assessor}
                       </Typography>
           
@@ -196,7 +186,7 @@ const StudentSearch = ({ open, onClose}) => {
           </div>
       </Modal>
   </>
-);
+)
 }
     
 export default StudentSearch
