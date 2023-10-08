@@ -3,6 +3,7 @@ import { Alert, CircularProgress, Container, Typography, Button, Box, Paper, Car
 import { useVerifyEmail, useResendVerification } from "../../hooks/useVerifyEmail.js";
 import { useEffect } from 'react';
 import { useAuthContext } from '../../hooks/useAuthContext.js';
+import { useLogout } from '../../hooks/useLogout.js';
 import useStyles from './verifyEmailStyles.js';
 
 
@@ -12,6 +13,7 @@ const VerifyEmailPage = () => {
     const navigate = useNavigate()
     const classes = useStyles()
     const { resendVerification, timeLeft } = useResendVerification(user?.email)
+    const {logout} = useLogout()
 
     useEffect(() => { 
 
@@ -21,6 +23,13 @@ const VerifyEmailPage = () => {
             }, 3000);
         }
     }, [isVerified, navigate])
+
+    const handleLogout = () => {
+        // Perform logout action here, e.g., clear authentication tokens, navigate to login page, etc.
+        logout()
+        sessionStorage.removeItem('user');
+        navigate('/login')
+    }
 
     return (
             <Container component="main" maxWidth="xs" className={classes.root}>
@@ -58,9 +67,9 @@ const VerifyEmailPage = () => {
                                         component="p"
                                         className={`${classes.boldText} ${classes.largerText}`}
                                          > Please wait {timeLeft} seconds to resend.</Typography>}
-                                        <Button variant="contained" color="primary" onClick={() => navigate('/login')} className={classes.loginButton}>
-                                            Back to login
-                                        </Button>
+                                         <Button variant="contained" color="primary" onClick={handleLogout}>
+                                             Logout
+                                         </Button>
                                     </Box>
                                 )}
                             </Box>

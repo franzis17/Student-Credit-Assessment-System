@@ -3,7 +3,7 @@ import { createTheme } from "@mui/material/styles";
 import { useMemo, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { themeSettings } from "./theme"
-import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom"
+import { BrowserRouter, Navigate, Route, Routes, useLocation } from "react-router-dom"
 import { useAuthContext } from './hooks/useAuthContext'
 import { useNavigate } from 'react-router-dom';
 import Login from "./scenes/login";
@@ -22,6 +22,11 @@ function App() {
   const mode = useSelector((state) => state.global.mode);
   const theme = useMemo(() => createTheme(themeSettings(mode)), [mode]);
   const {user} = useAuthContext()
+
+  //Email verification state handlers
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+  const justVerified = queryParams.get('verified') === 'true';
 
   //Keep window state handler
   const handleBeforeUnload = () => {
@@ -46,16 +51,22 @@ function App() {
           <CssBaseline />
           
               <Routes>
-                <Route path="/" element={user ? <Dashboard /> : <Navigate to="/login"/>}/>
-                <Route path="/login" element={!user ? <Login /> : <Navigate to="/"/>}/>
+                <Route path="/" element={user ? (user.isVerified === true ? <Dashboard /> : <Navigate to="/verifyemail"/>) : <Navigate to="/login"/>}/>
+
+                <Route path="/login" element={
+                    user ?
+                    (user.isVerified === true ? <Navigate to="/"/> : <Login />)
+                    : <Login />
+                }/>
                 <Route path="/signup" element={!user ? <Signup /> : <Navigate to="/"/>}/>
-                <Route path="/whitelist" element={user && user.role === 'Admin' ? <Whitelist /> : <Navigate to="/login"/>}/>
+                <Route path="/whitelist" element={user && user.role === 'Admin' && user.isVerified === true ? <Whitelist /> : <Navigate to="/login"/>}/>
+
                 <Route path="/verifyemail" element={<VerifyEmail/>}/>
-                <Route path="/dashboard" element={user ? <Dashboard /> : <Navigate to="/login"/>}/>
-                <Route path="/institutions" element={user ? <InstitutionList/> : <Navigate to="/login"/>}/>
-                <Route path="/units" element={user ? <UnitList /> : <Navigate to="/login"/>}/>
-                <Route path="/unitassessmentpage" element={user ? <UnitAssessmentPage /> : <Navigate to="/login"/>}/>
-                <Route path="/applications" element={user ? <ApplicationList /> : <Navigate to="/login"/>}/>
+                <Route path="/dashboard" element={user && user.isVerified === true ? <Dashboard /> : <Navigate to="/login"/>}/>
+                <Route path="/institutions" element={user && user.isVerified === true ? <InstitutionList/> : <Navigate to="/login"/>}/>
+                <Route path="/units" element={user && user.isVerified === true ? <UnitList /> : <Navigate to="/login"/>}/>
+                <Route path="/unitassessmentpage" element={user && user.isVerified === true ? <UnitAssessmentPage /> : <Navigate to="/login"/>}/>
+                <Route path="/applications" element={user && user.isVerified === true ? <ApplicationList /> : <Navigate to="/login"/>}/>
               </Routes> 
               
         </ThemeProvider>
