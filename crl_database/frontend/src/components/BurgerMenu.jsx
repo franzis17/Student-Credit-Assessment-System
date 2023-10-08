@@ -26,10 +26,12 @@ import { Link } from 'react-router-dom';
 import LockIcon from '@mui/icons-material/Lock';
 import { useAuthContext } from '../hooks/useAuthContext.js';
 import StudentSearch from './studentSearch.jsx';
+import Whitelist from './whitelistMenu.jsx';
 
 const BurgerMenu = () => {
   const [open, setOpen] = useState(false);
-  const [searchModalOpen, setSearchModalOpen] = useState(false);
+  const [searchModalOpen, setSearchModalOpen] = useState(false)
+  const [whitelistModalOpen, setWhitelistModalOpen] = useState(false)
   const navigate = useNavigate();
   const { user } = useAuthContext();
   const [openLists, setOpenLists] = useState(false);
@@ -53,6 +55,10 @@ const BurgerMenu = () => {
   const toggleSearchModal = () => {
     setSearchModalOpen(!searchModalOpen);
   };
+
+  const toggleWhitelistMenu = () => {
+    setWhitelistModalOpen(!whitelistModalOpen)
+  }
 
 
   function handleListItemClick(index) {
@@ -98,9 +104,7 @@ const BurgerMenu = () => {
                   </ListItemButton>
                 ) :  index == 3 && user && user.role === 'Admin' ? (
                   <ListItemButton
-                  component={Link}
-                  to="/whitelist"   // <- Direct to the Whitelist route
-                  onClick={toggleDrawer}
+                  onClick={toggleWhitelistMenu}
                  >
                   <ListItemIcon>
                     <PersonAddIcon/>
@@ -178,6 +182,7 @@ const BurgerMenu = () => {
         </div>
       </Drawer>
       <StudentSearch open={searchModalOpen} onClose={toggleSearchModal} />
+      <Whitelist open={whitelistModalOpen} onClose={toggleWhitelistMenu} />
     </>
   );
 };

@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { TextField, Select, MenuItem, Box, Table, TableBody, TableCell, TableHead, TableRow, Paper, TableContainer } from '@mui/material';
+import { useState, useEffect } from 'react';
+import { TextField, Select, MenuItem, Box, Table, TableBody, TableCell, TableHead, TableRow, Paper, TableContainer, CircularProgress } from '@mui/material';
 import { Dialog,
     DialogTitle,
     DialogContent,
@@ -8,18 +8,17 @@ import { Dialog,
     } from '@mui/material';
 import {Container, Grid } from '@mui/material';
 import { Button } from "@mui/material";
-import { useFetchWhitelistedUsers } from '../../hooks/useFetchWhitelistedUsers.js';
-import { useEffect } from 'react';
-import Navbar from '../../components/Navbar.jsx';
-import Typography from '@mui/material/Typography';
-import {useAuthContext} from '../../hooks/useAuthContext.js'
+import { useFetchWhitelistedUsers } from '../hooks/useFetchWhitelistedUsers.js';
+import {useAuthContext} from '../hooks/useAuthContext.js'
 import useStyles from './whitelistPageStyle.js'
 
 
-const Whitelist = () => {
+const Whitelist = ({open, onClose}) => {
 
     const [curtinID, setCurtinID] = useState('')
     const [userRole, setUserRole] = useState('')
+    const [currentPage, setCurrentPage] = useState(1)
+    const usersPerPage = 5
     const [openDialog, setOpenDialog] = useState(false);
     const [selectedId, setSelectedId] = useState(null);
     const [isLoading, setIsLoading] = useState(false)
@@ -28,6 +27,11 @@ const Whitelist = () => {
     const [inputError, setInputError] = useState('')
     const [helperText, setHelperText] = useState('')
     const {user} = useAuthContext()
+    
+
+    const indexOfLastUser = currentPage * usersPerPage;
+    const indexOfFirstUser = indexOfLastUser - usersPerPage;
+    const currentUsers = data.slice(indexOfFirstUser, indexOfLastUser);
 
     const classes = useStyles()
 
@@ -108,64 +112,72 @@ const Whitelist = () => {
         setSelectedId(null);
     }
 
+    
+
 
     return (
-        <>
-        
-        <div>
-            <Navbar />
-        </div>
-        <Container maxWidth="md" className={classes.centeredContent}>
-        <Box boxShadow={3} p={3} width="100%">
-                <Grid container spacing={2} direction="column" alignItems="center">
-                    <Grid item xs={12}>
-                        <Typography variant="h2" align="center">Whitelist a User Account</Typography>
-                    </Grid>
-                    <Grid item xs={12}>
-                        <TextField
-                            label="CurtinID"
-                            value={curtinID}
-                            size="small"
-                            onChange={handleInputChange} //Handle curtinID
-                            placeholder="Enter the user's Curtin ID..."
-                            fullWidth
-                            margin="normal"
-                            helperText={helperText}
-                            error={inputError}    
-                        />
-                    </Grid>
-                    <Grid item xs={12}>
-                    <Select
-                        value={userRole}
-                        onChange={(e) => setUserRole(e.target.value)}
-                        fullWidth
-                        displayEmpty
-                        margin="normal">
-                       <MenuItem value="">
-                           <em>Select an option</em>
-                       </MenuItem>
-                       <MenuItem value="Staff">Staff</MenuItem>
-                       <MenuItem value="Moderator">Moderator</MenuItem>
-                   </Select>
-                   </Grid>
-                    <Grid item xs={12}>
-                        <Button 
-                            style={{backgroundColor: '#3169c3', color: 'white' }}
-                            variant="contained"
-                            disabled={isLoading}
-                            onClick={handleWhitelist}>
-                            Add user to whitelist
-                        </Button>
-                    </Grid>
-                    <Grid item xs={12}>
-                        {loading ? (
-                            <p>Loading whitelisted users...</p>
-                        ) : error ? (
-                            <p>Error fetching data: {error.message}</p>
-                        ) : (
-                            <TableContainer component={Paper}>
-                                <Table className={classes.compactTable} size="small" aria-label="whitelist table">
-                                    <TableHead>
+    <Dialog
+    open={open}
+    onClose={onClose}
+    maxWidth="xs"
+    fullWidth
+    aria-labelledby="whitelist modal"
+    aria-describedby="whitelist-user"
+>
+    <DialogTitle>Whitelist a User Account</DialogTitle>
+
+    <DialogContent dividers>
+        <Grid container spacing={2} direction="column" alignItems="center">
+            
+            <Grid item xs={12}>
+                <TextField
+                    label="CurtinID"
+                    value={curtinID}
+                    size="small"
+                    onChange={handleInputChange} // Handle curtinID
+                    placeholder="Enter the user's Curtin ID..."
+                    fullWidth
+                    margin="normal"
+                    helperText={helperText}
+                    error={inputError}    
+                />
+            </Grid>
+
+            <Grid item xs={12}>
+                <Select
+                    value={userRole}
+                    onChange={(e) => setUserRole(e.target.value)}
+                    fullWidth
+                    displayEmpty
+                    margin="normal">
+                   <MenuItem value="">
+                       <em>Select an option</em>
+                   </MenuItem>
+                   <MenuItem value="Staff">Staff</MenuItem>
+                   <MenuItem value="Moderator">Moderator</MenuItem>
+               </Select>
+            </Grid>
+
+            <Grid item xs={12}>
+                <Button 
+                    style={{backgroundColor: '#3169c3', color: 'white' }}
+                    variant="contained"
+                    disabled={isLoading}
+                    onClick={handleWhitelist}>
+                    Add user to whitelist
+                </Button>
+            </Grid>
+
+            <Grid item xs={12}>
+                {loading ? (
+                    <CircularProgress />
+                ) : error ? (
+                    // Using Snackbar/Alert might be more visually appealing, but a simple paragraph works too
+                    <p>Error fetching data: {error.message}</p>
+                ) : (
+                    <TableContainer component={Paper}>
+                        <Table className={classes.compactTable} size="small" aria-label="whitelist table">
+                        <TableHead>
                                         <TableRow>
                                             <TableCell>Curtin ID</TableCell>
                                             <TableCell align="right">Role</TableCell>
@@ -173,7 +185,7 @@ const Whitelist = () => {
                                         </TableRow>
                                     </TableHead>
                                     <TableBody>
-                                        {data.map((row) => (
+                                        {currentUsers.map((row) => (
                                             <TableRow key={row._id}>
                                                 <TableCell component="th" scope="row">
                                                     {row.curtinID}
@@ -188,17 +200,33 @@ const Whitelist = () => {
                                             </TableRow>
                                         ))}
                                     </TableBody>
-                                </Table>
-                            </TableContainer>
-                        )}
-                    </Grid>
-                </Grid>
-            </Box>
-        </Container>
 
-        <Dialog
-            open={openDialog}
-            onClose={() => setOpenDialog(false)}>
+                        </Table>
+                        <Button color="primary" style={{justifyContent: 'center', width: '120px', backgroundColor: '#3169c3', color: 'white' }}
+                            onClick={() => setCurrentPage(currentPage > 1 ? currentPage - 1 : 1)}
+                             >
+                             Previous
+                            </Button>
+
+                        <Button color="primary" style={{justifyContent: 'center', width: '120px', backgroundColor: '#3169c3', color: 'white' }}
+                            onClick={() => setCurrentPage(currentPage < Math.ceil(data.length / usersPerPage) ? currentPage + 1 : currentPage)}
+                            >
+                            Next
+                    </Button>
+                    </TableContainer>
+                )}
+            </Grid>
+        </Grid>
+    </DialogContent>
+
+    <DialogActions>
+        <Button onClick={onClose} color="primary">Close</Button>
+    </DialogActions>
+    <Dialog
+        open={openDialog}
+        onClose={() => setOpenDialog(false)}
+        maxWidth="xs" 
+        fullWidth>
         <DialogTitle>Confirm Removal</DialogTitle>
         <DialogContent>
         <DialogContentText>
@@ -213,15 +241,10 @@ const Whitelist = () => {
             Yes
         </Button>
         </DialogActions>
-        </Dialog>
+    </Dialog>
+</Dialog>    
 
-    </>
     )
-}
-        
-        
+ }
 
-
-export default Whitelist;
-
-
+export default Whitelist
