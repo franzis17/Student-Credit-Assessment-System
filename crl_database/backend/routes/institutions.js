@@ -39,6 +39,7 @@ router.route("/units").get((req, res) => {
   console.log("querying an institution's units, institution id = " + institution);
   
   Unit.find({ institution: institution })
+    .populate("institution")
     .then((units) => {
       res.json(units)
     })
