@@ -1,32 +1,45 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import UnitDataService from "../../services/unit";
-import Navbar from "../../components/Navbar";
+import { Link, useParams } from 'react-router-dom';
 import { useAuthContext } from "../../hooks/useAuthContext";
+
+import UnitDataService from "../../services/unit";
+import InstitutionDataService from "../../services/institution";
 import DataUtils from "../../utils/dataUtils";
 
 import Box from '@mui/material/Box';
 import { DataGrid } from '@mui/x-data-grid';
 import Button from '@mui/material/Button';
+import Navbar from "../../components/Navbar";
 import SimpleButton from "../../components/buttons/SimpleButton";
-
 
 const UnitList = () => {
   
-  // State variables
   const [units, setUnits] = useState([]);
   const [selectedUnits, setSelectedUnits] = useState([]);
   
   const { user } = useAuthContext();
+  const { institutionId } = useParams();
   
   const dataUtils = new DataUtils();
   
-  // To do after render
+  console.log("institutionId =", institutionId);
+
   useEffect(() => {
     console.log("In Unit List, user:\n", user);
-    retrieveUnits();
-  }, []);
-  
+    
+    // List all units in the DB, if an institutionId has not been specified
+    if (institutionId === undefined || institutionId === null) {
+      console.log("institutionId IS undefined");
+      retrieveUnits();
+    }
+    // List all units of a specific institution, if its id has been specified
+    else {
+      console.log("institutionId NOT null =", institutionId);
+      // retrieve units for this specific institution
+      retrieveUnitsOfInstitution(institutionId);
+    }
+  }, [institutionId]);
+
   // Use Axios to GET all Units from the backend server
   const retrieveUnits = () => {
     UnitDataService.getAll(user.token)
@@ -40,7 +53,23 @@ const UnitList = () => {
         setUnits(data);
       })
       .catch((err) => {
-        console.log(`ERROR when retrieving units. \nError: ${err}`);
+        console.log("ERROR when retrieving units.\nError:", err);
+      });
+  };
+  
+  const retrieveUnitsOfInstitution = (id) => {
+    InstitutionDataService.getUnitsOfInstitution(id, user.token)
+      .then((response) => {
+        const data = response.data;
+        console.log("Retrieved units:\n", data);
+        
+        // replace the null fields of with text "NO DATA"
+        dataUtils.replaceNullFields(data);
+        
+        setUnits(data);
+      })
+      .catch((err) => {
+        console.log("ERROR when retrieving units of a specific institution.\nError:", err);
       });
   };
 
@@ -152,7 +181,6 @@ const UnitList = () => {
   };
   
   
-
   return (
     <>
     <div>

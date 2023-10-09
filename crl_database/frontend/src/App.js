@@ -54,6 +54,7 @@ function App() {
                 <Route path="/dashboard" element={user ? <Dashboard /> : <Navigate to="/login"/>}/>
                 <Route path="/institutions" element={user ? <InstitutionList/> : <Navigate to="/login"/>}/>
                 <Route path="/units" element={user ? <UnitList /> : <Navigate to="/login"/>}/>
+                <Route path="/units/:institutionId" element={user ? <UnitList /> : <Navigate to="/login"/>}/>
                 <Route path="/unitassessmentpage" element={user ? <UnitAssessmentPage /> : <Navigate to="/login"/>}/>
                 <Route path="/applications" element={user ? <ApplicationList /> : <Navigate to="/login"/>}/>
               </Routes> 

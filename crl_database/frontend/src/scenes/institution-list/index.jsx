@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import InstitutionDataService from "../../services/institution";
 import Navbar from "../../components/Navbar";
 import { useAuthContext } from "../../hooks/useAuthContext";
@@ -9,9 +10,10 @@ import { DataGrid } from '@mui/x-data-grid';
 
 const InstitutionList = () => {
   
-  // State variables
   const [institutions, setInstitutions] = useState([]);
+  
   const { user } = useAuthContext();
+  const navigate = useNavigate();
   
   const dataUtils = new DataUtils();
   
@@ -25,7 +27,7 @@ const InstitutionList = () => {
     InstitutionDataService.getAll(user.token)
       .then((response) => {
         const data = response.data;
-        console.log("Retrieved institutions:", data);
+        console.log("Retrieved institutions:\n", data);
         
         // replace the null fields of with text "NO DATA"
         dataUtils.replaceNullFields(data);
@@ -66,6 +68,11 @@ const InstitutionList = () => {
       });
   };
   
+  const handleSelection = (institution) => {
+    console.log("Selected:", institution[0]);
+    navigate(`/units/${institution[0]}`);
+  };
+  
   
   const columns = [
     { field: 'name', headerName: 'Name', width: 250 },
@@ -100,8 +107,10 @@ const InstitutionList = () => {
           },
         }}
         pageSizeOptions={[10, 25, 50]}
-        checkboxSelection
+        //checkboxSelection
         //disableRowSelectionOnClick
+        //selectionModel={selectedInstitution}
+        onRowSelectionModelChange={handleSelection}
       />
     </Box>
     </>
