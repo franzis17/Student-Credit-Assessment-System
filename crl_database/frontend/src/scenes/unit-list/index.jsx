@@ -4,9 +4,17 @@ import InstitutionDataService from '../../services/institution';
 import UnitDataService from "../../services/unit";
 import Navbar from "../../components/Navbar";
 import AddUnitButton from '../../components/AddUnitButton';
-import { Button } from '@mui/material';
-import Box from '@mui/material/Box';
 import { DataGrid } from '@mui/x-data-grid';
+
+import {
+  Box,
+  Button,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogContentText,
+  DialogActions,
+} from '@mui/material';
 
 
 const UnitList = () => {
@@ -21,11 +29,34 @@ const UnitList = () => {
   const [selectedUnits, setSelectedUnits] = useState([]);
   const [unitData, setUnitData] = useState(null);
 
+  const [selectedUnitIDs, setSelectedUnitIDs] = useState([]);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+
   // To do after render
   useEffect(() => {
     fetchInstitutions();
     retrieveUnits();
-  }, [institutionId]);
+  }, [institutionId])
+
+  const handleRemoveClick = () => {
+    setIsDeleteModalOpen(true);
+  };
+
+  const handleRemoveConfirm = async () => {
+    // Perform the removal of selected units here
+    try {
+      await UnitDataService.removeMultiple(selectedUnitIDs);
+      setIsDeleteModalOpen(false);
+      setSelectedUnitIDs([]);
+      retrieveUnits();
+    } catch (error) {
+      console.error('Error removing units:', error);
+    }
+  };;
+
+  const handleRemoveCancel = () => {
+    setIsDeleteModalOpen(false);
+  };
 
   // Use Axios to GET all Units from the backend server
   const retrieveUnits = () => {
@@ -105,7 +136,7 @@ const UnitList = () => {
     const selectedUnitObj = newSelection.map((selectedId) => 
       units.find((unit) => unit._id === selectedId)
     );
-
+    setSelectedUnitIDs(newSelection);
     setSelectedUnits(selectedUnitObj);
     console.log("selectedUnitObj = ", selectedUnitObj);
   };
@@ -115,6 +146,25 @@ const UnitList = () => {
       <div>
         <Navbar />
         <AddUnitButton onUnitSave={handleUnitSave}/>
+       
+        {selectedUnitIDs.length > 0 && (
+          <Button
+            sx={{
+              position: 'absolute',
+              top: '15px', // Adjust the top position as needed
+              right: '290px', // Adjust the left position as needed
+              color: 'white',
+              borderRadius: '10px',
+              background: 'error',
+              zIndex: 1200,
+            }}
+            variant="contained"
+            color="error"
+            onClick={handleRemoveClick}
+          >
+            Remove ({selectedUnitIDs.length})
+          </Button>
+        )}
       </div>
 
       <Link 
@@ -146,6 +196,28 @@ const UnitList = () => {
           onRowSelectionModelChange={handleRowSelectionModelChange}
         />
       </Box>
+
+      <Dialog
+        open={isDeleteModalOpen}
+        onClose={handleRemoveCancel}
+        aria-labelledby="remove-dialog-title"
+        aria-describedby="remove-dialog-description"
+      >
+        <DialogTitle id="remove-dialog-title">Confirm Removal</DialogTitle>
+        <DialogContent>
+          <DialogContentText id="remove-dialog-description">
+            Are you sure you want to remove {selectedUnitIDs.length} selected unit(s)?
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleRemoveCancel} sx={{color:"black"}}>
+            Cancel
+          </Button>
+          <Button onClick={handleRemoveConfirm} color="error">
+            Remove
+          </Button>
+        </DialogActions>
+      </Dialog>
     </>
   );
 };

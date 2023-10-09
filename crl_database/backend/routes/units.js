@@ -122,4 +122,38 @@ router.route("/delete/:id").delete((req, res) => {
     .catch((err) => res.status(400).json("Error:" + err));
 });
 
+
+router.route("/institution-unit-delete/:institutionId").delete(async (req, res) => {
+  const institutionId = req.params.institutionId;
+
+  try {
+    const deletedUnits = await Unit.deleteMany({ institution: institutionId });
+    if (deletedUnits.deletedCount > 0) {
+      res.json(`Deleted ${deletedUnits.deletedCount} units associated with institution ID ${institutionId}`);
+    } else {
+      res.json(`No units associated with institution ID ${institutionId}`);
+    }
+  } catch (err) {
+    console.error(`ERROR: ${err}`);
+    res.status(500).json(`ERROR: Failed to delete units. More details: ${err}`);
+  }
+});
+
+router.route("/remove-multiple").delete(async (req, res) => {
+  const unitIds = req.body.unitIds;
+
+  try {
+    const result = await Unit.deleteMany({ _id: { $in: unitIds } });
+
+    if (result.deletedCount > 0) {
+      res.json(`Successfully deleted ${result.deletedCount} units.`);
+    } else {
+      res.json("No units were deleted.");
+    }
+  } catch (error) {
+    console.error("Error removing units:", error);
+    res.status(500).json("Error removing units: " + error.message);
+  }
+});
+
 export default router;

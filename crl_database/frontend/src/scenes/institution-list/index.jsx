@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import InstitutionDataService from "../../services/institution";
+import UnitDataService from "../../services/unit"
 import Navbar from "../../components/Navbar";
 import DeleteIcon from '@mui/icons-material/Delete';
 import Box from '@mui/material/Box';
@@ -35,8 +36,18 @@ const InstitutionList = () => {
     setIsDeleteModalOpen(false);
   };
 
-  
-  // Use data service to get all institutions from the backend server
+  const deleteButtonStyle = {
+    position: 'relative',
+    color: '#DB6A6C',
+    width: "100%"
+  };
+
+  const containerStyle = {
+    display: 'flex', 
+    flexDirection: 'column',
+    height: '100%'
+  }
+
   const retrieveInstitutions = () => {
     InstitutionDataService.getAll()
       .then((response) => {
@@ -75,24 +86,32 @@ const InstitutionList = () => {
       });
   };
   
-  const handleDeleteClick = () => {
-    InstitutionDataService.removeInstitution(institutionToDelete)
-      .then((response) => {
-        console.log(`Successfully removed institution from the database`);
-        retrieveInstitutions();
-      })
-      .catch((error) => {
-        console.error("An error occurred while removing the institution:", error);
-        if (error.response) {
-          console.log("Response data:", error.response.data);
-          console.log("Response status:", error.response.status);
-        } else if (error.request) {
-          console.log("No response received. Request:", error.request);
-        } else {
-          console.log("Error message:", error.message);
-        }
-      });
+  const handleDeleteClick = async () => {
+    try {
+      await InstitutionDataService.removeInstitution(institutionToDelete);
+      console.log(`Successfully removed institution from the database`);
+      retrieveInstitutions();
+  
+      // Remove units of the institution
+      const response = await UnitDataService.removeUnitsOfInstitution(institutionToDelete);
+      if (response.data.startsWith('Deleted')) {
+        console.log(response.data);
+      } else {
+        console.log('No units to delete or invalid data received.');
+      }
+    } catch (error) {
+      console.error("An error occurred while removing the institution:", error);
+      if (error.response) {
+        console.log("Response data:", error.response.data);
+        console.log("Response status:", error.response.status);
+      } else if (error.request) {
+        console.log("No response received. Request:", error.request);
+      } else {
+        console.log("Error message:", error.message);
+      }
+    }
   };
+  
   
   
   
@@ -106,16 +125,16 @@ const InstitutionList = () => {
     {
       field: 'delete',
       headerName: 'Delete',
-      width: 100,
+      width: "100%",
       renderCell: (params) => (
-        <IconButton
-          style={{ color: '#DB6A6C' }}
-          onClick={() => openConfirmationModal(params.row._id)}
-        >
-          <DeleteIcon />
-        </IconButton>
-
-        
+        <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+          <IconButton
+            style={deleteButtonStyle}
+            onClick={() => openConfirmationModal(params.row._id)}
+          >
+            <DeleteIcon />
+          </IconButton>
+        </div>
       ),
     },
   ];
@@ -123,54 +142,62 @@ const InstitutionList = () => {
   
   
   return (
-    <>
     <div>
       <Navbar />
-      <AddInstitutionButton onInstitutionSave={handleInstitutionSave}/>
+      <AddInstitutionButton onInstitutionSave={handleInstitutionSave} />
+
+      {/* Wrap the DataGrid and Delete confirmation dialog in a container */}
+      <div style={containerStyle}>
+        <Box sx={{ flex: 1 }}>
+          <DataGrid
+            rows={institutions}
+            columns={columns}
+            columnResizable={true}
+            getRowId={(row) => row._id}
+            initialState={{
+              pagination: {
+                paginationModel: {
+                  pageSize: 25,
+                },
+              },
+            }}
+            pageSizeOptions={[10, 25, 50]}
+            checkboxSelection
+            //disableRowSelectionOnClick
+          />
+        </Box>
+
+        {/* Delete confirmation dialog */}
+        <Dialog
+          open={isDeleteModalOpen}
+          onClose={closeConfirmationModal}
+          aria-labelledby="delete-dialog-title"
+          aria-describedby="delete-dialog-description"
+        >
+          <DialogTitle id="delete-dialog-title">Confirm Deletion</DialogTitle>
+          <DialogContent>
+            <DialogContentText id="delete-dialog-description">
+              Are you sure you want to delete this institution and all its units?
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={closeConfirmationModal} sx={{ color: '#DB6A6C' }}>
+              No
+            </Button>
+            <Button
+              onClick={() => {
+                handleDeleteClick();
+                closeConfirmationModal();
+              }}
+              sx={{ color: '#52a832' }}
+            >
+              Yes
+            </Button>
+          </DialogActions>
+        </Dialog>
+      </div>
     </div>
-    <Box sx={{ height: '100%', width: '100%' }}>
-      <DataGrid
-        rows={institutions}
-        columns={columns}
-        columnResizable={true}
-        getRowId={(row) => row._id}
-        initialState={{
-          pagination: {
-            paginationModel: {
-              pageSize: 25,
-            },
-          },
-        }}
-        pageSizeOptions={[10, 25, 50]}
-        checkboxSelection
-        //disableRowSelectionOnClick
-      />
-    </Box>
-
-    <Dialog
-      open={isDeleteModalOpen}
-      onClose={closeConfirmationModal}
-      aria-labelledby="delete-dialog-title"
-      aria-describedby="delete-dialog-description"
->
-        <DialogTitle id="delete-dialog-title">Confirm Deletion</DialogTitle>
-        <DialogContent>
-          <DialogContentText id="delete-dialog-description">
-            Are you sure you want to delete this institution?
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={closeConfirmationModal} sx={{color:"#DB6A6C"}}>
-            No
-          </Button>
-          <Button onClick={() => { handleDeleteClick(); closeConfirmationModal(); }} sx={{color:"#52a832"}}>
-            Yes
-          </Button>
-        </DialogActions>
-      </Dialog>
-    </>
   );
-
-}
+};
 
 export default InstitutionList;

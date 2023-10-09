@@ -30,7 +30,16 @@ class UnitDataService {
   removeUnit(unitId) {
     return http.delete(`${UnitDataService.defaultRoute}/delete/${unitId}`);
   }
-  
+
+  removeMultiple(unitIds) {
+    return http.post(`${UnitDataService.defaultRoute}/remove-multiple`, { unitIds });
+  }
+
+  removeMultiple(unitIds) {
+    return http.delete(`${UnitDataService.defaultRoute}/remove-multiple`, {data: { unitIds },
+    });
+  }
+
 }
 
 const unitDataService = new UnitDataService();
