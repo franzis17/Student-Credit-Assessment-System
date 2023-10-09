@@ -26,12 +26,12 @@ router.route("/").get(async (req, res) => {
 //get units specific to an institution
 router.route("/sortedunits").get(async (req, res) => {
   const institutionId = req.query.institutionId;
-  console.log('Received institutionId:', institutionId); // Log the received institutionId for debugging
+  console.log('Received institutionId:', institutionId);
 
   try {
     const units = await Unit.find({ institution: institutionId }).populate("institution");
 
-    console.log('Retrieved units:', units); // Log the retrieved units for debugging
+    console.log('Retrieved units:', units);
 
     res.json(units);
   } catch (err) {

@@ -23,7 +23,7 @@ const InstitutionList = () => {
 
   // To do after render
   useEffect(() => {
-    retrieveInstitutions();  // After rendering, retrieve institutions
+    retrieveInstitutions(); 
   }, []);
   
   //modal stuff
@@ -92,7 +92,7 @@ const InstitutionList = () => {
       console.log(`Successfully removed institution from the database`);
       retrieveInstitutions();
   
-      // Remove units of the institution
+      // Remove units of an institution
       const response = await UnitDataService.removeUnitsOfInstitution(institutionToDelete);
       if (response.data.startsWith('Deleted')) {
         console.log(response.data);
@@ -146,7 +146,6 @@ const InstitutionList = () => {
       <Navbar />
       <AddInstitutionButton onInstitutionSave={handleInstitutionSave} />
 
-      {/* Wrap the DataGrid and Delete confirmation dialog in a container */}
       <div style={containerStyle}>
         <Box sx={{ flex: 1 }}>
           <DataGrid
@@ -163,11 +162,8 @@ const InstitutionList = () => {
             }}
             pageSizeOptions={[10, 25, 50]}
             checkboxSelection
-            //disableRowSelectionOnClick
           />
         </Box>
-
-        {/* Delete confirmation dialog */}
         <Dialog
           open={isDeleteModalOpen}
           onClose={closeConfirmationModal}

@@ -43,7 +43,6 @@ const UnitList = () => {
   };
 
   const handleRemoveConfirm = async () => {
-    // Perform the removal of selected units here
     try {
       await UnitDataService.removeMultiple(selectedUnitIDs);
       setIsDeleteModalOpen(false);
@@ -60,7 +59,6 @@ const UnitList = () => {
 
   // Use Axios to GET all Units from the backend server
   const retrieveUnits = () => {
-    // Get the institutionId from the query parameter
     console.log('Retrieving units for institutionId: ', institutionId);
 
     const params = {};
@@ -70,8 +68,8 @@ const UnitList = () => {
 
     console.log("right before it is passed to the backend " + institutionId);
     const dataServiceMethod = institutionId
-      ? UnitDataService.getUnitsOfAnInstitution // Use 'getUnitsOfAnInstitution' method
-      : UnitDataService.getAll; // Use 'getAll' method
+      ? UnitDataService.getUnitsOfAnInstitution
+      : UnitDataService.getAll;
 
     dataServiceMethod(params.institutionId)
       .then((response) => {
@@ -104,7 +102,6 @@ const UnitList = () => {
     }
   };
 
-  // Use Axios to add Unit in the DB by POST request
   const handleUnitSave = (unitData) => {
     console.log('Received unit data:', unitData);
     UnitDataService.addUnit(unitData)
@@ -131,8 +128,6 @@ const UnitList = () => {
 
   // Handle selecting one or more units
   const handleRowSelectionModelChange = (newSelection) => {
-    // "newSelection" will end being just the id of the unit selected but we want 
-    // the whole Unit object itself, so find it in the Array of "Units"
     const selectedUnitObj = newSelection.map((selectedId) => 
       units.find((unit) => unit._id === selectedId)
     );
@@ -151,8 +146,8 @@ const UnitList = () => {
           <Button
             sx={{
               position: 'absolute',
-              top: '15px', // Adjust the top position as needed
-              right: '290px', // Adjust the left position as needed
+              top: '15px',
+              right: '290px',
               color: 'white',
               borderRadius: '10px',
               background: 'error',
