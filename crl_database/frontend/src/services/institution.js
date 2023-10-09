@@ -8,38 +8,52 @@ class InstitutionDataService {
   /* Fields - to be changed as needed */
   static defaultRoute = `/institutions`;
   static curtinId = "64e08d6f12f5f27fc10f3dcf";
+
+  static getHeader(userToken) {
+    return {
+      headers: {
+        Authorization : ("Bearer " + userToken)
+      }
+    }
+  }
   
   // GET
   
-  getAll() {
-    return http.get(InstitutionDataService.defaultRoute);
+  getAll(userToken) {
+    const headers = InstitutionDataService.getHeader(userToken)
+    return http.get((InstitutionDataService.defaultRoute), headers);
   }
   
-  getCount() {
-    return http.get(InstitutionDataService.defaultRoute + "/count");
+  getCount(userToken) {
+    const headers = InstitutionDataService.getHeader(userToken)
+    return http.get((InstitutionDataService.defaultRoute + "/count"), headers);
   }
   
-  getUnitsOfCurtin(institutionId) {
+  getUnitsOfCurtin(institutionId, userToken) {
+    const headers = InstitutionDataService.getHeader(userToken)
     const params = { institution: institutionId };
-    return http.get((InstitutionDataService.defaultRoute + "/units"), { params });
+    return http.get((InstitutionDataService.defaultRoute + "/units"), { params }, headers);
   }
   
-  getUnitsOfAnInstitution() {
-    return this.getUnitsOfInstitution(InstitutionDataService.curtinId);
+  getUnitsOfAnInstitution(userToken) {
+    const headers = InstitutionDataService.getHeader(userToken)
+    return this.getUnitsOfInstitution((InstitutionDataService.curtinId), headers);
   }
   
   
   // POST
   
-  addInstitution(institution) {
+  addInstitution(institution, userToken) {
+    const headers = InstitutionDataService.getHeader(userToken)
     console.log("Institution to go to backend: " + institution.name)
-    return http.post((InstitutionDataService.defaultRoute + "/add"), institution);
+    return http.post((InstitutionDataService.defaultRoute + "/add"), institution, headers);
   }
 
 
   //DELETE 
-  removeInstitution(institutionId) {
-    return http.delete(`${InstitutionDataService.defaultRoute}/delete/${institutionId}`);
+  removeInstitution(institutionId, userToken) {
+    const headers = InstitutionDataService.getHeader(userToken)
+    return http.delete(`${InstitutionDataService.defaultRoute}/delete/${institutionId}`, headers);
   }
   
 }

@@ -26,6 +26,9 @@ import { useNavigate, useLocation} from 'react-router-dom';
 import Counter from './animate/counter';
 import dashboardBackground from '../../assets/dashboard-backdrop.jpg';
 
+import { useAuthContext } from '../../hooks/useAuthContext';
+
+
 const Dashboard = () => {
   const [totalInstitutions, setTotalInstitutions] = useState([]);
   const [totalUnits, setTotalUnits] = useState([]);
@@ -34,6 +37,9 @@ const Dashboard = () => {
   const [filteredList, setFilteredList] = useState([]);
   const [selectedInstitution, setSelectedInstitution] = useState([]);
   const listRef = useRef(null);
+
+  const {user} = useAuthContext();
+
   // To do after render
   useEffect(() => {
     getInstitutionCount();
@@ -69,7 +75,7 @@ const Dashboard = () => {
   };
 
   const getUnitCount = () => {
-    UnitDataService.getCount()
+    UnitDataService.getCount(user.token)
     .then((response) => {
       const unitCount = response.data;
       console.log('Unit Count:', unitCount);
@@ -84,7 +90,7 @@ const Dashboard = () => {
 
 
   const getAllInstitutions = () => {
-    InstitutionDataService.getAll()
+    InstitutionDataService.getAll(user.token)
     .then((response) => {
       const institutions = response.data;
       setInstitutionList(institutions);
@@ -129,10 +135,16 @@ const Dashboard = () => {
   };
 
   const dashboardStyle = {
-    backgroundImage: `url(${dashboardBackground})`,
+    background: `url(${dashboardBackground})`,
     backgroundSize: 'cover',
     backgroundRepeat: 'no-repeat',
     backgroundPosition: 'center center',
+    width: '100vw', // 100% of the viewport width
+    height: '100vh', // 100% of the viewport height
+    position: 'fixed', // Fixed position to cover the entire viewport
+    top: 0,
+    left: 0,
+    overflow: 'auto', // Allow the container to scroll
   };
 
   const dispatch = useDispatch();
@@ -145,7 +157,7 @@ const Dashboard = () => {
       <Navbar />
     </div>
     <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column', marginTop: '2rem' }}>
-    <div style={{ fontSize: '32px', fontWeight: 'bold', marginBottom: '2rem', textAlign: 'center' }}>
+    <div style={{ fontSize: '32px', fontWeight: 'bold', marginBottom: '1rem', textAlign: 'center' }}>
       Welcome to the CRL Database
     </div>
     <FlexBetween backgroundColor={theme.palette.background.alt} borderRadius="10px" gap="0.5rem" p="0.1rem 1rem" style={{ position: 'relative', backgroundColor:"white", border:"solid", borderColor:"#D3D3D3" }}>

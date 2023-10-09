@@ -6,6 +6,8 @@ import Navbar from "../../components/Navbar";
 import AddUnitButton from '../../components/AddUnitButton';
 import { DataGrid } from '@mui/x-data-grid';
 
+import { useAuthContext } from '../../hooks/useAuthContext';
+
 import {
   Box,
   Button,
@@ -23,6 +25,8 @@ const UnitList = () => {
   const institutionId = queryParams.get('institutionId');
   const [institutionList, setInstitutionList] = useState([]);
   console.log("passed the institution id to UnitList " + institutionId)
+
+  const { user } = useAuthContext();
 
   // State variables
   const [units, setUnits] = useState([]);
@@ -44,7 +48,7 @@ const UnitList = () => {
 
   const handleRemoveConfirm = async () => {
     try {
-      await UnitDataService.removeMultiple(selectedUnitIDs);
+      await UnitDataService.removeMultiple(selectedUnitIDs, user.token);
       setIsDeleteModalOpen(false);
       setSelectedUnitIDs([]);
       retrieveUnits();
@@ -63,7 +67,7 @@ const UnitList = () => {
 
     const params = {};
     if (institutionId) {
-      params.institutionId = institutionId; // Use the correct parameter name
+      params.institutionId = institutionId;
     }
 
     console.log("right before it is passed to the backend " + institutionId);
@@ -71,7 +75,7 @@ const UnitList = () => {
       ? UnitDataService.getUnitsOfAnInstitution
       : UnitDataService.getAll;
 
-    dataServiceMethod(params.institutionId)
+    dataServiceMethod(params.institutionId, user.token)
       .then((response) => {
         console.log("Response from server:", response.data);
         const unitsWithInstitutionNames = response.data.map((unit) => {
@@ -91,7 +95,7 @@ const UnitList = () => {
 
   const fetchInstitutions = async () => {
     try {
-      const response = await InstitutionDataService.getAll();
+      const response = await InstitutionDataService.getAll(user.token);
       if (Array.isArray(response)) {
         setInstitutionList(response);
       } else {
@@ -104,7 +108,7 @@ const UnitList = () => {
 
   const handleUnitSave = (unitData) => {
     console.log('Received unit data:', unitData);
-    UnitDataService.addUnit(unitData)
+    UnitDataService.addUnit(unitData, user.token)
       .then((response) => {
         console.log("Successfully added the unit in the database");
         retrieveUnits();

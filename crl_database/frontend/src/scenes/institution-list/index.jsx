@@ -14,12 +14,16 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText'; 
 import DialogTitle from '@mui/material/DialogTitle';
 
+import { useAuthContext } from '../../hooks/useAuthContext';
+
 const InstitutionList = () => {
   
   // State variables
   const [institutions, setInstitutions] = useState([]);
   const [institutionToDelete, setInstitutionToDelete] = useState('');
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+
+  const {user} = useAuthContext();
 
   // To do after render
   useEffect(() => {
@@ -49,7 +53,7 @@ const InstitutionList = () => {
   }
 
   const retrieveInstitutions = () => {
-    InstitutionDataService.getAll()
+    InstitutionDataService.getAll(user.token)
       .then((response) => {
         console.log("Retrieved institutions: " + response.data);
         setInstitutions(response.data);
@@ -65,7 +69,7 @@ const InstitutionList = () => {
   const handleInstitutionSave = (institutionData) => {
     console.log("Received Institution Data: " + institutionData.name);
   
-    InstitutionDataService.addInstitution(institutionData)
+    InstitutionDataService.addInstitution(institutionData, user.token)
       .then((response) => {
         console.log(`Successfully added institution in the database.`);
         retrieveInstitutions();
@@ -88,12 +92,12 @@ const InstitutionList = () => {
   
   const handleDeleteClick = async () => {
     try {
-      await InstitutionDataService.removeInstitution(institutionToDelete);
+      await InstitutionDataService.removeInstitution(institutionToDelete, user.token);
       console.log(`Successfully removed institution from the database`);
       retrieveInstitutions();
   
       // Remove units of an institution
-      const response = await UnitDataService.removeUnitsOfInstitution(institutionToDelete);
+      const response = await UnitDataService.removeUnitsOfInstitution(institutionToDelete, user.token);
       if (response.data.startsWith('Deleted')) {
         console.log(response.data);
       } else {

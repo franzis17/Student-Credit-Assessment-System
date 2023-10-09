@@ -1,43 +1,52 @@
 import http from "../http-common";
 
+
 class UnitDataService {
   
   static defaultRoute = `/units`;
-  
+
+  static getHeader(userToken) {
+    return {
+      headers: {
+        Authorization : ("Bearer " + userToken)
+      }
+    }
+  }
   // GET
   
-  getAll() {
-    return http.get(UnitDataService.defaultRoute);
+  getAll(userToken) {
+    const headers = UnitDataService.getHeader(userToken)
+    return http.get(UnitDataService.defaultRoute, headers);
   }
   
   /** Get all units of a specific institution */
-  getUnitsOfAnInstitution(institutionId) {
-    return http.get(`${UnitDataService.defaultRoute}/sortedunits?institutionId=${institutionId}`);
+  getUnitsOfAnInstitution(institutionId, userToken) {
+    const headers = UnitDataService.getHeader(userToken)
+    return http.get(`${UnitDataService.defaultRoute}/sortedunits?institutionId=${institutionId}`, headers);
   }
   
-  getCount() {
-    return http.get(UnitDataService.defaultRoute + "/count");
+  getCount(userToken) {
+    const headers = UnitDataService.getHeader(userToken)
+    return http.get((UnitDataService.defaultRoute + "/count"), headers);
   }
   
   
   // POST
   
-  addUnit(unit) {
-    return http.post((UnitDataService.defaultRoute + "/add"), unit);
+  addUnit(unit, userToken) {
+    const headers = UnitDataService.getHeader(userToken)
+    return http.post((UnitDataService.defaultRoute + "/add"), unit, headers);
   }
 
   //DELETE
-  removeUnit(unitId) {
-    return http.delete(`${UnitDataService.defaultRoute}/delete/${unitId}`);
+  removeUnit(unitId, userToken) {
+    const headers = UnitDataService.getHeader(userToken);
+    return http.delete(`${UnitDataService.defaultRoute}/delete/${unitId}`, headers);
   }
-
-  removeMultiple(unitIds) {
-    return http.post(`${UnitDataService.defaultRoute}/remove-multiple`, { unitIds });
-  }
-
-  removeMultiple(unitIds) {
-    return http.delete(`${UnitDataService.defaultRoute}/remove-multiple`, {data: { unitIds },
-    });
+  
+  removeMultiple(unitIds, userToken) {
+    const headers = UnitDataService.getHeader(userToken)
+    return http.delete(`${UnitDataService.defaultRoute}/remove-multiple`, {data: { unitIds },}, headers);
   }
 
 }
