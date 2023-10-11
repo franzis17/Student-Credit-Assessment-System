@@ -4,11 +4,12 @@ import Unit from "../models/unit.model.js";
 import requireAuth from '../middleware/requireAuth.js';
 
 const router = express.Router();
-//router.use(requireAuth)
+router.use(requireAuth)
 
-// ---- [GET] -----
 
-// Get all units = /units
+// ---- [GET] ----
+
+/** Get all units = /units */
 router.route("/").get(async (req, res) => {
   try {
     let units;
@@ -20,10 +21,23 @@ router.route("/").get(async (req, res) => {
   }
 });
 
+/**
+ * Replace the institution field with JUST the institution's
+ * name instead of the institution object
+ */
+function getInstitutionNames(units) {
+  const unitsWithInstitutionNames = units.map(unit => ({
+    ...unit.toObject(),
+    institution: unit.institution.name,  // replace the institution field
+  }));
+  return unitsWithInstitutionNames;
+}
 
 
-
-//get units specific to an institution
+/**
+ * [/units/sortedunits] 
+ * Get units specific to an institution 
+ */
 router.route("/sortedunits").get(async (req, res) => {
   const institutionId = req.query.institutionId;
   console.log('Received institutionId:', institutionId);
@@ -41,7 +55,7 @@ router.route("/sortedunits").get(async (req, res) => {
 });
 
 
-// Get total units count
+/** Get total units count */
 router.route("/count").get(async (req, res) => {
   try {
     const count = await Unit.countDocuments({});
@@ -87,7 +101,7 @@ router.route("/add").post((req, res) => {
       
       if (error.code === 11000) {
         // Error: Duplicate key (data already exists)
-        res.status(400).json({ message: `${name} already exists` });
+        res.status(400).json({ error: `the unit "${name}" already exists` });
       } else {
         // Other errors
         res.status(500).json(`ERROR when adding a unit. More info: ${error}`);
@@ -97,6 +111,7 @@ router.route("/add").post((req, res) => {
 
 
 // ---- [UPDATE] ----
+
 
 router.route("/update/:id").put((req, res) => {
   const unitId = req.params.id;
@@ -116,10 +131,15 @@ router.route("/update/:id").put((req, res) => {
 // ---- [DELETE] ----
 
 // Delete a unit = /units/delete/:id
-router.route("/delete/:id").delete((req, res) => {
-  Unit.findByIdAndDelete(req.params.id)
-    .then(() => res.json("The Unit has been deleted."))
-    .catch((err) => res.status(400).json("Error:" + err));
+router.route("/delete").delete(async (req, res) => {
+  const unit = req.query.unit;
+
+  console.log("Deleting Unit:");
+  console.log(unit);
+
+  // Unit.findByIdAndDelete(unit)
+  //   .then(() => res.json("The Unit has been deleted."))
+  //   .catch((err) => res.status(400).json("Error:" + err));
 });
 
 
@@ -139,8 +159,14 @@ router.route("/institution-unit-delete/:institutionId").delete(async (req, res) 
   }
 });
 
+/**
+ * [/units/remove-multiple]
+ */
 router.route("/remove-multiple").delete(async (req, res) => {
   const unitIds = req.body.unitIds;
+  
+  console.log("body =", req.body);
+  console.log("unitIds =", unitIds);
 
   try {
     const result = await Unit.deleteMany({ _id: { $in: unitIds } });

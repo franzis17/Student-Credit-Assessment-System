@@ -5,17 +5,23 @@ class UnitDataService {
   
   static defaultRoute = `/units`;
 
+  // GET
+  
+  /**
+   * Header used to add the user's token and verified by API Provider
+   */
   static getHeader(userToken) {
     return {
       headers: {
-        Authorization : ("Bearer " + userToken)
+        Authorization: ( "Bearer " + userToken )
       }
-    }
+    };
   }
+  
   // GET
   
   getAll(userToken) {
-    const headers = UnitDataService.getHeader(userToken)
+    const headers = UnitDataService.getHeader(userToken);
     return http.get(UnitDataService.defaultRoute, headers);
   }
   
@@ -26,7 +32,7 @@ class UnitDataService {
   }
   
   getCount(userToken) {
-    const headers = UnitDataService.getHeader(userToken)
+    const headers = UnitDataService.getHeader(userToken);
     return http.get((UnitDataService.defaultRoute + "/count"), headers);
   }
   
@@ -34,19 +40,28 @@ class UnitDataService {
   // POST
   
   addUnit(unit, userToken) {
-    const headers = UnitDataService.getHeader(userToken)
-    return http.post((UnitDataService.defaultRoute + "/add"), unit, headers);
+    const headers = UnitDataService.getHeader(userToken);
+    return http.post((UnitDataService.defaultRoute + "/add"),
+      unit,
+      headers
+    );
   }
-
-  //DELETE
+  
+  
+  // DELETE
+  
   removeUnit(unitId, userToken) {
+    console.log("usertoken = ", userToken);
     const headers = UnitDataService.getHeader(userToken);
     return http.delete(`${UnitDataService.defaultRoute}/delete/${unitId}`, headers);
   }
   
   removeMultiple(unitIds, userToken) {
-    const headers = UnitDataService.getHeader(userToken)
-    return http.delete(`${UnitDataService.defaultRoute}/remove-multiple`, {data: { unitIds },}, headers);
+    const config = {
+      headers: { authorization: ( "Bearer " + userToken ) },
+      data: { unitIds }, // Wrap unitIds in an object as data
+    };
+    return http.delete((UnitDataService.defaultRoute + "/remove-multiple"), config);
   }
 
 }

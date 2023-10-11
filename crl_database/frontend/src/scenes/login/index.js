@@ -25,14 +25,15 @@ const Login = () => {
 
             const loginSuccessful = await login(email, password)
 
-            if (loginSuccessful) {
-                console.log(email)
-                navigate('/dashboard');
+            if (loginSuccessful.isSucsess && loginSuccessful.isVerified) {
+                    navigate('/dashboard');
+            }
+            else if(loginSuccessful.isSuccess && !loginSuccessful.isVerified)
+            {
+                console.log('User is not verified')
             }
         } catch (err) {
-            if(err.message.includes('Email is not verified')) {
-                navigate('/verifyemail')
-            }
+            err("An unexpected error occurred.")
         }
        
     }

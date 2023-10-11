@@ -7,8 +7,9 @@ import Typography from '@mui/material/Typography';
 import { List, ListItem, ListItemText } from '@mui/material';
 import InstitutionDataService from "../services/institution"
 import Divider from '@mui/material/Divider';
+import { useAuthContext } from '../hooks/useAuthContext';
 
-const UnitModal = ({ user, onClose, onUnitSave}) => {
+const UnitModal = ({ onClose, onUnitSave}) => {
   const [name, setUnitName] = useState('');
   const [institution, setInstitutionName] = useState('');
   const [unitCode, setUnitCode] = useState('');
@@ -19,6 +20,8 @@ const UnitModal = ({ user, onClose, onUnitSave}) => {
   const [selectedInstitution, setSelectedInstitution] = useState(null);
   const listRef = useRef(null);
   const [institutionArray, setInstitutionArray] = useState([]);
+  
+  const {user} = useAuthContext();
 
   useEffect(() => {
     getAllInstitutions();
@@ -67,7 +70,7 @@ const UnitModal = ({ user, onClose, onUnitSave}) => {
 
 
   const getAllInstitutions = () => {
-    InstitutionDataService.getAll()
+    InstitutionDataService.getAll(user.token)
     .then((response) => {
       const institutions = response.data;
       setInstitutionArray(institutions);

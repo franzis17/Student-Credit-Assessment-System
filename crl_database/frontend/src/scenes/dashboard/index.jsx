@@ -62,14 +62,14 @@ const Dashboard = () => {
   }, []);
 
   const getInstitutionCount = () => {
-    InstitutionDataService.getCount()
+    InstitutionDataService.getCount(user.token)
       .then((response) => {
         const instCount = response.data;
         setTotalInstitutions(instCount);
       })
       .catch((err) => {
         console.log(
-          `ERROR when retrieving institutions. \nError: ${err}`
+          `ERROR when retrieving institution's count. \nError: ${err}`
         );
       });
   };
@@ -78,15 +78,14 @@ const Dashboard = () => {
     UnitDataService.getCount(user.token)
     .then((response) => {
       const unitCount = response.data;
-      console.log('Unit Count:', unitCount);
       setTotalUnits(unitCount);
     })
     .catch((err) => {
       console.log(
-        `ERROR when retrieving institutions. \nError: ${err}`
+        `ERROR when retrieving unit's count. \nError: ${err}`
       );
     });
-  }
+  };
 
 
   const getAllInstitutions = () => {
@@ -97,7 +96,7 @@ const Dashboard = () => {
     })
       .catch((err) => {
         console.log(
-          `ERROR when retrieving institutions. \nError: ${err}`
+          `ERROR when retrieving all institutions. \nError: ${err}`
         );
     });
   }
@@ -130,7 +129,8 @@ const Dashboard = () => {
   const navigateToSortedUnitList = (institutionId) => {
     console.log("here is the instition id: " + institutionId)
     if (institutionId) {
-      navigate(`/units?institutionId=${institutionId}`);
+      //navigate(`/units?institutionId=${institutionId}`);
+      navigate(`/units/${institutionId}`);
     }
   };
 
@@ -144,7 +144,7 @@ const Dashboard = () => {
     position: 'fixed', // Fixed position to cover the entire viewport
     top: 0,
     left: 0,
-    overflow: 'auto', // Allow the container to scroll
+    overflow: 'auto' // Allow the container to scroll
   };
 
   const dispatch = useDispatch();

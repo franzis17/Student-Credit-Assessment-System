@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { Link , useLocation} from 'react-router-dom';
+import { Link , useLocation, useParams } from 'react-router-dom';
 import InstitutionDataService from '../../services/institution';
 import UnitDataService from "../../services/unit";
 import Navbar from "../../components/Navbar";
 import AddUnitButton from '../../components/AddUnitButton';
+import SimpleButton from "../../components/buttons/SimpleButton";
 import { DataGrid } from '@mui/x-data-grid';
 
 import { useAuthContext } from '../../hooks/useAuthContext';
+import DataUtils from "../../utils/dataUtils";
 
 import {
   Box,
@@ -20,13 +22,13 @@ import {
 
 
 const UnitList = () => {
-  const location = useLocation();
-  const queryParams = new URLSearchParams(location.search);
-  const institutionId = queryParams.get('institutionId');
-  const [institutionList, setInstitutionList] = useState([]);
-  console.log("passed the institution id to UnitList " + institutionId)
 
   const { user } = useAuthContext();
+  const { institutionId } = useParams();
+
+  console.log("institutionId =", institutionId);
+
+  const dataUtils = new DataUtils();
 
   // State variables
   const [units, setUnits] = useState([]);
@@ -36,74 +38,54 @@ const UnitList = () => {
   const [selectedUnitIDs, setSelectedUnitIDs] = useState([]);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
-  // To do after render
+  // List units or units of an institution
   useEffect(() => {
-    fetchInstitutions();
+    console.log("In Unit List, user:\n", user);
     retrieveUnits();
-  }, [institutionId])
-
-  const handleRemoveClick = () => {
-    setIsDeleteModalOpen(true);
-  };
-
-  const handleRemoveConfirm = async () => {
-    try {
-      await UnitDataService.removeMultiple(selectedUnitIDs, user.token);
-      setIsDeleteModalOpen(false);
-      setSelectedUnitIDs([]);
-      retrieveUnits();
-    } catch (error) {
-      console.error('Error removing units:', error);
-    }
-  };;
-
-  const handleRemoveCancel = () => {
-    setIsDeleteModalOpen(false);
-  };
-
-  // Use Axios to GET all Units from the backend server
+  }, [institutionId]);
+  
   const retrieveUnits = () => {
-    console.log('Retrieving units for institutionId: ', institutionId);
-
-    const params = {};
-    if (institutionId) {
-      params.institutionId = institutionId;
+    // List all units in the DB, if an institutionId has not been specified
+    if (institutionId === undefined || institutionId === null) {
+      retrieveAllUnits();
     }
-
-    console.log("right before it is passed to the backend " + institutionId);
-    const dataServiceMethod = institutionId
-      ? UnitDataService.getUnitsOfAnInstitution
-      : UnitDataService.getAll;
-
-    dataServiceMethod(params.institutionId, user.token)
+    // List specific units of an institution, if its id has been specified
+    else {
+      retrieveUnitsOfInstitution(institutionId);
+    }
+  };
+  
+  // Use Axios to GET all Units from the backend server
+  const retrieveAllUnits = () => {
+    UnitDataService.getAll(user.token)
       .then((response) => {
-        console.log("Response from server:", response.data);
-        const unitsWithInstitutionNames = response.data.map((unit) => {
-          return {
-            ...unit,
-            institution: unit.institution ? unit.institution.name : '',
-          };
-        });
-
-        console.log("Retrieved units:", unitsWithInstitutionNames);
-        setUnits(unitsWithInstitutionNames);
+        const data = response.data;
+        console.log("Retrieved units:\n", data);
+        
+        // replace the null fields with text "NO DATA"
+        dataUtils.replaceNullFields(data);
+        
+        setUnits(data);
       })
       .catch((err) => {
-        console.log(`ERROR when retrieving units. \nError: ${err}`);
+        console.log("ERROR when retrieving units.\nError:", err);
       });
   };
-
-  const fetchInstitutions = async () => {
-    try {
-      const response = await InstitutionDataService.getAll(user.token);
-      if (Array.isArray(response)) {
-        setInstitutionList(response);
-      } else {
-        console.error('Response is not an array:', response);
-      }
-    } catch (error) {
-      console.error('Error fetching institutions:', error);
-    }
+  
+  const retrieveUnitsOfInstitution = (id) => {
+    InstitutionDataService.getUnitsOfInstitution(id, user.token)
+      .then((response) => {
+        const data = response.data;
+        console.log("Retrieved units:\n", data);
+        
+        // replace the null fields of with text "NO DATA"
+        dataUtils.replaceNullFields(data);
+        
+        setUnits(data);
+      })
+      .catch((err) => {
+        console.log("ERROR when retrieving units of a specific institution.\nError:", err);
+      });
   };
 
   const handleUnitSave = (unitData) => {
@@ -119,25 +101,60 @@ const UnitList = () => {
         );
       });
   };
+  
+  const handleRemoveClick = () => {
+    setIsDeleteModalOpen(true);
+  };
+
+  const handleRemoveConfirm = async () => {
+    try {
+      console.log("removing, user token =", user.token);
+      await UnitDataService.removeMultiple(selectedUnitIDs, user.token);
+      setIsDeleteModalOpen(false);
+      setSelectedUnitIDs([]);
+      retrieveUnits();
+    } catch (error) {
+      console.error('Error removing units:', error);
+    }
+  };
+
+  const handleRemoveCancel = () => {
+    setIsDeleteModalOpen(false);
+  };
 
   // Column fields of Units in the DataGrid
   const columns = [
-    { field: 'unitCode', headerName: 'Unit Code', width: 150 },
-    { field: 'name', headerName: 'Name', width: 350 },
-    { field: 'location', headerName: 'Location', width: 300 },
-    { field: 'major', headerName: 'Major', width: 150 },
-    { field: 'institution', headerName: 'Institution', width: 250 },
-    { field: 'notes', headerName: 'Notes', width: 400 }
+    { field: 'unitCode',    headerName: 'Unit Code',   width: 150 },
+    { field: 'name',        headerName: 'Name',        width: 350 },
+    { field: 'location',    headerName: 'Location',    width: 300 },
+    { field: 'major',       headerName: 'Major',       width: 150 },
+    { 
+      field: 'institution', headerName: 'Institution', width: 250,
+      // map the institution's name
+      valueGetter: (params) => {
+        if (params.row.institution.toString().includes("NO DATA")) {
+          return "NO DATA";
+        } else {
+          return params.row.institution.name;
+        }
+      },
+    },
+    { field: 'notes',       headerName: 'Notes',       width: 400 }
   ];
-
+  
   // Handle selecting one or more units
   const handleRowSelectionModelChange = (newSelection) => {
+    // > "newSelections" are the id's of the units selected but we want the Unit object itself
+    // > replace the unit id's with the actual unit objects that are selected
     const selectedUnitObj = newSelection.map((selectedId) => 
       units.find((unit) => unit._id === selectedId)
     );
     setSelectedUnitIDs(newSelection);
     setSelectedUnits(selectedUnitObj);
     console.log("selectedUnitObj = ", selectedUnitObj);
+
+    // add selected units to local storage incase of refresh
+    localStorage.setItem('selectedUnits', JSON.stringify(selectedUnitObj));
   };
 
   return (
@@ -145,6 +162,12 @@ const UnitList = () => {
       <div>
         <Navbar />
         <AddUnitButton onUnitSave={handleUnitSave}/>
+        <Link
+          to="/unitassessmentpage"
+          state={{ selectedUnits: selectedUnits }}
+        >
+          <SimpleButton content="Assess" />
+        </Link>
        
         {selectedUnitIDs.length > 0 && (
           <Button
@@ -165,13 +188,6 @@ const UnitList = () => {
           </Button>
         )}
       </div>
-
-      <Link 
-        to="/unitassessmentpage"
-        state={{ selectedUnits: selectedUnits }}
-      >
-        <button>Assess</button>
-      </Link>
 
       {/* [TESTING] - if a Unit is actually added in the DB */}
       <Box sx={{ height: '100%', width: '100%' }}>

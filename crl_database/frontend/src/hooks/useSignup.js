@@ -3,6 +3,7 @@ import { useAuthContext } from './useAuthContext'
 
 export const useSignup = () => {
 
+    console.log('Rendering Signup')
     /* if error with sign request*/
     const [error, setError] = useState(null)
     /*loading state - is true when starting the request*/

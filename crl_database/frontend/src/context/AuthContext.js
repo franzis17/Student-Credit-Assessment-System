@@ -1,6 +1,8 @@
 import { createContext, useReducer, useEffect} from 'react';
 
+
 export const AuthContext = createContext()
+
 
 //Export to use in other files later
 export const authReducer = (state, action) => { 
@@ -30,6 +32,7 @@ export const AuthContextProvider = ({children}) => {
 
         if (user) {
             dispatch({type: 'LOGIN', payload: user})
+
         }
 
     }, []) 

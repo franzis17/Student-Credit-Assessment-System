@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import InstitutionDataService from "../../services/institution";
 import UnitDataService from "../../services/unit"
 import Navbar from "../../components/Navbar";
@@ -15,16 +16,18 @@ import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 
 import { useAuthContext } from '../../hooks/useAuthContext';
+import DataUtils from "../../utils/dataUtils";
 
 const InstitutionList = () => {
   
-  // State variables
   const [institutions, setInstitutions] = useState([]);
   const [institutionToDelete, setInstitutionToDelete] = useState('');
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
   const {user} = useAuthContext();
-
+  const navigate = useNavigate();
+  const dataUtils = new DataUtils();
+  
   // To do after render
   useEffect(() => {
     retrieveInstitutions(); 
@@ -55,13 +58,17 @@ const InstitutionList = () => {
   const retrieveInstitutions = () => {
     InstitutionDataService.getAll(user.token)
       .then((response) => {
-        console.log("Retrieved institutions: " + response.data);
-        setInstitutions(response.data);
+        const data = response.data;
+        console.log("Retrieved institutions:\n", data);
+        
+        // replace the null fields of with text "NO DATA"
+        dataUtils.replaceNullFields(data);
+        
+        setInstitutions(data);
       })
-      .catch((err) => {
-        console.log(
-          `ERROR when retrieving institutions. \nError: ${err}`
-        );
+      .catch((error) => {
+        console.log("ERROR when retrieving institutions. \nError: ", error);
+        console.log("Error response:\n", error.response.data);
       });
   };
   
@@ -90,19 +97,16 @@ const InstitutionList = () => {
       });
   };
   
+  const handleSelection = (institution) => {
+    console.log("Selected:", institution);
+    navigate(`/units/${institution}`);
+  };
+  
   const handleDeleteClick = async () => {
     try {
       await InstitutionDataService.removeInstitution(institutionToDelete, user.token);
       console.log(`Successfully removed institution from the database`);
       retrieveInstitutions();
-  
-      // Remove units of an institution
-      const response = await UnitDataService.removeUnitsOfInstitution(institutionToDelete, user.token);
-      if (response.data.startsWith('Deleted')) {
-        console.log(response.data);
-      } else {
-        console.log('No units to delete or invalid data received.');
-      }
     } catch (error) {
       console.error("An error occurred while removing the institution:", error);
       if (error.response) {
@@ -115,9 +119,6 @@ const InstitutionList = () => {
       }
     }
   };
-  
-  
-  
   
   
   const columns = [
@@ -144,7 +145,6 @@ const InstitutionList = () => {
   ];
   
   
-  
   return (
     <div>
       <Navbar />
@@ -165,7 +165,16 @@ const InstitutionList = () => {
               },
             }}
             pageSizeOptions={[10, 25, 50]}
-            checkboxSelection
+            // [ Clicking an institution ]
+            // Apart from the "delete" column, selecting an institution should navigate to
+            // the specific List of Units of the selected institution
+            onCellClick={ (params, event) => {
+              console.log("clicked an institution, params =", params);
+              if (params.field !== 'delete') {
+                console.log("params.id =", params.id);
+                handleSelection(params.id);
+              }
+            }}
           />
         </Box>
         <Dialog
@@ -177,7 +186,7 @@ const InstitutionList = () => {
           <DialogTitle id="delete-dialog-title">Confirm Deletion</DialogTitle>
           <DialogContent>
             <DialogContentText id="delete-dialog-description">
-              Are you sure you want to delete this institution and all its units?
+              Are you sure you want to delete this institution? (This will delete its units and applications).
             </DialogContentText>
           </DialogContent>
           <DialogActions>
