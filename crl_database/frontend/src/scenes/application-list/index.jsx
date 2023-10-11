@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useAuthContext } from "../../hooks/useAuthContext";
 import ApplicationDataService from "../../services/application";
 import DataUtils from "../../utils/dataUtils";
+import '../institution-list/list.css';
 
 import Navbar from "../../components/Navbar";
 import Box from '@mui/material/Box';
@@ -95,6 +96,7 @@ const ApplicationList = () => {
           disableRowSelectionOnClick
           selectionModel={selectedApplications}
           //onRowSelectionModelChange={handleRowSelectionModelChange}
+          className="list-column"
         />
       </Box>
     </>

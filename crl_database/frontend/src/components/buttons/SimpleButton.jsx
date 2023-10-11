@@ -9,7 +9,6 @@ const SimpleButton = (params) => {
   
   const content = params.content;
   const handleClickEvent = params.onClick;
-  const margins = params.margins;
   
   return (
     <Button
