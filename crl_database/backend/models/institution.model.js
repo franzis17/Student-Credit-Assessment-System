@@ -7,12 +7,19 @@ const institutionSchema = new Schema(
     name: {
       type: String,
       unique: true,
+      trim: true,
       required: true,
       minlength: 5,
     },
     rank: {
       type: Number,
       required: true,
+      validate: {
+        validator: function (value) {
+          return value > 0;
+        },
+        message: "Rank must be greater than 0.",
+      },
     },
     location: {
       type: String,
@@ -27,13 +34,14 @@ const institutionSchema = new Schema(
     },
     notes: {
       type: String,
-      required: true,
+      required: false,
     },
   },
   {
     timestamps: true,
   }
 );
+
 
 const Institution = mongoose.model("Institution", institutionSchema);
 

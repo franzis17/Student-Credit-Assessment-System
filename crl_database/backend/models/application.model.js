@@ -4,7 +4,6 @@ const Schema = mongoose.Schema;
 
 const applicationSchema = new Schema(
   {
-    // MUST verify if the institution exists
     institution: {
       type: Schema.Types.ObjectId,
       ref: "Institution",
@@ -15,6 +14,7 @@ const applicationSchema = new Schema(
     },
     aqf: {
       type: Number,
+      required: false,
     },
     location: {
       type: String,
@@ -26,16 +26,23 @@ const applicationSchema = new Schema(
       type: String,
       required: false,
     },
-    previousUnit: {
-      type: Schema.Types.ObjectId,
-      ref: "Unit",
-    },
+    assessedUnits: [  // Array of Units, that was selected to be assessed
+      {
+        type: Schema.Types.ObjectId,
+        ref: "Unit",
+      },
+    ],
     curtinUnit: {
       type: Schema.Types.ObjectId,
       ref: "Unit",
     },
-    notes: {
+    assessorNotes: {
       type: String,
+      required: false,
+    },
+    studentNotes: {
+      type: String,
+      required: false,
     },
   },
   {

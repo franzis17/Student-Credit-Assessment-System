@@ -30,7 +30,18 @@ const assessmentSchema = new Schema(
 
     studentNotes: {
       type: String,
-    }
+    },
+
+    application: {
+      type: Schema.Types.ObjectId,
+      ref: "Application",
+    },
+
+    noteLog: [  
+      {
+        type: String,
+      },
+    ],
   },
   {
     timestamps: true,

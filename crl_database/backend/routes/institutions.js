@@ -1,11 +1,12 @@
 import express from "express";
 import Institution from "../models/institution.model.js";
 import Unit from "../models/unit.model.js";
+import Application from "../models/application.model.js";
 import requireAuth from '../middleware/requireAuth.js';
 // import fs from "fs";  // used by add-mock data
 
 const router = express.Router();
-//router.use(requireAuth)
+router.use(requireAuth)
 
 const DUPLICATE_ERROR_CODE = 11000;
 
@@ -13,9 +14,13 @@ const DUPLICATE_ERROR_CODE = 11000;
 
 // Get all institutions = /institutions
 router.route("/").get(async (req, res) => {
-  Institution.find()
-    .then((institutions) => res.json(institutions))
-    .catch((err) => res.status(400).json("Error:" + err));
+  try {
+    const institutions = await Institution.find();
+    res.json(institutions);
+  } catch (err) {
+    console.error(`ERROR: ${err}`);
+    res.status(500).json(`ERROR: Failed to fetch institutions. More details: ${err}`);
+  }
 });
 
 // Get total institution count
@@ -36,8 +41,12 @@ router.route("/count").get(async (req, res) => {
 router.route("/units").get((req, res) => {
   const institution = req.query.institution;
   
+  console.log("querying an institution's units, institution id = " + institution);
+  
   Unit.find({ institution: institution })
+    .populate("institution")
     .then((units) => {
+      console.log("units =", units);
       res.json(units)
     })
     .catch((err) => {
@@ -51,11 +60,17 @@ router.route("/units").get((req, res) => {
 
 // Add an institution = /institutions/add
 router.route("/add").post(async (req, res) => {
+  console.log("add institution backend, institution = " + JSON.stringify(req.body));
   const name = req.body.name;
   const rank = req.body.rank;
   const location = req.body.location;
   const major = req.body.major;
   const notes = req.body.notes;
+
+  console.log("New institution name: " + name)
+  console.log("New institution rank: " + rank)
+  console.log("New institution location: " + location)
+  console.log("New institution major: " + major)
 
   const newInstitution = new Institution({
     name,
@@ -67,15 +82,15 @@ router.route("/add").post(async (req, res) => {
 
   newInstitution
     .save()
-    .then(() => res.json("The institution has been added"))
+    .then(() => res.json(`Institution: [${name}] has been added!`))
     .catch((error) => {
       console.log(`ERROR when adding an institution.\n>>> ${error}`);
       
       if (error.code === DUPLICATE_ERROR_CODE) {
         // Error: Duplicate key / institution name
-        res.status(400).json({ message: `Error: ${name} already exists` });
+        res.status(400).json({ error: `the institution "${name}" already exists` });
       } else {
-        res.status(500).json(`ERROR when adding a Unit. More info: ${error}`);
+        res.status(500).json(`ERROR when adding an Institution. More info: ${error}`);
       }
     });
 });
@@ -106,9 +121,30 @@ router.route("/update/:id").post(async (req, res) => {
 
 // Delete an institution = /institutions/delete/:id
 router.route("/delete/:id").delete(async (req, res) => {
-  Institution.findByIdAndDelete(req.params.id)
-    .then(() => res.json("Institution deleted."))
-    .catch((err) => res.status(400).json("Error:" + err));
+  const id = req.params.id;
+  console.log(">>> Deleting an institution\nparams:", req.params);
+  console.log("institution id =", id);
+  
+  try {
+    if (!id) {
+      throw Error("Institution id does not exist");
+    }
+    
+    // delete units of institution
+    const deletedUnits = await Unit.deleteMany({ institution: id });
+    // delete applications of institution
+    const deletedApplications = await Application.deleteMany({ institution: id });
+    // delete institution
+    const deletedInstitution = await Institution.findByIdAndDelete(id);
+    
+    const numUnitsDeleted = deletedUnits.deletedCount;
+    const numAppsDeleted = deletedApplications.deletedCount;
+    
+    res.json(`successfully deleted an institution, and its [${numUnitsDeleted}] unit(s) and [${numAppsDeleted}] application(s).`);
+  } catch (error) {
+    console.error("!!!Error deleting institution:", error);
+    res.status(500).json("Error deleting institution.\nMore info:", error.message);
+  }
 });
 
 
