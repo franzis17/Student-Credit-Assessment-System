@@ -5,19 +5,21 @@ import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 
-const InstitutionModal = ({ user, onClose }) => {
-  const [unitName, setUnitName] = useState('');
-  const [institutionName, setInstitutionName] = useState('');
-  const [unitCode, setUnitCode] = useState('');
+const InstitutionModal = ({ user, onClose, onInstitutionSave}) => {
+  const [name, setInstitutionName] = useState('');
+  const [rank, setRank] = useState('');
+  const [location, setLocation] = useState('');
+  const [major, setMajor] = useState('');
 
   const handleSave = () => {
-    // Add your save functionality here
-    // For now, you can just log the values to the console
-    console.log('Institution Name:', unitName);
-    console.log('Institution Rank:', institutionName);
-    console.log('City', unitCode);
-
-    // Close the modal
+    const institutionToAdd = {
+      name,
+      rank,
+      location,
+      major,
+    };
+    console.log("Institution to Add: " + institutionToAdd)
+    onInstitutionSave(institutionToAdd);
     onClose();
   }
 
@@ -38,8 +40,6 @@ const InstitutionModal = ({ user, onClose }) => {
           borderRadius: '10px',
         }}
       >
-
-        {/* Title */}
         <Typography variant="h2" sx={{ fontWeight: 'bold', marginBottom: '16px' }}>
           Add an Institution
         </Typography>
@@ -48,19 +48,9 @@ const InstitutionModal = ({ user, onClose }) => {
           label="Institution Name"
           fullWidth
           margin="normal"
-          value={unitName}
-          onChange={(e) => setUnitName(e.target.value)}
-          placeholder="Institution Name"
-          sx={{ width: '100%', marginBottom: '16px' }} // Adjust the width and margin
-        />
-
-        <TextField
-          label="Institution Location"
-          fullWidth
-          margin="normal"
-          value={institutionName}
+          value={name}
           onChange={(e) => setInstitutionName(e.target.value)}
-          placeholder="Institution Location"
+          placeholder="Institution Name"
           sx={{ width: '100%', marginBottom: '16px' }} // Adjust the width and margin
         />
 
@@ -68,9 +58,29 @@ const InstitutionModal = ({ user, onClose }) => {
           label="Institution Rank"
           fullWidth
           margin="normal"
-          value={unitCode}
-          onChange={(e) => setUnitCode(e.target.value)}
-          placeholder="Institution Rank"
+          value={rank}
+          onChange={(e) => setRank(e.target.value)}
+          placeholder="Institution Location"
+          sx={{ width: '100%', marginBottom: '16px' }} // Adjust the width and margin
+        />
+
+        <TextField
+          label="Location"
+          fullWidth
+          margin="normal"
+          value={location}
+          onChange={(e) => setLocation(e.target.value)}
+          placeholder="Location"
+          sx={{ width: '100%', marginBottom: '16px' }} // Adjust the width and margin
+        />
+
+        <TextField
+          label="Major"
+          fullWidth
+          margin="normal"
+          value={major}
+          onChange={(e) => setMajor(e.target.value)}
+          placeholder="Major"
           sx={{ width: '100%', marginBottom: '16px' }} // Adjust the width and margin
         />
 
@@ -83,8 +93,7 @@ const InstitutionModal = ({ user, onClose }) => {
             color:"white"
           }}
           onClick={handleSave}
-        >
-          Save
+        >Save
         </Button>
       </Box>
     </Modal>

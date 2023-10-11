@@ -1,53 +1,68 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useParams } from 'react-router-dom';
-import { useAuthContext } from "../../hooks/useAuthContext";
-
+import { Link , useLocation, useParams } from 'react-router-dom';
+import InstitutionDataService from '../../services/institution';
 import UnitDataService from "../../services/unit";
-import InstitutionDataService from "../../services/institution";
+import Navbar from "../../components/Navbar";
+import AddUnitButton from '../../components/AddUnitButton';
+import SimpleButton from "../../components/buttons/SimpleButton";
+import { DataGrid } from '@mui/x-data-grid';
+
+import { useAuthContext } from '../../hooks/useAuthContext';
 import DataUtils from "../../utils/dataUtils";
 
-import Box from '@mui/material/Box';
-import { DataGrid } from '@mui/x-data-grid';
-import Button from '@mui/material/Button';
-import Navbar from "../../components/Navbar";
-import SimpleButton from "../../components/buttons/SimpleButton";
+import {
+  Box,
+  Button,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogContentText,
+  DialogActions,
+} from '@mui/material';
+
 
 const UnitList = () => {
-  
-  const [units, setUnits] = useState([]);
-  const [selectedUnits, setSelectedUnits] = useState([]);
-  
+
   const { user } = useAuthContext();
   const { institutionId } = useParams();
-  
-  const dataUtils = new DataUtils();
-  
+
   console.log("institutionId =", institutionId);
 
+  const dataUtils = new DataUtils();
+
+  // State variables
+  const [units, setUnits] = useState([]);
+  const [selectedUnits, setSelectedUnits] = useState([]);
+  const [unitData, setUnitData] = useState(null);
+
+  const [selectedUnitIDs, setSelectedUnitIDs] = useState([]);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+
+  // List units or units of an institution
   useEffect(() => {
     console.log("In Unit List, user:\n", user);
-    
+    retrieveUnits();
+  }, [institutionId]);
+  
+  const retrieveUnits = () => {
     // List all units in the DB, if an institutionId has not been specified
     if (institutionId === undefined || institutionId === null) {
-      console.log("institutionId IS undefined");
-      retrieveUnits();
+      retrieveAllUnits();
     }
-    // List all units of a specific institution, if its id has been specified
+    // List specific units of an institution, if its id has been specified
     else {
-      console.log("institutionId NOT null =", institutionId);
-      // retrieve units for this specific institution
       retrieveUnitsOfInstitution(institutionId);
     }
-  }, [institutionId]);
-
+  };
+  
   // Use Axios to GET all Units from the backend server
-  const retrieveUnits = () => {
+  const retrieveAllUnits = () => {
     UnitDataService.getAll(user.token)
       .then((response) => {
         const data = response.data;
         console.log("Retrieved units:\n", data);
         
-        // replace the null fields of with text "NO DATA"
+        // replace the null fields with text "NO DATA"
         dataUtils.replaceNullFields(data);
         
         setUnits(data);
@@ -73,76 +88,40 @@ const UnitList = () => {
       });
   };
 
-  // Use Axios to add Unit in the DB by POST request
-  const handleAddUnit = () => {
-    
-    // 1. Enter unit details here
-    
-    // << Creating a Mock "Unit" Object for now >>
-    const unitCode = "CITS1001";
-    const name = "Software Engineering with Java";
-    const location = "Perth";
-    const major = "B-COMP";
-    const notes = "TEST very Long, very long, very long, very long, very long, very long";
-    
-    // important note: institution will need to be an objectId
-    // how to get id? searched from institution list (or somehow
-    // get the institution that is currently displaying this list of units and user their "_id")
-    const institution = "64e0911b123bc76c05356445";  // UWA
-    
-    const unit = {
-      unitCode,
-      name,
-      location,
-      major,
-      institution,
-      notes
-    };
-    
-    // 2. Pass it to axios to HTTP POST request to backend route
-    UnitDataService.addUnit(unit, user.token)
+  const handleUnitSave = (unitData) => {
+    console.log('Received unit data:', unitData);
+    UnitDataService.addUnit(unitData, user.token)
       .then((response) => {
-        console.log("Successfully added the mock unit in the database");
-        retrieveUnits();  // refresh list to display newly added data
+        console.log("Successfully added the unit in the database");
+        retrieveUnits();
       })
       .catch((error) => {
         console.log(
-          `ERROR when adding units.\nError: ${error.response.data.error}`
+          `ERROR when adding unit in the DB.\nError: ${error.response.data.message}`
         );
-        window.alert("Error: Cannot add a unit, " + error.response.data.error);
       });
   };
   
-  const handleDeleteUnit = () => {
+  const handleRemoveClick = () => {
+    setIsDeleteModalOpen(true);
+  };
+
+  const handleRemoveConfirm = async () => {
     try {
-      var unitID;
-      
-      selectedUnits.forEach((unit) => {
-        unitID = unit._id;
-      });
-      
-      console.log("Unit to delete:", unitID);
-      
-      if (selectedUnits.length === 0) {
-        window.alert("ERROR: Must select at least one unit to delete.");
-        throw Error("Must select at least one unit to delete.");
-      }
-      
-      // UnitDataService.deleteUnit(unitID, user.token)
-      //   .then((response) => {
-      //     console.log("Successfully deleted units.");
-      //     retrieveUnits();
-      //   })
-      //   .catch((error) => {
-      //     console.log(
-      //       `ERROR when deleting units.\nError: ${error.response.data.error}`
-      //     );
-      //   });
+      console.log("removing, user token =", user.token);
+      await UnitDataService.removeMultiple(selectedUnitIDs, user.token);
+      setIsDeleteModalOpen(false);
+      setSelectedUnitIDs([]);
+      retrieveUnits();
     } catch (error) {
-      console.error("ERROR when deleting units:\n", error);
+      console.error('Error removing units:', error);
     }
   };
-  
+
+  const handleRemoveCancel = () => {
+    setIsDeleteModalOpen(false);
+  };
+
   // Column fields of Units in the DataGrid
   const columns = [
     { field: 'unitCode',    headerName: 'Unit Code',   width: 150 },
@@ -164,76 +143,98 @@ const UnitList = () => {
   ];
   
   // Handle selecting one or more units
-  const handleRowSelectionModelChange = (newSelections) => {
-    console.log("newSelections = " + newSelections);
-
+  const handleRowSelectionModelChange = (newSelection) => {
     // > "newSelections" are the id's of the units selected but we want the Unit object itself
     // > replace the unit id's with the actual unit objects that are selected
-    const selectedUnitObj = newSelections.map((selectedId) => 
+    const selectedUnitObj = newSelection.map((selectedId) => 
       units.find((unit) => unit._id === selectedId)
     );
-
+    setSelectedUnitIDs(newSelection);
     setSelectedUnits(selectedUnitObj);
-    console.log("Selected a unit, updated selectedUnitObj to:\n", selectedUnitObj);
-    
+    console.log("selectedUnitObj = ", selectedUnitObj);
+
     // add selected units to local storage incase of refresh
     localStorage.setItem('selectedUnits', JSON.stringify(selectedUnitObj));
   };
-  
-  
+
   return (
     <>
-    <div>
-      <Navbar />
-    </div>
-    
-    { /* FOR TESTING - Add/Delete Unit Buttons */ }
-    <SimpleButton content="Add Unit" onClick={handleAddUnit} />
-    
-    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-      <Link
-        to="/unitassessmentpage"
-        state={{ selectedUnits: selectedUnits }}
-      >
-        <SimpleButton content="Assess" />
-      </Link>
-      <Button
-        variant="contained"
-        sx={
-          {
-            color: 'white', borderRadius: '10px', background: '#24a0ed',
-            marginRight: '10px',
-          }
-        }
-        onClick={handleDeleteUnit}
-      >
-        Delete
-      </Button>
-    </div>
-    <Box sx={{ height: '100%', width: '100%' }}>
-      <DataGrid
-        rows={units}
-        rowHeight={30}
-        columns={columns}
-        columnResizable={true}
-        getRowId={(row) => row._id}  // use the Unit's mongo ID as the row ID
-        initialState={{
-          pagination: {
-            paginationModel: {
-              pageSize: 25,
+      <div>
+        <Navbar />
+        <AddUnitButton onUnitSave={handleUnitSave}/>
+        <Link
+          to="/unitassessmentpage"
+          state={{ selectedUnits: selectedUnits }}
+        >
+          <SimpleButton content="Assess" />
+        </Link>
+       
+        {selectedUnitIDs.length > 0 && (
+          <Button
+            sx={{
+              position: 'absolute',
+              top: '15px',
+              right: '290px',
+              color: 'white',
+              borderRadius: '10px',
+              background: 'error',
+              zIndex: 1200,
+            }}
+            variant="contained"
+            color="error"
+            onClick={handleRemoveClick}
+          >
+            Remove ({selectedUnitIDs.length})
+          </Button>
+        )}
+      </div>
+
+      {/* [TESTING] - if a Unit is actually added in the DB */}
+      <Box sx={{ height: '100%', width: '100%' }}>
+        <DataGrid
+          rows={units}
+          rowHeight={30}
+          columns={columns}
+          columnResizable={true}
+          getRowId={(row) => row._id}  // use the Unit's mongo ID as the row ID
+          initialState={{
+            pagination: {
+              paginationModel: {
+                pageSize: 25,
+              },
             },
-          },
-        }}
-        pageSizeOptions={[10, 25, 50]}
-        checkboxSelection
-        disableRowSelectionOnClick
-        selectionModel={selectedUnits}
-        onRowSelectionModelChange={handleRowSelectionModelChange}
-      />
-    </Box>
+          }}
+          pageSizeOptions={[10, 25, 50]}
+          checkboxSelection
+          disableRowSelectionOnClick
+          selectionModel={selectedUnits}
+          onRowSelectionModelChange={handleRowSelectionModelChange}
+        />
+      </Box>
+
+      <Dialog
+        open={isDeleteModalOpen}
+        onClose={handleRemoveCancel}
+        aria-labelledby="remove-dialog-title"
+        aria-describedby="remove-dialog-description"
+      >
+        <DialogTitle id="remove-dialog-title">Confirm Removal</DialogTitle>
+        <DialogContent>
+          <DialogContentText id="remove-dialog-description">
+            Are you sure you want to remove {selectedUnitIDs.length} selected unit(s)?
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleRemoveCancel} sx={{color:"black"}}>
+            Cancel
+          </Button>
+          <Button onClick={handleRemoveConfirm} color="error">
+            Remove
+          </Button>
+        </DialogActions>
+      </Dialog>
     </>
   );
-
-}
+};
 
 export default UnitList;

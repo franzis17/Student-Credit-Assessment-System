@@ -12,8 +12,8 @@ router.use(requireAuth)
 /** Get all units = /units */
 router.route("/").get(async (req, res) => {
   try {
-    // Get all units from the DB and populate with the reference institution object
-    const units = await Unit.find({}).populate("institution", "name");
+    let units;
+    units = await Unit.find().populate("institution");
     res.json(units);
   } catch (err) {
     console.error(`ERROR: ${err}`);
@@ -34,15 +34,19 @@ function getInstitutionNames(units) {
 }
 
 
-/** Get units specific to an institution */
+/**
+ * [/units/sortedunits] 
+ * Get units specific to an institution 
+ */
 router.route("/sortedunits").get(async (req, res) => {
-  const institutionId = req.query.id; // Get the institution ID from the query parameter
+  const institutionId = req.query.institutionId;
+  console.log('Received institutionId:', institutionId);
 
   try {
-    // Get all units from the DB that belong to the specified institution
-    const units = await Unit.find({ institution: institutionId });
+    const units = await Unit.find({ institution: institutionId }).populate("institution");
 
-    // Return the list of units
+    console.log('Retrieved units:', units);
+
     res.json(units);
   } catch (err) {
     console.error(`ERROR: ${err}`);
@@ -108,8 +112,20 @@ router.route("/add").post((req, res) => {
 
 // ---- [UPDATE] ----
 
-// Update a unit's details = /units/update/:id
-// TO BE DONE
+
+router.route("/update/:id").put((req, res) => {
+  const unitId = req.params.id;
+  const updatedUnitData = req.body;
+
+  Unit.findByIdAndUpdate(unitId, updatedUnitData, { new: true })
+    .then((updatedUnit) => {
+      if (!updatedUnit) {
+        return res.status(404).json("Unit not found.");
+      }
+      res.json(updatedUnit);
+    })
+    .catch((err) => res.status(500).json("Error: " + err));
+});
 
 
 // ---- [DELETE] ----
@@ -124,6 +140,46 @@ router.route("/delete").delete(async (req, res) => {
   // Unit.findByIdAndDelete(unit)
   //   .then(() => res.json("The Unit has been deleted."))
   //   .catch((err) => res.status(400).json("Error:" + err));
+});
+
+
+router.route("/institution-unit-delete/:institutionId").delete(async (req, res) => {
+  const institutionId = req.params.institutionId;
+
+  try {
+    const deletedUnits = await Unit.deleteMany({ institution: institutionId });
+    if (deletedUnits.deletedCount > 0) {
+      res.json(`Deleted ${deletedUnits.deletedCount} units associated with institution ID ${institutionId}`);
+    } else {
+      res.json(`No units associated with institution ID ${institutionId}`);
+    }
+  } catch (err) {
+    console.error(`ERROR: ${err}`);
+    res.status(500).json(`ERROR: Failed to delete units. More details: ${err}`);
+  }
+});
+
+/**
+ * [/units/remove-multiple]
+ */
+router.route("/remove-multiple").delete(async (req, res) => {
+  const unitIds = req.body.unitIds;
+  
+  console.log("body =", req.body);
+  console.log("unitIds =", unitIds);
+
+  try {
+    const result = await Unit.deleteMany({ _id: { $in: unitIds } });
+
+    if (result.deletedCount > 0) {
+      res.json(`Successfully deleted ${result.deletedCount} units.`);
+    } else {
+      res.json("No units were deleted.");
+    }
+  } catch (error) {
+    console.error("Error removing units:", error);
+    res.status(500).json("Error removing units: " + error.message);
+  }
 });
 
 export default router;

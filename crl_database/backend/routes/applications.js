@@ -3,7 +3,7 @@ import Application from "../models/application.model.js";
 import requireAuth from '../middleware/requireAuth.js';
 
 const router = express.Router();
-//router.use(requireAuth)
+router.use(requireAuth)
 
 
 // ---- [ GET ] ----
@@ -51,7 +51,7 @@ router.route("/add").post((req, res) => {
     studentNotes,
   });
   
-  console.log("Adding new application:");
+  console.log(">>> Adding new application:");
   console.log("newApplication =", newApplication);
   
   newApplication
@@ -78,6 +78,32 @@ router.route("/delete/:id").delete((req, res) => {
     .catch((e) => {
       res.status(400).json(`ERROR: ${e}`);
     });
+});
+
+// ---- [ Search for Student ] ----
+router.route("/studentSearch").get(async (req, res) => {
+  console.log("Endpoint accessed");
+  const query = req.query.q;
+    
+  // Search logic: StudentNotes
+  try {
+      let results = [];
+      if(query) {
+          results = await Application.find({
+              
+              studentNotes: { $regex: query, $options: 'i' }
+              
+          }).populate("institution assessedUnits assessorNotes");
+      }
+      res.json(results);
+  } catch (e) {
+      console.error(`ERROR: ${e}`);
+      res.status(500).json(`ERROR: Failed to fetch search results. More details: ${e}`);
+  }
+});
+
+router.route("/totty").get((req, res) => {
+  res.send("Route is working");
 });
 
 export default router;
