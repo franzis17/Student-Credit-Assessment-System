@@ -23,6 +23,14 @@ const assessmentSchema = new Schema(
       type: Schema.Types.ObjectId,
       ref: "Unit",
     },
+    
+    date: {
+      type: Date
+    },
+
+    studentNotes: {
+      type: String,
+    }
   },
   {
     timestamps: true,

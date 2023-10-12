@@ -2,8 +2,10 @@ import express from "express";
 import Assessment from "../models/assesment.model.js";
 import User from "../models/user.model.js";
 import Unit from "../models/unit.model.js";
+import requireAuth from '../middleware/requireAuth.js';
 
 const router = express.Router();
+//router.use(requireAuth)
 
 /**
  * Save assessment
@@ -23,4 +25,48 @@ router.post("/add", async (req, res) => {
   .catch(err => res.status(500).json("Error: " + err));
 });
 
-export default router;
+router.get("/searchStudent", async (req, res) => {
+
+  const query = req.query.q;
+
+  try {
+
+    const assessments = await Assessment.find({ 
+      studentNotes: new RegExp(query, 'i')
+   }) 
+  
+       const results = assessments.map(assessment => {
+         const match = assessment.studentNotes.match(/(\w+)\s(\d+)/)  //Map based on regex for name and ID
+          if (match) {
+           return {
+             name: match[1],
+             id: match[2]
+           }
+          }
+
+          return null
+       }).filter(Boolean) //filter null values
+
+       res.status(200).json(results)
+  } catch (err) {
+    res.status(500).json({error: err.message})
+  }
+
+})
+
+/*
+// TEST: Mock data to be put in db
+router.route("/add-appMock").post(async (req, res) => {
+  try {
+    const rawData = fs.readFileSync("./routes/MOCK-Assessment.json");
+    const jsonData = JSON.parse(rawData);
+    
+    await Assessment.insertMany(jsonData);
+    
+    res.json("Mock Assessments have been added.");
+  } catch (err) {
+    res.status(400).json("Error when adding mock: " + err);
+  }
+});
+
+export default router; */

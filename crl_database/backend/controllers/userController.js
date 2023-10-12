@@ -23,11 +23,19 @@ const loginUser = async (req, res) => {
 
         const user = await User.login(email,password)
 
+        // Check if email is verified
+        if(!user.isVerified) {
+            // Respond differently when the email is not verified
+            return res.status(401).json({ error: 'Email is not verified. Please verify your email before logging in.' });
+        }
+
+        const { role, username, isVerified } = user;
+
         //create a token for user
         const token = createJsonToken(user._id)
 
         //token -> payload encoded, headers encoded, secret_token encoded
-        res.status(200).json({email, token})
+        res.status(200).json({username, email, token, role, isVerified})
 
     } catch (error) {
         res.status(400).json({error: error.message})
@@ -62,7 +70,7 @@ const signupUser = async (req, res) => {
             const token = createJsonToken(user._id)
 
             //token -> payload encoded, headers encoded, secret_token encoded
-            res.status(200).json({email, token})
+            res.status(200).json({email, token, isVerified: user.isVerified})
 
         }
 
@@ -97,6 +105,7 @@ const verifyEmail = async (req, res) => {
             res.status(200).json( {
                 _id: user._id,
                 name: user.username,
+                role: user.role,
                 email: user.email,
                 token,
                 isVerified: user?.isVerified,
@@ -110,6 +119,41 @@ const verifyEmail = async (req, res) => {
     }
 
         
+}
+
+const resendVerification = async (req, res) => {
+
+    try {
+        const { email } = req.body
+
+        if (!email) {
+            return res.status(400).json({ message: "Email not found." })
+        }
+
+        const user = await User.findOne({ email });
+
+        if (!user) {
+            return res.status(404).json({ message: "User not found." })
+        }
+
+        if (user.isVerified) {
+            return res.status(400).json({ message: "Email is already verified." })
+        }
+
+
+        user.emailToken = createJsonToken()
+        await user.save();
+
+        // Send the verification email with the new token
+        // Implement this function to send the email
+        sendVerificationEmail(user)
+
+        res.status(200).json({ message: "Verification email resent successfully." });
+
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ message: error.message });
+    }
 }
 
 
@@ -138,6 +182,6 @@ const updateUserFields = async (req, res) => {
 
 }
 
-export {signupUser, loginUser, verifyEmail, updateUserFields};
+export {signupUser, loginUser, verifyEmail, updateUserFields, resendVerification};
 
 

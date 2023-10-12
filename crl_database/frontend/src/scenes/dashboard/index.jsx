@@ -7,8 +7,8 @@ import { LightModeOutlined,  //For darkmode functionality later
     CountertopsRounded
 } from "@mui/icons-material";
 import FlexBetween from '../../components/FlexBetween';
-import { useDispatch } from 'react-redux';
-import { setMode } from "../../state" //For darkmode functionality later
+import { useDispatch} from 'react-redux';
+import { setMode } from "../../state" //For darkmode functionality later maybe
 import { Box, 
   Grid, 
   IconButton, 
@@ -22,8 +22,12 @@ import { Box,
 import Navbar from "../../components/Navbar";
 import InstitutionDataService from "../../services/institution";
 import UnitDataService from "../../services/unit";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation} from 'react-router-dom';
 import Counter from './animate/counter';
+import dashboardBackground from '../../assets/dashboard-backdrop.jpg';
+
+import { useAuthContext } from '../../hooks/useAuthContext';
+
 
 const Dashboard = () => {
   const [totalInstitutions, setTotalInstitutions] = useState([]);
@@ -31,12 +35,15 @@ const Dashboard = () => {
   const [searchInput, setSearchInput] = useState('');
   const [institutionList, setInstitutionList] = useState([]);
   const [filteredList, setFilteredList] = useState([]);
+  const [selectedInstitution, setSelectedInstitution] = useState([]);
   const listRef = useRef(null);
-  
+
+  const {user} = useAuthContext();
+
   // To do after render
   useEffect(() => {
     getInstitutionCount();
-    getUnitCount(); // After rendering, retrieve institutions
+    getUnitCount();
     getAllInstitutions();
 
 
@@ -55,81 +62,110 @@ const Dashboard = () => {
   }, []);
 
   const getInstitutionCount = () => {
-    InstitutionDataService.getCount()
+    InstitutionDataService.getCount(user.token)
       .then((response) => {
         const instCount = response.data;
         setTotalInstitutions(instCount);
       })
       .catch((err) => {
         console.log(
-          `ERROR when retrieving institutions. \nError: ${err}`
+          `ERROR when retrieving institution's count. \nError: ${err}`
         );
       });
   };
 
   const getUnitCount = () => {
-    UnitDataService.getCount()
+    UnitDataService.getCount(user.token)
     .then((response) => {
       const unitCount = response.data;
       setTotalUnits(unitCount);
     })
     .catch((err) => {
       console.log(
-        `ERROR when retrieving institutions. \nError: ${err}`
+        `ERROR when retrieving unit's count. \nError: ${err}`
       );
     });
-  }
+  };
 
 
   const getAllInstitutions = () => {
-    InstitutionDataService.getAll()
+    InstitutionDataService.getAll(user.token)
     .then((response) => {
       const institutions = response.data;
       setInstitutionList(institutions);
     })
       .catch((err) => {
         console.log(
-          `ERROR when retrieving institutions. \nError: ${err}`
+          `ERROR when retrieving all institutions. \nError: ${err}`
         );
     });
   }
 
-  const handleSearchChange = (event) => {
-    const query = event.target.value.toLowerCase();
+  const handleSearchChange = (ev) => {
+    const query = ev.target.value ? ev.target.value.toLowerCase() : "";
+    console.log("Query:", query);
+  
     if (query === "") {
-      setFilteredList([]); //hides list
-    }
-    else{
-      var filteredList = institutionList.filter((institution) =>
+      setFilteredList([]);
+      setSelectedInstitution(null);
+    } else {
+      const filteredList = institutionList.filter((institution) =>
         institution.name.toLowerCase().includes(query)
       );
       setFilteredList(filteredList);
     }
   };
-
+  
+  const handleInstitutionClick = (institutionId) => {
+    setSelectedInstitution(institutionId);
+    navigateToSortedUnitList(institutionId);
+  };
+  
+  
   const navigateToInstitutionList = (institutionId) => {
-    navigate(`/institutions/`); //Change this for return route into institution list
+    navigate(`/institutions/`);
+  };
+
+  const navigateToSortedUnitList = (institutionId) => {
+    console.log("here is the instition id: " + institutionId)
+    if (institutionId) {
+      //navigate(`/units?institutionId=${institutionId}`);
+      navigate(`/units/${institutionId}`);
+    }
+  };
+
+  const dashboardStyle = {
+    background: `url(${dashboardBackground})`,
+    backgroundSize: 'cover',
+    backgroundRepeat: 'no-repeat',
+    backgroundPosition: 'center center',
+    width: '100vw', // 100% of the viewport width
+    height: '100vh', // 100% of the viewport height
+    position: 'fixed', // Fixed position to cover the entire viewport
+    top: 0,
+    left: 0,
+    overflow: 'auto' // Allow the container to scroll
   };
 
   const dispatch = useDispatch();
   const theme = useTheme();
   const navigate = useNavigate();
-
   return (
+  <div style={dashboardStyle}>
   <div>
     <div>
       <Navbar />
     </div>
     <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column', marginTop: '2rem' }}>
-    <div style={{ fontSize: '24px', fontWeight: 'bold', marginBottom: '2rem', textAlign: 'center' }}>
+    <div style={{ fontSize: '32px', fontWeight: 'bold', marginBottom: '1rem', textAlign: 'center' }}>
       Welcome to the CRL Database
     </div>
-    <FlexBetween backgroundColor={theme.palette.background.alt} borderRadius="10px" gap="0.5rem" p="0.1rem 1rem" style={{ position: 'relative' }}>
-            <InputBase
+    <FlexBetween backgroundColor={theme.palette.background.alt} borderRadius="10px" gap="0.5rem" p="0.1rem 1rem" style={{ position: 'relative', backgroundColor:"white", border:"solid", borderColor:"#D3D3D3" }}>
+          <InputBase
               type="text"
               placeholder="Search an institution..."
-              style={{ width: '500px', padding: "0" }}
-              onChange={handleSearchChange}
+              style={{ width: '500px', padding: "0"}}
+              onChange={(event) => handleSearchChange(event)}
             />
             <IconButton>
               <Search />
@@ -164,10 +200,13 @@ const Dashboard = () => {
                   <React.Fragment key={institution.id}>
                     <ListItem
                       button
-                      onClick={() => navigateToInstitutionList(institution.name)}
+                      onClick={(event) => {
+                        handleInstitutionClick(institution._id);
+                      }}
                     >
                       <ListItemText primary={institution.name} />
                     </ListItem>
+
                     {index < 7 && <Divider />}
                   </React.Fragment>
                 ))}
@@ -335,15 +374,18 @@ const Dashboard = () => {
         Put Total Rejected Unit Comparisons Here
       </Box>
             <div>
-              <Button style={{
-                       color: '#0070E0',
-                       padding: "8px 10px",
-                       fontSize: "10px",
-                       position: 'relative',
-                       bottom: '0',
-                       left: '-70px'
-                      }}>
-              View Rejected Comparisons</Button>
+            <Button
+              style={{
+                color: '#0070E0',
+                padding: "8px 10px",
+                fontSize: "10px",
+                position: 'relative',
+                bottom: '0',
+                left: '-70px'
+              }}
+            >
+              View Rejected Comparisons
+            </Button>
             </div>
           </Grid>
           <Grid item xs={4} textAlign="center">
@@ -387,5 +429,7 @@ const Dashboard = () => {
         </Grid>
     </div>
   </div>
+</div>
+
   )}
 export default Dashboard;

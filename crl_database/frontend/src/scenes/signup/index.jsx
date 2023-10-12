@@ -2,11 +2,12 @@
 import { useState, useEffect } from 'react';
 import { useSignup } from "../../hooks/useSignup"
 import { useNavigate } from 'react-router-dom';
-import { useWhitelistCheck } from '../../hooks/useWhitelistCheck';
-import { useGetRoleID } from '../../hooks/useGetRoleID';
 import { Button, TextField, Paper, Typography, Container } from '@material-ui/core';
 import useStyles from './signupFormStyle.js'
 import Alert from '@material-ui/lab/Alert';
+
+import { whitelistCheck } from '../../services/whitelistHelper.js'
+import { getRoleID, updateRole } from '../../services/roleHelper.js'
 
 const Signup = () => {
 
@@ -16,29 +17,30 @@ const Signup = () => {
     const [curtinID, setCurtinID] = useState('')
     const {signup, error, isLoading} = useSignup()
     const navigate = useNavigate();
-    const { isWhitelisted } = useWhitelistCheck(curtinID)
     const [showAccessDeniedMessage, setShowAccessDeniedMessage] = useState(JSON.parse(localStorage.getItem('showAccessDeniedMessage') || "false"))
-    const { userRole, updateRole } = useGetRoleID(curtinID)
     const classes = useStyles()
+    useState(JSON.parse(localStorage.getItem('showAccessDeniedMessage') || "false"))
+
     
     
     const handle = async(e) => {
+        e.preventDefault()
 
+        const isUsrWhitelst = await whitelistCheck(curtinID)
+        
 
-        if(!isWhitelisted)
+        if(!isUsrWhitelst)
         {
             setShowAccessDeniedMessage(true);
             localStorage.setItem('showAccessDeniedMessage', JSON.stringify(true))
 
         } else {
 
-            e.preventDefault()
             //Clear local storage for access denied message
             localStorage.removeItem('showAccessDeniedMessage')
 
             //Update the users role in the User schema table after getting new assigned role
-            const role = userRole
-            console.log(role)
+            const role = await getRoleID(curtinID)
 
             if (role) {
                 // Call updateRole with the correct arguments
@@ -61,6 +63,7 @@ const Signup = () => {
 
 
     return (
+        
             <Container maxWidth="xs">
                 {showAccessDeniedMessage && (
                     <Alert severity="error">You do not have authorized access. Please contact the admin.</Alert>
@@ -106,7 +109,11 @@ const Signup = () => {
                             fullWidth
                             label="Curtin ID"
                             type="text"
-                            onChange={(e) => setCurtinID(e.target.value)}
+                            onChange={(e) => {
+                                setCurtinID(e.target.value)
+                        
+                            }}
+                            
                             value={curtinID}
                         />
                         <Button
