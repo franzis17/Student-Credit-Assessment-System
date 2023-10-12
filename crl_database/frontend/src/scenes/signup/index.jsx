@@ -2,9 +2,10 @@
 import { useState, useEffect } from 'react';
 import { useSignup } from "../../hooks/useSignup"
 import { useNavigate } from 'react-router-dom';
-import { Button, TextField, Paper, Typography, Container } from '@material-ui/core';
+import { Button, TextField, Paper, Typography, Container, IconButton } from '@material-ui/core';
 import useStyles from './signupFormStyle.js'
 import Alert from '@material-ui/lab/Alert';
+import { Visibility, VisibilityOff } from '@material-ui/icons';
 
 import { whitelistCheck } from '../../services/whitelistHelper.js'
 import { getRoleID, updateRole } from '../../services/roleHelper.js'
@@ -16,6 +17,7 @@ const Signup = () => {
     const [password, setPassword] = useState('')
     const [curtinID, setCurtinID] = useState('')
     const {signup, error, isLoading} = useSignup()
+    const [showPassword, setShowPassword] = useState(false)
     const navigate = useNavigate();
     const [showAccessDeniedMessage, setShowAccessDeniedMessage] = useState(JSON.parse(localStorage.getItem('showAccessDeniedMessage') || "false"))
     const classes = useStyles()
@@ -98,9 +100,20 @@ const Signup = () => {
                             required
                             fullWidth
                             label="Password"
-                            type="password"
+                            type={showPassword ? "text" : "password"}
                             onChange={(e) => setPassword(e.target.value)}
                             value={password}
+                            InputProps={{
+                                endAdornment: (
+                                    <IconButton
+                                        edge="end"
+                                        aria-label="toggle password visibility"
+                                        onClick={() => setShowPassword(!showPassword)}
+                                    >
+                                        {showPassword ? <VisibilityOff /> : <Visibility />}
+                                    </IconButton>
+                                )
+                            }}
                         />
                         <TextField
                             variant="outlined"

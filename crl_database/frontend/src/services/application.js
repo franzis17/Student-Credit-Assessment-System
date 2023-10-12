@@ -26,14 +26,19 @@ class ApplicationDataService {
   // ---- [ POST ] ----
   
   addApplication(newApplication, userToken) {
-    console.log("newAssessment =", newApplication);
     const headers = ApplicationDataService.getHeader(userToken);
     return http.post((ApplicationDataService.defaultRoute + "/add"),
       newApplication,
       headers,
     );
   }
-  
+
+  // ---- [ DELETE ] ----
+  removeApplication(applicationID, userToken) {
+    const headers = ApplicationDataService.getHeader(userToken);
+    console.log("ENPOINT: " + applicationID)
+    return http.delete(`/applications/delete/${applicationID}`, headers);
+  }
 }
 
 const applicationDataService = new ApplicationDataService();

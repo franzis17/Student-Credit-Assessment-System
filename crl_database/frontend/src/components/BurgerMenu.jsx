@@ -25,6 +25,7 @@ import ChevronUpIcon from '@mui/icons-material/ExpandLess';
 import { Link } from 'react-router-dom';
 import LockIcon from '@mui/icons-material/Lock';
 import { useAuthContext } from '../hooks/useAuthContext.js';
+import { useLogout } from '../hooks/useLogout.js'
 import StudentSearch from './studentSearch.jsx';
 import Whitelist from './whitelistMenu.jsx';
 
@@ -35,12 +36,13 @@ const BurgerMenu = () => {
   const navigate = useNavigate();
   const { user } = useAuthContext();
   const [openLists, setOpenLists] = useState(false);
+  const {logout} = useLogout()
   
   //Conditionally set the menu items 
   const menuItems = ['Dashboard', 'Lists', 'Student Search']
   //Check if the user is admin
   if (user && user.role == 'Admin') {
-    menuItems.push('Whistlist')
+    menuItems.push('Whitelist')
   }
 
   const toggleDrawer = () => {
@@ -59,6 +61,14 @@ const BurgerMenu = () => {
   const toggleWhitelistMenu = () => {
     setWhitelistModalOpen(!whitelistModalOpen)
   }
+
+  const handleLogout = () => {
+    // Perform logout action here, e.g., clear authentication tokens, navigate to login page, etc.
+    logout()
+    navigate('/login')
+    // navigate('/login'); // You can uncomment this line if you have a navigation system set up
+  };
+
 
 
   function handleListItemClick(index) {
@@ -173,7 +183,7 @@ const BurgerMenu = () => {
               left: 0,
             }}
             onClick={() => {
-              navigateTo('/login');
+              handleLogout()
             }}
           >
             <LockIcon style={{ marginRight: '20px' }} />

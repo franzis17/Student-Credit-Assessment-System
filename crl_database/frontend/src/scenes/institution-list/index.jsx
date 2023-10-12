@@ -3,6 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import InstitutionDataService from "../../services/institution";
 import UnitDataService from "../../services/unit"
 import Navbar from "../../components/Navbar";
+import "./list.css";
+
 import DeleteIcon from '@mui/icons-material/Delete';
 import Box from '@mui/material/Box';
 import { DataGrid } from '@mui/x-data-grid';
@@ -24,7 +26,7 @@ const InstitutionList = () => {
   const [institutionToDelete, setInstitutionToDelete] = useState('');
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
-  const {user} = useAuthContext();
+  const { user } = useAuthContext();
   const navigate = useNavigate();
   const dataUtils = new DataUtils();
   
@@ -32,6 +34,23 @@ const InstitutionList = () => {
   useEffect(() => {
     retrieveInstitutions(); 
   }, []);
+  
+  const retrieveInstitutions = () => {
+    InstitutionDataService.getAll(user.token)
+      .then((response) => {
+        const data = response.data;
+        console.log("Retrieved institutions:\n", data);
+        
+        // replace the null fields of with text "NO DATA"
+        dataUtils.replaceNullFields(data);
+        
+        setInstitutions(data);
+      })
+      .catch((error) => {
+        console.log("ERROR when retrieving institutions. \nError: ", error);
+        console.log("Error response:\n", error.response.data);
+      });
+  };
   
   //modal stuff
   const openConfirmationModal = (institutionId) => {
@@ -54,23 +73,6 @@ const InstitutionList = () => {
     flexDirection: 'column',
     height: '100%'
   }
-
-  const retrieveInstitutions = () => {
-    InstitutionDataService.getAll(user.token)
-      .then((response) => {
-        const data = response.data;
-        console.log("Retrieved institutions:\n", data);
-        
-        // replace the null fields of with text "NO DATA"
-        dataUtils.replaceNullFields(data);
-        
-        setInstitutions(data);
-      })
-      .catch((error) => {
-        console.log("ERROR when retrieving institutions. \nError: ", error);
-        console.log("Error response:\n", error.response.data);
-      });
-  };
   
   // Use Axios to add new Institution in the DB by HTTP POST request
   const handleInstitutionSave = (institutionData) => {
@@ -122,11 +124,11 @@ const InstitutionList = () => {
   
   
   const columns = [
-    { field: 'name', headerName: 'Name', width: 250 },
-    { field: 'rank', headerName: 'Rank' },
-    { field: 'location', headerName: 'Location', width: 300 },
-    { field: 'major', headerName: 'Major', width: 150 },
-    { field: 'notes', headerName: 'Notes', width: 400 },
+    { field: 'name',      headerName: 'Name',      width: 250, },
+    { field: 'rank',      headerName: 'Rank',      width: 60,  },
+    { field: 'location',  headerName: 'Location',  width: 300, },
+    { field: 'major',     headerName: 'Major',     width: 150, },
+    { field: 'notes',     headerName: 'Notes',     width: 400, },
     {
       field: 'delete',
       headerName: 'Delete',
@@ -175,6 +177,7 @@ const InstitutionList = () => {
                 handleSelection(params.id);
               }
             }}
+            className="list-column"
           />
         </Box>
         <Dialog

@@ -125,9 +125,13 @@ const UnitAssessmentPage = () => {
       const noteWithTimestamp = `${formattedTime} - ${noteText}`;
   
       const updatedNotes = [...notes, noteWithTimestamp];
-      setNotes(updatedNotes);
-      document.querySelector('.notes-section textarea').value = '';
-      localStorage.setItem('notes', JSON.stringify(updatedNotes));
+      const isConfirmed = window.confirm("Are you sure you want to add this note?");
+    
+      if (isConfirmed) {
+        setNotes(updatedNotes);
+        document.querySelector('.notes-section textarea').value = '';
+        localStorage.setItem('notes', JSON.stringify(updatedNotes));
+      }
     }
   };
   
@@ -210,6 +214,7 @@ const UnitAssessmentPage = () => {
     if (studentInfo.name.trim() !== '' && aqf.trim() !== '' && award.trim() !== '') {
       const parsedAqf = parseInt(aqf, 10);
       if (Number.isInteger(parsedAqf) && parsedAqf >= 0 && parsedAqf <= 10) {
+        const studentNotesFormatted = `${studentInfo.name} (${studentInfo.studentNumber}): ${studentInfo.studentNote}`;
         const applicationToAdd = {
           institution: selectedUnits[0].institution._id,
           status: localStorage.getItem('status'),
@@ -220,22 +225,25 @@ const UnitAssessmentPage = () => {
           assessedUnits: selectedUnits.map(unit => unit._id),
           curtinUnit: selectedItemDetails._id,
           assessorNotes: notes.join('\n'), //notes by itself is an array and cannot be saved
-          studentNotes: JSON.stringify(studentInfo) //this is an array and cannot be saved (student info)
+          studentNotes: studentNotesFormatted //this is an array and cannot be saved (student info)
         };
 
-      console.log("HERE ARE THE NOTES: " + notes);
-
-      console.log("APPLICATION: " + studentInfo.studentNumber);
-      console.log(applicationToAdd.curtinUnit);
-
-      ApplicationDataService.addApplication(applicationToAdd, user.token)
-      .then(response => {
-        console.log('Application Successfully Added: ', response.data);
-        navigate('/applications');
-      })
-      .catch(error => {
-        console.error('Error while adding application: ' , error)
-      });
+        const isConfirmed = window.confirm("Are you sure you want to submit this information?");
+    
+        if (isConfirmed) {
+          console.log("HERE ARE THE NOTES: " + notes);
+          console.log("APPLICATION: " + studentInfo.studentNumber);
+          console.log(applicationToAdd.curtinUnit);
+  
+          ApplicationDataService.addApplication(applicationToAdd, user.token)
+            .then(response => {
+              console.log('Application Successfully Added: ', response.data);
+              navigate('/applications');
+            })
+            .catch(error => {
+              console.error('Error while adding application: ', error);
+            });
+        }
      }
      else {
       alert('AQF must be an integer between 0 and 10.');
