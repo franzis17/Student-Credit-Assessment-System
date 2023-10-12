@@ -33,22 +33,6 @@ class InstitutionDataService {
     return http.get((InstitutionDataService.defaultRoute + "/count"), headers);
   }
   
-  getUnitsOfInstitution(institutionId, userToken) {
-    const params = { institution: institutionId };
-    return http.get((InstitutionDataService.defaultRoute + "/units"),
-      {
-        params,
-        headers: {
-          Authorization: ( "Bearer " + userToken )
-        }
-      }
-    );
-  }
-  
-  getUnitsOfCurtin(userToken) {
-    return this.getUnitsOfInstitution(InstitutionDataService.curtinId, userToken);
-  }
-  
   
   // POST
   

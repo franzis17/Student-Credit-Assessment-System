@@ -5,7 +5,8 @@ import './App.css';
 import './buttonStyles.css';
 import { useAuthContext } from '../../hooks/useAuthContext';
 import ApplicationDataService from "../../services/application";
-import InstitutionDataService from "../../services/institution";
+import UnitDataService from "../../services/unit";
+
 
 const UnitAssessmentPage = () => {
   const [searchedUnit, setSearchedUnit] = useState('');
@@ -69,7 +70,7 @@ const UnitAssessmentPage = () => {
   }, [searchedUnit]); 
   
   const retrieveCurtinUnits = () => {
-    InstitutionDataService.getUnitsOfCurtin(user.token)
+    UnitDataService.getUnitsOfCurtin(user.token)
       .then((response) => {
         console.log("Retrieved Curtin Units:", response.data);
         setCurtinUnits(response.data);
