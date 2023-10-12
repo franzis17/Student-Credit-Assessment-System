@@ -124,14 +124,14 @@ const InstitutionList = () => {
   
   
   const columns = [
-    { field: 'name',      headerName: 'Name',      width: 250, },
+    { field: 'name',      headerName: 'Name',      width: 400, },
     { field: 'rank',      headerName: 'Rank',      width: 60,  },
     { field: 'location',  headerName: 'Location',  width: 300, },
     { field: 'major',     headerName: 'Major',     width: 150, },
     {
       field: 'delete',
       headerName: 'Delete',
-      width: "100%",
+      width: 90,
       renderCell: (params) => (
         <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
           <IconButton
@@ -151,13 +151,14 @@ const InstitutionList = () => {
       <Navbar />
       <AddInstitutionButton onInstitutionSave={handleInstitutionSave} />
 
-      <div style={containerStyle}>
+      <div style={containerStyle} className="center-data-grid">
         <Box sx={{ flex: 1 }}>
           <DataGrid
             rows={institutions}
             columns={columns}
             columnResizable={true}
             getRowId={(row) => row._id}
+            autoHeight={true} // Set autoHeight to true
             initialState={{
               pagination: {
                 paginationModel: {
