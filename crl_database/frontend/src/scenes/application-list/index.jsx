@@ -42,7 +42,6 @@ const ApplicationList = () => {
         
         // replace the null fields of with text "NO DATA"
         dataUtils.replaceNullFields(data);
-        
         setApplications(data);
       })
       .catch((error) => {
@@ -74,7 +73,7 @@ const ApplicationList = () => {
         .then(() => {
           // Handle success, such as updating the UI
           console.log(`Application ${selectedId} has been deleted.`);
-          // You may want to refresh the applications list or handle this as needed.
+          retrieveApplications();
         })
         .catch((error) => {
           // Handle errors

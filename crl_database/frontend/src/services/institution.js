@@ -8,7 +8,7 @@ class InstitutionDataService {
   
   /* Fields - to be changed as needed */
   static defaultRoute = `/institutions`;
-  static curtinId = "6524130024edd59e6e5c3ffa";
+  static curtinId = "6527f81d3548aaf69fb67adf";
   
   /**
    * Header used to add the user's token and verified by API Provider

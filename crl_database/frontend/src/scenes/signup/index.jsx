@@ -10,9 +10,6 @@ import { Visibility, VisibilityOff } from '@material-ui/icons';
 import { whitelistCheck } from '../../services/whitelistHelper.js'
 import { getRoleID, updateRole } from '../../services/roleHelper.js'
 
-import { whitelistCheck } from '../../services/whitelistHelper.js'
-import { getRoleID, updateRole } from '../../services/roleHelper.js'
-
 const Signup = () => {
 
     const [email, setEmail] = useState('')
