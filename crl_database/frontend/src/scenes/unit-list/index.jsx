@@ -6,6 +6,7 @@ import Navbar from "../../components/Navbar";
 import AddUnitButton from '../../components/AddUnitButton';
 import SimpleButton from "../../components/buttons/SimpleButton";
 import { DataGrid } from '@mui/x-data-grid';
+import '../institution-list/list.css';
 
 import { useAuthContext } from '../../hooks/useAuthContext';
 import DataUtils from "../../utils/dataUtils";
@@ -210,7 +211,6 @@ const UnitList = () => {
         )}
       </div>
 
-      {/* [TESTING] - if a Unit is actually added in the DB */}
       <Box sx={{ height: '100%', width: '100%' }}>
         <DataGrid
           rows={units}
@@ -230,6 +230,7 @@ const UnitList = () => {
           disableRowSelectionOnClick
           selectionModel={selectedUnits}
           onRowSelectionModelChange={handleRowSelectionModelChange}
+          className="list-column"
         />
       </Box>
 
