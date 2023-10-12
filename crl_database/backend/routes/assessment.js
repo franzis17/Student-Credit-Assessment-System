@@ -70,28 +70,3 @@ router.route("/add-appMock").post(async (req, res) => {
 });
 
 export default router; */
-
-router.route("/submit").post((req, res) => {
-  const application = req.body.application;
-  const noteLog = req.body.noteLog;
-
-  const newAssessment = new Assessment({
-    application,
-    noteLog,
-  });
-
-  console.log(">>> Adding new assessment:");
-  console.log("newAssessment =", newAssessment);
-
-  newAssessment
-  .save()
-  .then(() => {
-    console.log("SUCCESS: Added a new assessment!");
-    res.json(`Assessment has been added!`);
-  })
-  .catch((e) => {
-    const context = "ERROR: When adding a new assessment.";
-    console.log(`${context}\n>>> More info: ${e}`);
-    res.status(500).json(`${context} More info: ${e}`);
-  });
-});

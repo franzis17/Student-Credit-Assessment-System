@@ -26,6 +26,7 @@ class ApplicationDataService {
   // ---- [ POST ] ----
   
   addApplication(newApplication, userToken) {
+    console.log("newAssessment =", newApplication);
     const headers = ApplicationDataService.getHeader(userToken);
     return http.post((ApplicationDataService.defaultRoute + "/add"),
       newApplication,

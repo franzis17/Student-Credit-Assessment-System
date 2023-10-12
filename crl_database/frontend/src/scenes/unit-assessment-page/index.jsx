@@ -4,8 +4,7 @@ import Navbar from '../../components/Navbar';
 import './App.css';
 import './buttonStyles.css';
 import { useAuthContext } from '../../hooks/useAuthContext';
-import AssessmentDataService from "../../services/assessment";
-
+import ApplicationDataService from "../../services/application";
 import InstitutionDataService from "../../services/institution";
 
 const UnitAssessmentPage = () => {
@@ -35,19 +34,6 @@ const UnitAssessmentPage = () => {
     localStorage.getItem('selectedAction') || ''
   );
   const [assessmentData, setAssessmentData] = useState([]);
-  const retrieveAssessmentData = async () => {
-    try {
-      const response = await AssessmentDataService.getAssessmentData(user.token);
-      console.log("Retrieved Assessment Data:", response.data);
-      setAssessmentData(response.data);
-    } catch (err) {
-      console.error(`ERROR: when retrieving Assessment Data.\nMore info: ${err}`);
-    }
-  };
-
-  useEffect(() => {
-    retrieveAssessmentData();
-  }, []);
 
 
   useEffect(() => {
@@ -210,27 +196,35 @@ const UnitAssessmentPage = () => {
     setShowModal(!showModal);
   };
 
-  const handleStudentInfoSubmit = async () => {
+  const handleStudentInfoSubmit = () => {
     if (studentInfo.name.trim() !== '') {
-      const assessmentData = {
-        status: selectedAction === 'Approve' ? 1 : (selectedAction === 'Deny' ? 2 : 3), // Adjust status based on the selected action
-        assessor: user._id, // Use the current user's ID or the appropriate value
-        unit: selectedItemDetails._id, // Use the selected unit's ID
-        application: selectedUnits.map((unit) => unit.institution._id), // Use the selected unit's institutions' IDs
-        noteLog: notes, // Save the notes in the noteLog field
-        date: new Date(), // Adjust as needed
-        studentNotes: studentInfo.studentNote,
+      const applicationToAdd = {
+        institution: selectedUnits[0].institution._id,
+        status: 1,
+        aqf: 1,
+        location: selectedUnits[0].location,
+        award: selectedUnits[0].award,
+        assessor: user.username,
+        assessedUnits: selectedUnits.map(unit => unit._id),
+        curtinUnit: selectedItemDetails._id,
+        assessorNotes: notes[notes.length-1], //notes by itself is an array and cannot be saved
+        studentNotes: studentInfo.studentNumber //this is an array and cannot be saved (student info)
       };
-      try {
-        // Send the assessment data to the server for saving in the database
-        await AssessmentDataService.addAssessment(assessmentData, user.token);
 
-        // After saving, navigate to another page or perform any necessary actions
+      console.log("HERE ARE THE NOTES: " + notes);
+
+      console.log("APPLICATION: " + studentInfo.studentNumber);
+      console.log(applicationToAdd.curtinUnit);
+
+      ApplicationDataService.addApplication(applicationToAdd, user.token)
+      .then(response => {
+        console.log('Application Successfully Added: ', response.data);
         navigate('/applications');
-      } catch (error) {
-        console.error("Error when saving assessment data:", error);
-        alert("Error when saving assessment data. Please try again.");
-      }
+      })
+      .catch(error => {
+        console.error('Error while adding application: ' , error)
+      });
+
     } else {
       setNameError(true);
       setTimeout(() => {
