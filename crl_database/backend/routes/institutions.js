@@ -126,6 +126,33 @@ router.route("/delete/:id").delete(async (req, res) => {
   }
 });
 
+/** 
+ * [ /institutions/remove-notes ]
+ * Remove notes field
+ */
+router.route("/remove-notes").delete(async (req, res) => {
+  console.log(">>> Deleting notes of all institutions");
+  
+  // Define the update operation to remove the 'notes' field
+  const updateOperation = {
+    $unset: {
+      notes: 1, // Setting the value to 1 means to unset the field
+    },
+  };
+
+  try {
+    // Use the updateMany method to remove the 'notes' field from all documents
+    const result = await Institution.updateMany({}, updateOperation);
+
+    console.log("Removed 'notes' field from", result.nModified, "documents.");
+    res.json("Removed 'notes' field from " + result.nModified + " documents.");
+  }
+  catch (e) {
+    console.error("ERROR:", e);
+    res.status(500).json("Error deleting notes field of institutions.\nMore info:" + e);
+  }
+});
+
 
 // ---- MOCK DATA ----
 

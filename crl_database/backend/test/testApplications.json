@@ -1,15 +1,15 @@
 {
-    "institution": "64e0911b123bc76c05356445",
+    "institution": "652254134fe717abb4fbb4fb",
     "status": 1,
     "aqf": "10",
     "location": "Perth",
     "award": "Diploma in Information Technology",
-    "assessor": "Franz",
+    "assessor": "Hannes",
     "assessedUnits": [
-        "651ff94f729f7e37e28d7cb5",
-        "65216c03edfc6c6f637311cf"
+        "652425cde0ee7a3cb112a00a",
+        "652254134fe717abb4fbb4fb"
     ],
-    "curtinUnit": "6509da41cbeea77421b29ee3",
+    "curtinUnit": "6524140a24edd59e6e5c402b",
     "assessorNotes": "Has fundamental knowledge of programming",
-    "studentNotes": "Michael. Still does not have an id."
+    "studentNotes": "James. Still does not have an id."
 }

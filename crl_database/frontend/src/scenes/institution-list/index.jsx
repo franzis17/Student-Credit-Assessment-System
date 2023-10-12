@@ -128,7 +128,6 @@ const InstitutionList = () => {
     { field: 'rank',      headerName: 'Rank',      width: 60,  },
     { field: 'location',  headerName: 'Location',  width: 300, },
     { field: 'major',     headerName: 'Major',     width: 150, },
-    { field: 'notes',     headerName: 'Notes',     width: 400, },
     {
       field: 'delete',
       headerName: 'Delete',
