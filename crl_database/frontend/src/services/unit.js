@@ -1,8 +1,11 @@
 import http from "../http-common";
 
+
 class UnitDataService {
   
   static defaultRoute = `/units`;
+
+  // GET
   
   /**
    * Header used to add the user's token and verified by API Provider
@@ -23,9 +26,9 @@ class UnitDataService {
   }
   
   /** Get all units of a specific institution */
-  getUnitsOfAnInstitution(userToken) {
-    const headers = UnitDataService.getHeader(userToken);
-    return http.get((UnitDataService.defaultRoute + "/sortedunits"), headers);
+  getUnitsOfAnInstitution(institutionId, userToken) {
+    const headers = UnitDataService.getHeader(userToken)
+    return http.get(`${UnitDataService.defaultRoute}/sortedunits?institutionId=${institutionId}`, headers);
   }
   
   getCount(userToken) {
@@ -47,14 +50,20 @@ class UnitDataService {
   
   // DELETE
   
-  deleteUnit(unitID, userToken) {
+  removeUnit(unitId, userToken) {
+    console.log("usertoken = ", userToken);
     const headers = UnitDataService.getHeader(userToken);
-    return http.delete((UnitDataService.defaultRoute + "/delete"),
-      unitID,
-      headers
-    );
+    return http.delete(`${UnitDataService.defaultRoute}/delete/${unitId}`, headers);
   }
   
+  removeMultiple(unitIds, userToken) {
+    const config = {
+      headers: { authorization: ( "Bearer " + userToken ) },
+      data: { unitIds }, // Wrap unitIds in an object as data
+    };
+    return http.delete((UnitDataService.defaultRoute + "/remove-multiple"), config);
+  }
+
 }
 
 const unitDataService = new UnitDataService();

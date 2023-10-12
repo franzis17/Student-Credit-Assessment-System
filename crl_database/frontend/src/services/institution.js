@@ -8,7 +8,7 @@ class InstitutionDataService {
   
   /* Fields - to be changed as needed */
   static defaultRoute = `/institutions`;
-  static curtinId = "64e08d6f12f5f27fc10f3dcf";
+  static curtinId = "6524130024edd59e6e5c3ffa";
   
   /**
    * Header used to add the user's token and verified by API Provider
@@ -58,6 +58,14 @@ class InstitutionDataService {
       newInstitution,
       headers
     );
+  }
+  
+  
+  //DELETE
+  
+  removeInstitution(institutionId, userToken) {
+    const headers = InstitutionDataService.getHeader(userToken)
+    return http.delete(`${InstitutionDataService.defaultRoute}/delete/${institutionId}`, headers);
   }
   
 }

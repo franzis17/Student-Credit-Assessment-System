@@ -4,7 +4,7 @@ import User from '../models/userModel.js';
 export const requireAuth = async (req, res, next) => {
   // verify user is authenticated
   const { authorization } = req.headers;
-  
+  console.log(">>> Authorizing...");
   console.log("In require auth, authorization = " + authorization);
 
   if (!authorization) {

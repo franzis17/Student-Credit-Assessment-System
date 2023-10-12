@@ -19,7 +19,7 @@ class ApplicationDataService {
   
   getAll(userToken) {
     const headers = ApplicationDataService.getHeader(userToken);
-    return http.get(ApplicationDataService.defaultRoute, userToken);
+    return http.get(ApplicationDataService.defaultRoute, headers);
   }
   
   

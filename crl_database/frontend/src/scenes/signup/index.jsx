@@ -2,10 +2,10 @@
 import { useState, useEffect } from 'react';
 import { useSignup } from "../../hooks/useSignup"
 import { useNavigate } from 'react-router-dom';
-import { Visibility, VisibilityOff } from '@material-ui/icons';
 import { Button, TextField, Paper, Typography, Container } from '@material-ui/core';
 import useStyles from './signupFormStyle.js'
 import Alert from '@material-ui/lab/Alert';
+import { Visibility, VisibilityOff } from '@material-ui/icons';
 
 import { whitelistCheck } from '../../services/whitelistHelper.js'
 import { getRoleID, updateRole } from '../../services/roleHelper.js'
@@ -15,9 +15,9 @@ const Signup = () => {
     const [email, setEmail] = useState('')
     const [username, setUsername] = useState('')
     const [password, setPassword] = useState('')
-    const [showPassword, setShowPassword] = useState(false)
     const [curtinID, setCurtinID] = useState('')
     const {signup, error, isLoading} = useSignup()
+    const [showPassword, setShowPassword] = useState(false)
     const navigate = useNavigate();
     const [showAccessDeniedMessage, setShowAccessDeniedMessage] = useState(JSON.parse(localStorage.getItem('showAccessDeniedMessage') || "false"))
     const classes = useStyles()
@@ -113,7 +113,7 @@ const Signup = () => {
                                         {showPassword ? <VisibilityOff /> : <Visibility />}
                                     </IconButton>
                                 )
-                                }}
+                            }}
                         />
                         <TextField
                             variant="outlined"

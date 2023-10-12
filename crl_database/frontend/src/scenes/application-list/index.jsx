@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAuthContext } from "../../hooks/useAuthContext";
 import ApplicationDataService from "../../services/application";
+import DataUtils from "../../utils/dataUtils";
 
 import Navbar from "../../components/Navbar";
 import Box from '@mui/material/Box';
@@ -13,6 +14,8 @@ const ApplicationList = () => {
   const [selectedApplications, setSelectedApplications] = useState([]);
   
   const { user } = useAuthContext();
+
+  const dataUtils = new DataUtils();
   
   useEffect(() => {
     retrieveApplications();
@@ -22,8 +25,13 @@ const ApplicationList = () => {
     console.log("Getting applications...");
     ApplicationDataService.getAll(user.token)
       .then((response) => {
-        console.log("Retrieved applications:\n", response.data);
-        setApplications(response.data);
+        const data = response.data;
+        console.log("Retrieved applications:\n", data);
+        
+        // replace the null fields of with text "NO DATA"
+        dataUtils.replaceNullFields(data);
+        
+        setApplications(data);
       })
       .catch((error) => {
         console.log("ERROR: Failed to retrieve applications.\nMore info:", error);
@@ -35,7 +43,13 @@ const ApplicationList = () => {
   const columns = [
     { 
       field: 'institution',    headerName: 'Institution',       width: 250,
-      valueGetter: (params) => params.row.institution.name,
+      valueGetter: (params) => {
+        if (params.row.institution.toString().includes("NO DATA")) {
+          return "NO DATA";
+        } else {
+          return params.row.institution.name;
+        }
+      },
     },
     { field: 'status',         headerName: 'Status',            width: 70 },
     { field: 'aqf',            headerName: 'AQF',               width: 70 },
@@ -45,7 +59,7 @@ const ApplicationList = () => {
     { 
       field: 'assessedUnits',  headerName: 'Assessed Unit(s)',  width: 400,
       valueGetter: (params) => {
-        // Extract the names from the unitsToAssess array and join them with a comma
+        // Extract the each names and join them with a comma
         const unitNames = params.row.assessedUnits.map((unit) => unit.name).join(', ');
         return unitNames;
       },

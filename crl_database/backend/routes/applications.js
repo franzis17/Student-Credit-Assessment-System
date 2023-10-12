@@ -3,7 +3,7 @@ import Application from "../models/application.model.js";
 import requireAuth from '../middleware/requireAuth.js';
 
 const router = express.Router();
-//router.use(requireAuth)
+router.use(requireAuth)
 
 
 // ---- [ GET ] ----
@@ -51,7 +51,7 @@ router.route("/add").post((req, res) => {
     studentNotes,
   });
   
-  console.log("Adding new application:");
+  console.log(">>> Adding new application:");
   console.log("newApplication =", newApplication);
   
   newApplication
