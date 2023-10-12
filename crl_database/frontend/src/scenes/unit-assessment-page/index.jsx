@@ -6,6 +6,7 @@ import './buttonStyles.css';
 import { useAuthContext } from '../../hooks/useAuthContext';
 
 import InstitutionDataService from "../../services/institution";
+import ApplicationDataService from "../../services/application";
 
 const UnitAssessmentPage = () => {
   const [searchedUnit, setSearchedUnit] = useState('');
@@ -21,6 +22,7 @@ const UnitAssessmentPage = () => {
   const [studentInfo, setStudentInfo] = useState({ name: '', studentNumber: '', studentNote: '',  });
   const [nameError, setNameError] = useState(false);
   const [selectedItemDetails, setSelectedItemDetails] = useState(
+
     JSON.parse(localStorage.getItem('selectedItemDetails')) || null
   );
 
@@ -28,7 +30,6 @@ const UnitAssessmentPage = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // Provide fallback so if state is undefined, it can handle blank units or get from local storage
   const { selectedUnits: initialSelectedUnits } = location.state || { selectedUnits: JSON.parse(localStorage.getItem('selectedUnits') || '[]') }
 
   const [lastClickedButton, setLastClickedButton] = useState(
@@ -104,17 +105,13 @@ const UnitAssessmentPage = () => {
 
   const handleSearchInputChange = (event) => {
     const searchInput = event.target.value;
-
-    // Filter the curtinUnits based on the search input (both unit code and name)
     const filteredResults = curtinUnits.filter(item =>
-      item.name.toLowerCase().includes(searchInput.toLowerCase()) || // Search by name
-      item.unitCode.toLowerCase().includes(searchInput.toLowerCase()) // Search by unit code
+      item.name.toLowerCase().includes(searchInput.toLowerCase()) ||
+      item.unitCode.toLowerCase().includes(searchInput.toLowerCase())
     );
 
     setSearchResults(filteredResults);
     setSearchedUnit(searchInput);
-
-    // Show search suggestions if there are results and input is not empty
     setShowSuggestions(filteredResults.length > 0 && searchInput !== '');
   };
 
@@ -131,8 +128,6 @@ const UnitAssessmentPage = () => {
     setSearchedUnit(`${item.unitCode} - ${item.name}`);
     setSelectedItemIndex(-1);
     setShowSuggestions(false);
-
-    // Update local storage with the selected item details
     localStorage.setItem('selectedItemDetails', JSON.stringify(item));
   };
 
@@ -217,6 +212,7 @@ const UnitAssessmentPage = () => {
   
 
   const handleSave = () => {
+    console.log("Selected units on save: " + selectedUnits)
     if (!initialSelectedUnits || initialSelectedUnits.length === 0) {
       alert("No other Unit Information is selected on the Units page");
     } else if (!selectedItemDetails) {
@@ -239,10 +235,36 @@ const UnitAssessmentPage = () => {
     setShowModal(!showModal);
   };
 
+
   const handleStudentInfoSubmit = () => {
     if (studentInfo.name.trim() !== '') {
-      console.log('Student Info:', studentInfo);
-      navigate('/units');
+      const applicationToAdd = {
+        institution: selectedUnits[0].institution._id,
+        status: 1,
+        aqf: 1,
+        location: selectedUnits[0].location,
+        award: selectedUnits[0].award,
+        assessor: user.username,
+        assessedUnits: selectedUnits.map(unit => unit._id),
+        curtinUnit: selectedItemDetails._id,
+        assessorNotes: notes[notes.length-1], //notes by itself is an array and cannot be saved
+        studentNotes: studentInfo.studentNumber //this is an array and cannot be saved (student info)
+      };
+
+      console.log("HERE ARE THE NOTES: " + notes);
+
+      console.log("APPLICATION: " + studentInfo.studentNumber);
+      console.log(applicationToAdd.curtinUnit);
+
+      ApplicationDataService.addApplication(applicationToAdd, user.token)
+      .then(response => {
+        console.log('Application Successfully Added: ', response.data);
+        navigate('/applications');
+      })
+      .catch(error => {
+        console.error('Error while adding application: ' , error)
+      });
+
     } else {
       setNameError(true);
       setTimeout(() => {
@@ -329,6 +351,12 @@ return (
                   </div>
                 )}
               </div>
+
+              <div className="notes-section assessor-notes">
+              <h2>Assessor Notes</h2>
+              <textarea rows="4" cols="50" placeholder="Add notes here..." />
+              <button className="button" onClick={handleAddNote}>Add Note</button>
+            </div>
               <div className="selected-curtin-unit">
                 <h3>Searched Curtin Unit</h3>
                 {selectedItemDetails ? (
@@ -344,12 +372,6 @@ return (
                   <button className={`button deny ${searchedUnit ? '' : ''}`} onClick={handleDeny}>Deny</button>
                 </div>
               </div>
-            </div>
-
-            <div className="notes-section assessor-notes">
-              <h2>Assessor Notes</h2>
-              <textarea rows="4" cols="50" placeholder="Add notes here..." />
-              <button className="button" onClick={handleAddNote}>Add Note</button>
             </div>
           </div>
 

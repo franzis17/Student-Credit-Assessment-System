@@ -6,12 +6,23 @@ import DataUtils from "../../utils/dataUtils";
 import Navbar from "../../components/Navbar";
 import Box from '@mui/material/Box';
 import { DataGrid } from '@mui/x-data-grid';
+import { Button } from '@mui/material';
+
+import {
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogContentText,
+  DialogActions,
+} from '@mui/material';
 
 const ApplicationList = () => {
   
   // State variables
   const [applications, setApplications] = useState([]);
   const [selectedApplications, setSelectedApplications] = useState([]);
+  const [isModalOpen, setModalOpen] = useState(false);
+
   
   const { user } = useAuthContext();
 
@@ -36,6 +47,49 @@ const ApplicationList = () => {
       .catch((error) => {
         console.log("ERROR: Failed to retrieve applications.\nMore info:", error);
       })
+  };
+
+  const handleRowSelectionModelChange = (newSelection) => {
+    // > "newSelections" are the id's of the units selected but we want the Unit object itself
+    // > replace the unit id's with the actual unit objects that are selected
+    const selectedUnitObj = newSelection.map((selectedId) => 
+      applications.find((application) => application._id === selectedId)
+    );
+    setSelectedApplications(newSelection);
+
+    // add selected units to local storage incase of refresh
+    localStorage.setItem('selected Applications', JSON.stringify(selectedApplications));
+  };
+
+  //MODAL
+
+  const handleRemoveConfirm = () => {
+    if (selectedApplications.length === 0) {
+      handleCloseModal();
+      return;
+    }
+    selectedApplications.forEach((selectedId) => {
+      ApplicationDataService.removeApplication(selectedId, user.token)
+        .then(() => {
+          // Handle success, such as updating the UI
+          console.log(`Application ${selectedId} has been deleted.`);
+          // You may want to refresh the applications list or handle this as needed.
+        })
+        .catch((error) => {
+          // Handle errors
+          console.error(`Error deleting application ${selectedId}: ${error}`);
+        });
+    });
+    setModalOpen(false);
+    retrieveApplications();
+  };
+
+  const handleOpenModal = () => {
+    setModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setModalOpen(false);
   };
   
   
@@ -75,6 +129,48 @@ const ApplicationList = () => {
     <>
       <div>
         <Navbar/>
+        {selectedApplications.length > 0 && (
+          <Button
+            sx={{
+              position: 'absolute',
+              top: '15px',
+              right: '180px',
+              color: 'white',
+              borderRadius: '10px',
+              background: 'error',
+              zIndex: 1200,
+            }}
+            variant="contained"
+            color="error"
+            onClick={handleOpenModal}  // Add this line
+          >
+            Remove ({selectedApplications.length})
+          </Button>
+        )}
+
+        {isModalOpen && (
+          <Dialog
+          open={isModalOpen}
+          onClose={handleCloseModal}
+          aria-labelledby="remove-dialog-title"
+          aria-describedby="remove-dialog-description"
+        >
+          <DialogTitle id="remove-dialog-title">Confirm Removal</DialogTitle>
+          <DialogContent>
+            <DialogContentText id="remove-dialog-description">
+              Are you sure you want to remove {selectedApplications.length} selected application(s)?
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleCloseModal} sx={{color:"black"}}>
+              Cancel
+            </Button>
+            <Button onClick={handleRemoveConfirm} color="error">
+              Remove
+            </Button>
+          </DialogActions>
+        </Dialog>
+        )}
       </div>
       <Box sx={{ height: '100%', width: '100%' }}>
         <DataGrid
@@ -94,6 +190,7 @@ const ApplicationList = () => {
           checkboxSelection
           disableRowSelectionOnClick
           selectionModel={selectedApplications}
+          onRowSelectionModelChange={handleRowSelectionModelChange}
           //onRowSelectionModelChange={handleRowSelectionModelChange}
         />
       </Box>
