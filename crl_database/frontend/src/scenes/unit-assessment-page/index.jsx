@@ -4,12 +4,13 @@ import Navbar from '../../components/Navbar';
 import './App.css';
 import './buttonStyles.css';
 import { useAuthContext } from '../../hooks/useAuthContext';
+import ApplicationDataService from "../../services/application";
+import UnitDataService from "../../services/unit";
 
-import InstitutionDataService from "../../services/institution";
 
 const UnitAssessmentPage = () => {
   const [searchedUnit, setSearchedUnit] = useState('');
-  const [notes, setNotes] = useState([]);
+  const [notes, setNotes] = useState(JSON.parse(localStorage.getItem('notes')) || []);
   const [changeLog, setChangeLog] = useState([]);
   const [showConditionalButton, setShowConditionalButton] = useState(false);
   const [searchResults, setSearchResults] = useState([]);
@@ -30,43 +31,27 @@ const UnitAssessmentPage = () => {
 
   // Provide fallback so if state is undefined, it can handle blank units or get from local storage
   const { selectedUnits: initialSelectedUnits } = location.state || { selectedUnits: JSON.parse(localStorage.getItem('selectedUnits') || '[]') }
-
-  const [lastClickedButton, setLastClickedButton] = useState(
-    localStorage.getItem('lastClickedButton') || null
+  const [selectedAction, setSelectedAction] = useState(
+    localStorage.getItem('selectedAction') || ''
   );
+  const [assessmentData, setAssessmentData] = useState([]);
+  const [aqf, setAqf] = useState(''); 
+  const [award, setAward] = useState(''); 
 
-  const [lastClickedButtonInfo, setLastClickedButtonInfo] = useState(
-    JSON.parse(localStorage.getItem('lastClickedButtonInfo')) || null
-  );
-  
-  const [lastNoteInput, setLastNoteInput] = useState(
-    localStorage.getItem('lastNoteInput') || ''
-  );
-
-  useEffect(() => {
-    localStorage.setItem('lastClickedButton', lastClickedButton);
-  }, [lastClickedButton]);
 
   useEffect(() => {
     return () => {
       localStorage.removeItem('selectedItemDetails');
-      localStorage.removeItem('lastClickedButtonInfo');
-      localStorage.removeItem('lastNoteInput');
+      localStorage.removeItem('selectedAction');
+      localStorage.removeItem('notes');
     };
   }, []);
 
-  useEffect(() => {
-    const storedNotes = JSON.parse(localStorage.getItem('notes')) || [];
-    setNotes(storedNotes);
-  
-  }, []);
 
   useEffect(() => {
     if (initialSelectedUnits && initialSelectedUnits.length > 0) {
       setSelectedUnits(initialSelectedUnits);
     }
-
-    setNotes(JSON.parse(localStorage.getItem('notes')) || []);
   }, [initialSelectedUnits]);
   
 
@@ -82,17 +67,10 @@ const UnitAssessmentPage = () => {
     } else {
       setShowConditionalButton(false);
     }
-  }, [searchedUnit]);
-
-  useEffect(() => {
-    if (lastNoteInput) {
-      localStorage.setItem('lastNoteInput', lastNoteInput);
-    }
-  }, [lastNoteInput]);
-  
+  }, [searchedUnit]); 
   
   const retrieveCurtinUnits = () => {
-    InstitutionDataService.getUnitsOfCurtin(user.token)
+    UnitDataService.getUnitsOfCurtin(user.token)
       .then((response) => {
         console.log("Retrieved Curtin Units:", response.data);
         setCurtinUnits(response.data);
@@ -139,18 +117,21 @@ const UnitAssessmentPage = () => {
   const handleAddNote = () => {
     const noteText = document.querySelector('.notes-section textarea').value;
     if (noteText.trim() !== '') {
-      setLastNoteInput(noteText);
-
-      const updatedNotes = [...notes, noteText];
-      setNotes(updatedNotes);
+      const currentTime = new Date();
+      const formattedTime = `${currentTime.getFullYear()}-${
+        String(currentTime.getMonth() + 1).padStart(2, '0')
+      }-${String(currentTime.getDate()).padStart(2, '0')} ${
+        String(currentTime.getHours()).padStart(2, '0')
+      }:${String(currentTime.getMinutes()).padStart(2, '0')}`;
+      const noteWithTimestamp = `${formattedTime} - ${noteText}`;
   
-      localStorage.setItem('notes', JSON.stringify(updatedNotes));
-
+      const updatedNotes = [...notes, noteWithTimestamp];
+      setNotes(updatedNotes);
       document.querySelector('.notes-section textarea').value = '';
+      localStorage.setItem('notes', JSON.stringify(updatedNotes));
     }
   };
   
-
   const handleApprove = () => {
     if (!selectedItemDetails) {
       alert("Please select a Curtin unit before performing this action.");
@@ -161,14 +142,10 @@ const UnitAssessmentPage = () => {
       const updatedChangeLog = [...changeLog, logEntry];
   
       setChangeLog(updatedChangeLog);
-      setLastClickedButton("Approve");
-      const buttonInfo = {
-        button: "Approve",
-        unitCode: selectedItemDetails.unitCode,
-        unitName: selectedItemDetails.name,
-      };
-      setLastClickedButtonInfo(buttonInfo);
-      localStorage.setItem('lastClickedButtonInfo', JSON.stringify(buttonInfo));
+      setSelectedAction('Approved'); // Set selected action here
+      const status = 0;
+      localStorage.setItem('selectedAction', 'Approved'); // Store selected action in local storage
+      localStorage.setItem('status', status.toString());
     }
   };
   
@@ -178,18 +155,13 @@ const UnitAssessmentPage = () => {
     } else {
       const statusSymbol = '•';
       const logEntry = `${statusSymbol} ${selectedItemDetails.unitCode} - ${selectedItemDetails.name} Conditional.`;
-  
       const updatedChangeLog = [...changeLog, logEntry];
   
       setChangeLog(updatedChangeLog);
-      setLastClickedButton("Conditional");
-      const buttonInfo = {
-        button: "Conditional",
-        unitCode: selectedItemDetails.unitCode,
-        unitName: selectedItemDetails.name,
-      };
-      setLastClickedButtonInfo(buttonInfo);
-      localStorage.setItem('lastClickedButtonInfo', JSON.stringify(buttonInfo));
+      setSelectedAction('Conditional'); // Set selected action here
+      const status = 2;
+      localStorage.setItem('selectedAction', 'Conditional'); // Store selected action in local storage
+      localStorage.setItem('status', status.toString());
     }
   };
   
@@ -201,19 +173,15 @@ const UnitAssessmentPage = () => {
       const logEntry = `${statusSymbol} ${selectedItemDetails.unitCode} - ${selectedItemDetails.name} Denied.`;
   
       const updatedChangeLog = [...changeLog, logEntry];
-
   
       setChangeLog(updatedChangeLog);
-      setLastClickedButton("Deny");
-      const buttonInfo = {
-        button: "Deny",
-        unitCode: selectedItemDetails.unitCode,
-        unitName: selectedItemDetails.name,
-      };
-      setLastClickedButtonInfo(buttonInfo);
-      localStorage.setItem('lastClickedButtonInfo', JSON.stringify(buttonInfo));
+      setSelectedAction('Denied'); // Set selected action here
+      const status = 1;
+      localStorage.setItem('selectedAction', 'Denied'); // Store selected action in local storage
+      localStorage.setItem('status', status.toString());
     }
   };
+  
   
 
   const handleSave = () => {
@@ -240,14 +208,45 @@ const UnitAssessmentPage = () => {
   };
 
   const handleStudentInfoSubmit = () => {
-    if (studentInfo.name.trim() !== '') {
-      console.log('Student Info:', studentInfo);
-      navigate('/units');
+    if (studentInfo.name.trim() !== '' && aqf.trim() !== '' && award.trim() !== '') {
+      const parsedAqf = parseInt(aqf, 10);
+      if (Number.isInteger(parsedAqf) && parsedAqf >= 0 && parsedAqf <= 10) {
+        const applicationToAdd = {
+          institution: selectedUnits[0].institution._id,
+          status: localStorage.getItem('status'),
+          aqf: aqf,
+          location: selectedUnits[0].location,
+          award: award,
+          assessor: user.username,
+          assessedUnits: selectedUnits.map(unit => unit._id),
+          curtinUnit: selectedItemDetails._id,
+          assessorNotes: notes.join('\n'), //notes by itself is an array and cannot be saved
+          studentNotes: JSON.stringify(studentInfo) //this is an array and cannot be saved (student info)
+        };
+
+      console.log("HERE ARE THE NOTES: " + notes);
+
+      console.log("APPLICATION: " + studentInfo.studentNumber);
+      console.log(applicationToAdd.curtinUnit);
+
+      ApplicationDataService.addApplication(applicationToAdd, user.token)
+      .then(response => {
+        console.log('Application Successfully Added: ', response.data);
+        navigate('/applications');
+      })
+      .catch(error => {
+        console.error('Error while adding application: ' , error)
+      });
+     }
+     else {
+      alert('AQF must be an integer between 0 and 10.');
+     }
     } else {
       setNameError(true);
       setTimeout(() => {
         setNameError(false);
       }, 5000);
+      alert('Please fill in all required fields (Name, AQF, Award).');
     }
   };
   
@@ -330,7 +329,8 @@ return (
                 )}
               </div>
               <div className="selected-curtin-unit">
-                <h3>Searched Curtin Unit</h3>
+              <h3>Searched Curtin Unit</h3>
+              <div className="unit-info-frame">
                 {selectedItemDetails ? (
                   <p id="searched-unit-info">
                     {selectedItemDetails.unitCode} - {selectedItemDetails.name}
@@ -338,13 +338,44 @@ return (
                 ) : (
                   <p id="searched-unit-info">No unit selected</p>
                 )}
+              </div>
+              <div className="action-buttons-frame">
                 <div>
-                  <button className={`button approve ${searchedUnit ? '' : ''}`} onClick={handleApprove}>Approve</button>
-                  <button className={`button conditional ${searchedUnit ? '' : ''}`} onClick={handleConditional}>Conditional</button>
-                  <button className={`button deny ${searchedUnit ? '' : ''}`} onClick={handleDeny}>Deny</button>
+                  <button className={`button approve ${searchedUnit ? '' : ''}`} onClick={handleApprove}>
+                    Approve
+                  </button>
+                </div>
+                <div>
+                  <button className={`button conditional ${searchedUnit ? '' : ''}`} onClick={handleConditional}>
+                    Conditional
+                  </button>
+                </div>
+                <div>
+                  <button className={`button deny ${searchedUnit ? '' : ''}`} onClick={handleDeny}>
+                    Deny
+                  </button>
                 </div>
               </div>
+              <div className="selected-action-frame">
+                Selected Action: {selectedAction}
+              </div>
             </div>
+              
+            </div>
+            <input
+              type="text"
+              className="input-field"
+              placeholder="AQF"
+              value={aqf}
+              onChange={(e) => setAqf(e.target.value)}
+            />
+            <input
+              type="text"
+              className="input-field"
+              placeholder="Award"
+              value={award}
+              onChange={(e) => setAward(e.target.value)}
+            />
 
             <div className="notes-section assessor-notes">
               <h2>Assessor Notes</h2>
@@ -355,24 +386,32 @@ return (
 
           <div className="right-column">
           <div className="note-log">
-            <h2>Last Note Input</h2>
-            {lastNoteInput ? (
-              <p>{lastNoteInput}</p>
+            <h2>Notes Log</h2>
+            {notes.length === 0 ? (
+              <p>No notes available.</p>
             ) : (
-              <p>No note added yet.</p>
+              <div className="log-container">
+                {notes.map((note, index) => (
+                  <p key={index}>{note}</p>
+                ))}
+              </div>
             )}
           </div>
 
-            <div className="change-log">
-              <h2>Last Clicked Button</h2>
-              {lastClickedButtonInfo ? (
-                <p>
-                  {lastClickedButtonInfo.button} - {lastClickedButtonInfo.unitCode} - {lastClickedButtonInfo.unitName}
-                </p>
-              ) : (
-                <p>No button clicked yet.</p>
-              )}
-            </div>
+          <div className="change-log">
+            <h2>Change Log</h2>
+            {assessmentData.length === 0 ? (
+              <p>No change log entries available.</p>
+            ) : (
+              <div className="log-container">
+                {assessmentData.map((entry, index) => (
+                  <p key={index}>
+                    {`${entry.selectedItemDetails.unitCode} - ${entry.selectedItemDetails.name} ${entry.selectedAction}`}
+                  </p>
+                ))}
+              </div>
+            )}
+          </div>
 
           </div>
         </div>

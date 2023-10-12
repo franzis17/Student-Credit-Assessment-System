@@ -34,27 +34,6 @@ router.route("/count").get(async (req, res) => {
   }
 });
 
-/**
- * [/institutions/units]
- * GET the List of Units for a given institution
- */
-router.route("/units").get((req, res) => {
-  const institution = req.query.institution;
-  
-  console.log("querying an institution's units, institution id = " + institution);
-  
-  Unit.find({ institution: institution })
-    .populate("institution")
-    .then((units) => {
-      console.log("units =", units);
-      res.json(units)
-    })
-    .catch((err) => {
-      console.error(`ERROR: ${err}`);
-      res.status(500).json(`ERROR: Failed to retrieve the institution's units.\nMore details: ${err}`);
-    });
-});
-
 
 // ---- [POST] ----
 

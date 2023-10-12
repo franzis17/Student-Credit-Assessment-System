@@ -9,16 +9,23 @@ const SimpleButton = (params) => {
   
   const content = params.content;
   const handleClickEvent = params.onClick;
+  const margins = params.margins;
+
+
+  const buttonStyle = {
+    position: 'absolute',
+    top: '15px',
+    right: '410px',
+    color: 'white',
+    borderRadius: '10px',
+    background: '#228B22',
+    zIndex: 1200,
+  };
   
   return (
     <Button
       variant="contained"
-      sx={
-        {
-          color: 'white', borderRadius: '10px', background: '#24a0ed',
-          marginLeft: '10px', marginBottom: '10px',
-        }
-      }
+      sx={buttonStyle}
       onClick={handleClickEvent}
     >
       {content}

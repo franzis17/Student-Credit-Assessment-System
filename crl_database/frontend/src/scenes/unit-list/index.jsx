@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link , useLocation, useParams } from 'react-router-dom';
+import { Link , useLocation, useParams, useNavigate } from 'react-router-dom';
 import InstitutionDataService from '../../services/institution';
 import UnitDataService from "../../services/unit";
 import Navbar from "../../components/Navbar";
@@ -30,7 +30,7 @@ const UnitList = () => {
   console.log("institutionId =", institutionId);
 
   const dataUtils = new DataUtils();
-
+  const navigate = useNavigate();
   // State variables
   const [units, setUnits] = useState([]);
   const [selectedUnits, setSelectedUnits] = useState([]);
@@ -74,7 +74,7 @@ const UnitList = () => {
   };
   
   const retrieveUnitsOfInstitution = (id) => {
-    InstitutionDataService.getUnitsOfInstitution(id, user.token)
+    UnitDataService.getUnitsOfInstitution(id, user.token)
       .then((response) => {
         const data = response.data;
         console.log("Retrieved units:\n", data);
@@ -158,17 +158,38 @@ const UnitList = () => {
     localStorage.setItem('selectedUnits', JSON.stringify(selectedUnitObj));
   };
 
+  const checkUnitsHaveSameInstitution = () => {
+    if (selectedUnits.length > 0) {
+      const firstUnitInstitutionId = selectedUnits[0].institution._id;
+      for (let i = 1; i < selectedUnits.length; i++) {
+        if (selectedUnits[i].institution._id !== firstUnitInstitutionId) {
+          return false;
+        }
+      }
+      return true;
+    }
+    return false;
+  };
+
   return (
     <>
       <div>
         <Navbar />
         <AddUnitButton onUnitSave={handleUnitSave}/>
-        <Link
-          to="/unitassessmentpage"
-          state={{ selectedUnits: selectedUnits }}
-        >
-          <SimpleButton content="Assess" />
-        </Link>
+          {selectedUnitIDs.length > 0 && (
+            <SimpleButton
+              content={`Assess (${selectedUnitIDs.length})`}
+              onClick={() => {
+                if (checkUnitsHaveSameInstitution()) {
+                  console.log("TRUE");
+                  navigate("/unitassessmentpage", { state: { selectedUnits: selectedUnits } });
+
+                } else {
+                  alert('Selected units must have the same institution.');
+                }
+              }}
+            />
+          )}
        
         {selectedUnitIDs.length > 0 && (
           <Button
@@ -190,7 +211,6 @@ const UnitList = () => {
         )}
       </div>
 
-      {/* [TESTING] - if a Unit is actually added in the DB */}
       <Box sx={{ height: '100%', width: '100%' }}>
         <DataGrid
           rows={units}

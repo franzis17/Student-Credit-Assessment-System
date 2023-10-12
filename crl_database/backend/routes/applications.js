@@ -73,7 +73,7 @@ router.route("/add").post((req, res) => {
 router.route("/delete/:id").delete((req, res) => {
   Application.findByIdAndDelete(req.params.id)
     .then(() => {
-      res.json("The Application has successfully been deleted!")
+      res.json("The Application has successfully been deleted!");
     })
     .catch((e) => {
       res.status(400).json(`ERROR: ${e}`);

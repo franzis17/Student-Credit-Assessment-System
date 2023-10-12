@@ -20,7 +20,6 @@ import DialogTitle from '@mui/material/DialogTitle';
 import { useAuthContext } from '../../hooks/useAuthContext';
 import DataUtils from "../../utils/dataUtils";
 
-
 const InstitutionList = () => {
   
   const [institutions, setInstitutions] = useState([]);
@@ -75,11 +74,6 @@ const InstitutionList = () => {
     height: '100%'
   }
   
-  const handleSelection = (institution) => {
-    console.log("Selected:", institution);
-    navigate(`/units/${institution}`);
-  };
-  
   // Use Axios to add new Institution in the DB by HTTP POST request
   const handleInstitutionSave = (institutionData) => {
     console.log("Received Institution Data: " + institutionData.name);
@@ -103,6 +97,11 @@ const InstitutionList = () => {
         }
         console.error("An error occurred while adding the institution:", error);
       });
+  };
+  
+  const handleSelection = (institution) => {
+    console.log("Selected:", institution);
+    navigate(`/units/${institution}`);
   };
   
   const handleDeleteClick = async () => {

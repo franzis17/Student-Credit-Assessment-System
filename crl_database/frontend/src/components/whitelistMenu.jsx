@@ -10,6 +10,8 @@ import {Container, Grid } from '@mui/material';
 import { Button } from "@mui/material";
 import { useFetchWhitelistedUsers } from '../hooks/useFetchWhitelistedUsers.js';
 import {useAuthContext} from '../hooks/useAuthContext.js'
+import NavigateNextIcon from '@mui/icons-material/NavigateNext';
+import NavigateBeforeIcon from '@mui/icons-material/NavigateBefore';
 import useStyles from './whitelistPageStyle.js'
 
 
@@ -202,16 +204,18 @@ const Whitelist = ({open, onClose}) => {
                                     </TableBody>
 
                         </Table>
-                        <Button color="primary" style={{justifyContent: 'center', width: '120px', backgroundColor: '#3169c3', color: 'white' }}
+                        <Button color="primary" style={{justifyContent: 'center', width: '120px', backgroundColor: '#3f6bc0', color: 'white' }}
                             onClick={() => setCurrentPage(currentPage > 1 ? currentPage - 1 : 1)}
                              >
-                             Previous
+                            <NavigateBeforeIcon/>
+                             
                             </Button>
 
-                        <Button color="primary" style={{justifyContent: 'center', width: '120px', backgroundColor: '#3169c3', color: 'white' }}
+                        <Button color="primary" style={{justifyContent: 'center', width: '120px', backgroundColor: '#3f6bc0', color: 'white' }}
                             onClick={() => setCurrentPage(currentPage < Math.ceil(data.length / usersPerPage) ? currentPage + 1 : currentPage)}
                             >
-                            Next
+                
+                            <NavigateNextIcon/>
                     </Button>
                     </TableContainer>
                 )}

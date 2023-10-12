@@ -20,20 +20,33 @@ class UnitDataService {
   
   // GET
   
+  getCount(userToken) {
+    const headers = UnitDataService.getHeader(userToken);
+    return http.get((UnitDataService.defaultRoute + "/count"), headers);
+  }
+  
   getAll(userToken) {
     const headers = UnitDataService.getHeader(userToken);
     return http.get(UnitDataService.defaultRoute, headers);
   }
   
-  /** Get all units of a specific institution */
-  getUnitsOfAnInstitution(institutionId, userToken) {
-    const headers = UnitDataService.getHeader(userToken)
-    return http.get(`${UnitDataService.defaultRoute}/sortedunits?institutionId=${institutionId}`, headers);
+  getUnitsOfInstitution(institutionId, userToken) {
+    const params = { institution: institutionId };
+    return http.get((UnitDataService.defaultRoute + "/institution"),
+      {
+        params,
+        headers: {
+          Authorization: ( "Bearer " + userToken )
+        }
+      }
+    );
   }
   
-  getCount(userToken) {
+  getUnitsOfCurtin(userToken) {
     const headers = UnitDataService.getHeader(userToken);
-    return http.get((UnitDataService.defaultRoute + "/count"), headers);
+    const route = (UnitDataService.defaultRoute + "/curtin");
+    console.log("route = ", route);
+    return http.get(route, headers);
   }
   
   
