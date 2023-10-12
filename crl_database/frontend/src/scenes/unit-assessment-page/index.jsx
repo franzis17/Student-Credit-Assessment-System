@@ -9,7 +9,7 @@ import InstitutionDataService from "../../services/institution";
 
 const UnitAssessmentPage = () => {
   const [searchedUnit, setSearchedUnit] = useState('');
-  const [notes, setNotes] = useState([]);
+  const [notes, setNotes] = useState(JSON.parse(localStorage.getItem('notes')) || []);
   const [changeLog, setChangeLog] = useState([]);
   const [showConditionalButton, setShowConditionalButton] = useState(false);
   const [searchResults, setSearchResults] = useState([]);
@@ -34,12 +34,15 @@ const UnitAssessmentPage = () => {
     localStorage.getItem('selectedAction') || ''
   );
   const [assessmentData, setAssessmentData] = useState([]);
+  const [aqf, setAqf] = useState(''); 
+  const [award, setAward] = useState(''); 
 
 
   useEffect(() => {
     return () => {
       localStorage.removeItem('selectedItemDetails');
       localStorage.removeItem('selectedAction');
+      localStorage.removeItem('notes');
     };
   }, []);
 
@@ -124,6 +127,7 @@ const UnitAssessmentPage = () => {
       const updatedNotes = [...notes, noteWithTimestamp];
       setNotes(updatedNotes);
       document.querySelector('.notes-section textarea').value = '';
+      localStorage.setItem('notes', JSON.stringify(updatedNotes));
     }
   };
   
@@ -138,7 +142,9 @@ const UnitAssessmentPage = () => {
   
       setChangeLog(updatedChangeLog);
       setSelectedAction('Approved'); // Set selected action here
+      const status = 0;
       localStorage.setItem('selectedAction', 'Approved'); // Store selected action in local storage
+      localStorage.setItem('status', status.toString());
     }
   };
   
@@ -152,7 +158,9 @@ const UnitAssessmentPage = () => {
   
       setChangeLog(updatedChangeLog);
       setSelectedAction('Conditional'); // Set selected action here
+      const status = 2;
       localStorage.setItem('selectedAction', 'Conditional'); // Store selected action in local storage
+      localStorage.setItem('status', status.toString());
     }
   };
   
@@ -167,7 +175,9 @@ const UnitAssessmentPage = () => {
   
       setChangeLog(updatedChangeLog);
       setSelectedAction('Denied'); // Set selected action here
+      const status = 1;
       localStorage.setItem('selectedAction', 'Denied'); // Store selected action in local storage
+      localStorage.setItem('status', status.toString());
     }
   };
   
@@ -197,19 +207,21 @@ const UnitAssessmentPage = () => {
   };
 
   const handleStudentInfoSubmit = () => {
-    if (studentInfo.name.trim() !== '') {
-      const applicationToAdd = {
-        institution: selectedUnits[0].institution._id,
-        status: 1,
-        aqf: 1,
-        location: selectedUnits[0].location,
-        award: selectedUnits[0].award,
-        assessor: user.username,
-        assessedUnits: selectedUnits.map(unit => unit._id),
-        curtinUnit: selectedItemDetails._id,
-        assessorNotes: notes[notes.length-1], //notes by itself is an array and cannot be saved
-        studentNotes: studentInfo.studentNumber //this is an array and cannot be saved (student info)
-      };
+    if (studentInfo.name.trim() !== '' && aqf.trim() !== '' && award.trim() !== '') {
+      const parsedAqf = parseInt(aqf, 10);
+      if (Number.isInteger(parsedAqf) && parsedAqf >= 0 && parsedAqf <= 10) {
+        const applicationToAdd = {
+          institution: selectedUnits[0].institution._id,
+          status: localStorage.getItem('status'),
+          aqf: aqf,
+          location: selectedUnits[0].location,
+          award: award,
+          assessor: user.username,
+          assessedUnits: selectedUnits.map(unit => unit._id),
+          curtinUnit: selectedItemDetails._id,
+          assessorNotes: notes.join('\n'), //notes by itself is an array and cannot be saved
+          studentNotes: JSON.stringify(studentInfo) //this is an array and cannot be saved (student info)
+        };
 
       console.log("HERE ARE THE NOTES: " + notes);
 
@@ -224,12 +236,16 @@ const UnitAssessmentPage = () => {
       .catch(error => {
         console.error('Error while adding application: ' , error)
       });
-
+     }
+     else {
+      alert('AQF must be an integer between 0 and 10.');
+     }
     } else {
       setNameError(true);
       setTimeout(() => {
         setNameError(false);
       }, 5000);
+      alert('Please fill in all required fields (Name, AQF, Award).');
     }
   };
   
@@ -343,8 +359,22 @@ return (
                 Selected Action: {selectedAction}
               </div>
             </div>
-
+              
             </div>
+            <input
+              type="text"
+              className="input-field"
+              placeholder="AQF"
+              value={aqf}
+              onChange={(e) => setAqf(e.target.value)}
+            />
+            <input
+              type="text"
+              className="input-field"
+              placeholder="Award"
+              value={award}
+              onChange={(e) => setAward(e.target.value)}
+            />
 
             <div className="notes-section assessor-notes">
               <h2>Assessor Notes</h2>
