@@ -13,14 +13,6 @@ import { useState } from 'react';
 const UserDetailsModal = ({ onClose }) => {
 
   const { user } = useAuthContext()
-  const [password, setPassword] = useState('');
-
-  const handleChangePassword = () => {
-
-    //Call request to change password - use a route
-
-    console.log("Password changed to:", password);
-};
 
   return (
     <Modal open={true} onClose={onClose}>
@@ -76,14 +68,6 @@ const UserDetailsModal = ({ onClose }) => {
        </Typography>
        <Typography variant="body1"> {user?.role} </Typography>
        </Box>
-
-       <Button
-          variant="contained"
-           onClick={handleChangePassword}
-           sx={{ marginTop: 2 }}
-           >
-            Change Password
-        </Button>
       
       </Box>
    </Modal>

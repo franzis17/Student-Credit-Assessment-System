@@ -10,7 +10,6 @@ import { useLocation } from 'react-router-dom';
 import { AppBar, Toolbar, IconButton, useTheme, Button} from '@mui/material';
 import BurgerMenu from './BurgerMenu';
 import AvatarDropDown from './AvatarDropDown';
-import SettingsDropDown from './SettingsDropdown';
 
 const Navbar = () => {
   const dispatch = useDispatch();
@@ -43,9 +42,6 @@ const Navbar = () => {
                 <LightModeOutlined sx={{ fontSize: '25px' }} />
               )}
             </IconButton> */}
-            <IconButton>
-              <SettingsDropDown/>
-            </IconButton>
             <IconButton>
               <AvatarDropDown/>
             </IconButton>
