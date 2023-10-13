@@ -174,6 +174,11 @@ const ApplicationList = () => {
       </div>
       <Box sx={{ height: '100%', width: '100%' }}>
         <DataGrid
+          sx = {{
+            "& .MuiDataGrid-row:hover": {
+              backgroundColor: "#cccccc",
+            },
+          }}
           rows={applications}
           rowHeight={30}
           columns={columns}

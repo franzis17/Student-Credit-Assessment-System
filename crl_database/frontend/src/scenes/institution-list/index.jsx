@@ -154,6 +154,11 @@ const InstitutionList = () => {
       <div style={containerStyle} className="center-data-grid">
         <Box sx={{ flex: 1 }}>
           <DataGrid
+            sx = {{
+              "& .MuiDataGrid-row:hover": {
+                backgroundColor: "#cccccc",
+              },
+            }}
             rows={institutions}
             columns={columns}
             columnResizable={true}
