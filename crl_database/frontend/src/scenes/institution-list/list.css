@@ -6,9 +6,22 @@
   background-color: #f5eee0;
 }
 
+.unit-list-column .css-t89xny-MuiDataGrid-columnHeaderTitle {
+  font-weight: bold; /* Set font-weight to normal to remove bold */
+}
+
 .center-data-grid {
   display: flex;
   justify-content: center;
   align-items: center;
   height: "100%"; /* You can adjust this as needed */
+}
+
+.center-unit-list {
+  /* position: absolute;
+  top: 30%;
+  left: 50%;
+  transform: translate(-50%,-50%); */
+  margin: auto;
+  width: 50%;
 }

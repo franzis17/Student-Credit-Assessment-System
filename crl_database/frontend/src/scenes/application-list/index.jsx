@@ -196,7 +196,7 @@ const ApplicationList = () => {
           disableRowSelectionOnClick
           selectionModel={selectedApplications}
           onRowSelectionModelChange={handleRowSelectionModelChange}
-          //onRowSelectionModelChange={handleRowSelectionModelChange}
+          className="list-column"
         />
       </Box>
     </>

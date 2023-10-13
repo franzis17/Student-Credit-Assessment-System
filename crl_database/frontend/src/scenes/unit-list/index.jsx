@@ -170,12 +170,6 @@ const UnitList = () => {
     }
     return false;
   };
-  
-  const containerStyle = {
-    display: 'flex', 
-    flexDirection: 'column',
-    height: '100%'
-  }
 
   return (
     <>
@@ -216,11 +210,37 @@ const UnitList = () => {
           </Button>
         )}
       </div>
+      
+      <div>
+        <Dialog
+          open={isDeleteModalOpen}
+          onClose={handleRemoveCancel}
+          aria-labelledby="remove-dialog-title"
+          aria-describedby="remove-dialog-description"
+        >
+          <DialogTitle id="remove-dialog-title">Confirm Removal</DialogTitle>
+          <DialogContent>
+            <DialogContentText id="remove-dialog-description">
+              Are you sure you want to remove {selectedUnitIDs.length} selected unit(s)?
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleRemoveCancel} sx={{color:"black"}}>
+              Cancel
+            </Button>
+            <Button onClick={handleRemoveConfirm} color="error">
+              Remove
+            </Button>
+          </DialogActions>
+        </Dialog>
+      </div>
 
-      <div style={containerStyle} className="center-data-grid">
-        <Box sx={{ flex: 1 }}>
+      <div>
+        <Box sx={{ height: '100%', width: '100%' }}>
           <DataGrid
             sx = {{
+              // margin: 'auto',
+              // width: '50%',
               "& .MuiDataGrid-row:hover": {
                 backgroundColor: "#cccccc",
               },
@@ -242,32 +262,10 @@ const UnitList = () => {
             disableRowSelectionOnClick
             selectionModel={selectedUnits}
             onRowSelectionModelChange={handleRowSelectionModelChange}
-            className="list-column"
+            className="unit-list-column"
           />
         </Box>
       </div>
-
-      <Dialog
-        open={isDeleteModalOpen}
-        onClose={handleRemoveCancel}
-        aria-labelledby="remove-dialog-title"
-        aria-describedby="remove-dialog-description"
-      >
-        <DialogTitle id="remove-dialog-title">Confirm Removal</DialogTitle>
-        <DialogContent>
-          <DialogContentText id="remove-dialog-description">
-            Are you sure you want to remove {selectedUnitIDs.length} selected unit(s)?
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleRemoveCancel} sx={{color:"black"}}>
-            Cancel
-          </Button>
-          <Button onClick={handleRemoveConfirm} color="error">
-            Remove
-          </Button>
-        </DialogActions>
-      </Dialog>
     </>
   );
 };
