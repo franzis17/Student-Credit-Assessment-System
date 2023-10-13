@@ -10,5 +10,5 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100%; /* You can adjust this as needed */
+  height: "100%"; /* You can adjust this as needed */
 }

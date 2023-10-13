@@ -170,6 +170,12 @@ const UnitList = () => {
     }
     return false;
   };
+  
+  const containerStyle = {
+    display: 'flex', 
+    flexDirection: 'column',
+    height: '100%'
+  }
 
   return (
     <>
@@ -190,7 +196,7 @@ const UnitList = () => {
               }}
             />
           )}
-       
+        
         {selectedUnitIDs.length > 0 && (
           <Button
             sx={{
@@ -211,33 +217,35 @@ const UnitList = () => {
         )}
       </div>
 
-      <Box sx={{ height: '100%', width: '100%' }}>
-        <DataGrid
-          sx = {{
-            "& .MuiDataGrid-row:hover": {
-              backgroundColor: "#cccccc",
-            },
-          }}
-          rows={units}
-          rowHeight={30}
-          columns={columns}
-          columnResizable={true}
-          getRowId={(row) => row._id}  // use the Unit's mongo ID as the row ID
-          initialState={{
-            pagination: {
-              paginationModel: {
-                pageSize: 25,
+      <div style={containerStyle} className="center-data-grid">
+        <Box sx={{ flex: 1 }}>
+          <DataGrid
+            sx = {{
+              "& .MuiDataGrid-row:hover": {
+                backgroundColor: "#cccccc",
               },
-            },
-          }}
-          pageSizeOptions={[10, 25, 50]}
-          checkboxSelection
-          disableRowSelectionOnClick
-          selectionModel={selectedUnits}
-          onRowSelectionModelChange={handleRowSelectionModelChange}
-          className="list-column"
-        />
-      </Box>
+            }}
+            rows={units}
+            rowHeight={30}
+            columns={columns}
+            columnResizable={true}
+            getRowId={(row) => row._id}  // use the Unit's mongo ID as the row ID
+            initialState={{
+              pagination: {
+                paginationModel: {
+                  pageSize: 25,
+                },
+              },
+            }}
+            pageSizeOptions={[10, 25, 50]}
+            checkboxSelection
+            disableRowSelectionOnClick
+            selectionModel={selectedUnits}
+            onRowSelectionModelChange={handleRowSelectionModelChange}
+            className="list-column"
+          />
+        </Box>
+      </div>
 
       <Dialog
         open={isDeleteModalOpen}
