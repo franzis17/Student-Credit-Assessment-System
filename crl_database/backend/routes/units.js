@@ -217,4 +217,31 @@ router.route("/remove-multiple").delete(async (req, res) => {
   }
 });
 
+/** 
+ * [ /units/remove-notes ]
+ * Remove notes field
+ */
+router.route("/remove-notes").delete(async (req, res) => {
+  console.log(">>> Deleting notes of all units");
+  
+  // Define the update operation to remove the 'notes' field
+  const updateOperation = {
+    $unset: {
+      notes: 1, // Setting the value to 1 means to unset the field
+    },
+  };
+
+  try {
+    // Use the updateMany method to remove the 'notes' field from all documents
+    const result = await Unit.updateMany({}, updateOperation);
+
+    console.log("Removed 'notes' field from", result.nModified, "documents.");
+    res.json("Removed 'notes' field from " + result.nModified + " documents.");
+  }
+  catch (e) {
+    console.error("ERROR:", e);
+    res.status(500).json("Error deleting notes field of institutions.\nMore info:" + e);
+  }
+});
+
 export default router;

@@ -138,7 +138,6 @@ const UnitList = () => {
         }
       },
     },
-    { field: 'notes',       headerName: 'Notes',       width: '200%' }
   ];
   
   // Handle selecting one or more units
