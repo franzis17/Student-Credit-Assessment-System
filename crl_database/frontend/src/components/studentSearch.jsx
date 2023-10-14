@@ -4,7 +4,8 @@ import TextField from '@mui/material/TextField';
 import { List, ListItem, ListItemText, Button } from '@mui/material';
 import Typography from '@mui/material/Typography';
 import {useAuthContext} from "../hooks/useAuthContext.js"
-import useStyles from "./studentSearchStyles.js"
+import useStyles from "./studentSearchStyles.js
+import { useNavigate } from 'react-router-dom';
 
 const StudentSearch = ({ open, onClose}) => {
 
@@ -12,6 +13,7 @@ const StudentSearch = ({ open, onClose}) => {
     const [searchResults, setSearchResults] = useState([])
     const [suggestedResults, setSuggestedResults] = useState([])
    
+    navigate = useNavigate()
 
     const styles = useStyles()
 
@@ -32,6 +34,7 @@ const StudentSearch = ({ open, onClose}) => {
      const handleClick = (student) => {
       setSuggestedResults([]);
       setSelectedCase(null); // ensure no case is selected when displaying notes
+      navigate('/unitassessmentpage')
     }
 
 
