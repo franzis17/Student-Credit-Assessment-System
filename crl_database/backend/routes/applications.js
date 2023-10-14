@@ -111,27 +111,6 @@ router.route("/delete/:id").delete((req, res) => {
     });
 });
 
-// ---- [ Search for Student ] ----
-router.route("/studentSearch").get(async (req, res) => {
-  console.log("Endpoint accessed");
-  const query = req.query.q;
-    
-  // Search logic: StudentNotes
-  try {
-      let results = [];
-      if(query) {
-          results = await Application.find({
-              
-              studentNotes: { $regex: query, $options: 'i' }
-              
-          }).populate("institution assessedUnits assessorNotes");
-      }
-      res.json(results);
-  } catch (e) {
-      console.error(`ERROR: ${e}`);
-      res.status(500).json(`ERROR: Failed to fetch search results. More details: ${e}`);
-  }
-});
 
 router.route("/totty").get((req, res) => {
   res.send("Route is working");

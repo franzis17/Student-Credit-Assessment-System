@@ -178,9 +178,7 @@ const UnitList = () => {
               content={`Assess (${selectedUnitIDs.length})`}
               onClick={() => {
                 if (checkUnitsHaveSameInstitution()) {
-                  console.log("TRUE");
                   navigate("/unitassessmentpage", { state: { selectedUnits: selectedUnits } });
-
                 } else {
                   alert('Selected units must have the same institution.');
                 }
@@ -244,7 +242,7 @@ const UnitList = () => {
             rowHeight={30}
             columns={columns}
             columnResizable={true}
-            getRowId={(row) => row._id}  // use the Unit's mongo ID as the row ID
+            getRowId={(row) => row._id}
             initialState={{
               pagination: {
                 paginationModel: {
