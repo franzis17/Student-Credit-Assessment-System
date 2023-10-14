@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useParams } from 'react-router-dom';
 import { useAuthContext } from "../../hooks/useAuthContext";
 import ApplicationDataService from "../../services/application";
 import DataUtils from "../../utils/dataUtils";
@@ -19,34 +20,66 @@ import {
 
 const ApplicationList = () => {
   
+  // Fields
+  const { user } = useAuthContext();
+  const { studentInfo } = useParams();
+  //const studentInfo = "nathan";
+  const dataUtils = new DataUtils();
+  
+  console.log("studentInfo =", studentInfo);
+  
   // State variables
   const [applications, setApplications] = useState([]);
   const [selectedApplications, setSelectedApplications] = useState([]);
   const [isModalOpen, setModalOpen] = useState(false);
-
-  
-  const { user } = useAuthContext();
-
-  const dataUtils = new DataUtils();
   
   useEffect(() => {
     retrieveApplications();
-  }, []);
+    //retrieveApplicationsOfStudent(studentInfo);
+  }, [studentInfo]);
   
   const retrieveApplications = () => {
-    console.log("Getting applications...");
+    console.log(">>> Getting applications...");
+    // 1. LIST ALL applications (without searchInput)
+    if (studentInfo === undefined || studentInfo === null) {
+      retrieveAllApplications();
+    }
+    // 2. LIST STUDENTS' applications (with searchInput)
+    else {
+      retrieveApplicationsOfStudent(studentInfo);
+    }
+  };
+  
+  const retrieveAllApplications = () => {
     ApplicationDataService.getAll(user.token)
       .then((response) => {
         const data = response.data;
-        console.log("Retrieved applications:\n", data);
+        console.log("Retrieved all applications:\n", data);
         
         // replace the null fields of with text "NO DATA"
         dataUtils.replaceNullFields(data);
+        
         setApplications(data);
       })
       .catch((error) => {
-        console.log("ERROR: Failed to retrieve applications.\nMore info:", error);
+        console.log("ERROR: Failed to retrieve all applications.\nMore info:", error);
+      });
+  };
+  
+  const retrieveApplicationsOfStudent = (student) => {
+    ApplicationDataService.getApplicationsOfStudent(student, user.token)
+      .then((response) => {
+        const data = response.data;
+        console.log("Retrieved a student's applications:\n", data);
+        
+        // replace the null fields of with text "NO DATA"
+        dataUtils.replaceNullFields(data);
+        
+        setApplications(data);
       })
+      .catch((error) => {
+        console.log("ERROR: Failed to retrieve a student's applications.\nMore info:", error);
+      });
   };
 
   const handleRowSelectionModelChange = (newSelection) => {
