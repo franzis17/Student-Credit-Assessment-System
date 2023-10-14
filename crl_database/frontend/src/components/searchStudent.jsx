@@ -43,7 +43,7 @@ const SearchStudent = ({ open, onClose }) => {
       <DialogContent>
         <TextField
           label="Enter student"
-          fullWidth
+          fullWidth={true}
           variant="outlined"
           value={searchVal}
           onChange={handleInputChange}
