@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useParams } from 'react-router-dom';
 import { useAuthContext } from "../../hooks/useAuthContext";
 import ApplicationDataService from "../../services/application";
 import DataUtils from "../../utils/dataUtils";
@@ -8,6 +9,9 @@ import Navbar from "../../components/Navbar";
 import Box from '@mui/material/Box';
 import { DataGrid } from '@mui/x-data-grid';
 import { Button } from '@mui/material';
+import { TableCell, Tooltip } from '@mui/material';
+import { FiberManualRecord } from '@mui/icons-material';
+
 
 import {
   Dialog,
@@ -19,34 +23,66 @@ import {
 
 const ApplicationList = () => {
   
+  // Fields
+  const { user } = useAuthContext();
+  const { studentToSearch } = useParams();
+  const dataUtils = new DataUtils();
+  
+  // console.log(">>> In application list");
+  // console.log("studentToSearch =", studentToSearch);
+  
   // State variables
   const [applications, setApplications] = useState([]);
   const [selectedApplications, setSelectedApplications] = useState([]);
   const [isModalOpen, setModalOpen] = useState(false);
-
-  
-  const { user } = useAuthContext();
-
-  const dataUtils = new DataUtils();
   
   useEffect(() => {
     retrieveApplications();
-  }, []);
+    //retrieveApplicationsOfStudent(studentToSearch);
+  }, [studentToSearch]);
   
   const retrieveApplications = () => {
-    console.log("Getting applications...");
+    // console.log(">>> Getting applications...");
+    // 1. LIST ALL applications (without searchInput)
+    if (!studentToSearch) {
+      retrieveAllApplications();
+    }
+    // 2. LIST STUDENTS' applications (with searchInput)
+    else {
+      retrieveApplicationsOfStudent(studentToSearch);
+    }
+  };
+  
+  const retrieveAllApplications = () => {
     ApplicationDataService.getAll(user.token)
       .then((response) => {
         const data = response.data;
-        console.log("Retrieved applications:\n", data);
+        // console.log("Retrieved all applications:\n", data);
         
         // replace the null fields of with text "NO DATA"
         dataUtils.replaceNullFields(data);
+        
         setApplications(data);
       })
       .catch((error) => {
-        console.log("ERROR: Failed to retrieve applications.\nMore info:", error);
+        console.log("ERROR: Failed to retrieve all applications.\nMore info:", error);
+      });
+  };
+  
+  const retrieveApplicationsOfStudent = (student) => {
+    ApplicationDataService.getApplicationsOfStudent(student, user.token)
+      .then((response) => {
+        const data = response.data;
+        // console.log("Retrieved a student's applications:\n", data);
+        
+        // replace the null fields of with text "NO DATA"
+        dataUtils.replaceNullFields(data);
+        
+        setApplications(data);
       })
+      .catch((error) => {
+        console.log("ERROR: Failed to retrieve a student's applications.\nMore info:", error);
+      });
   };
 
   const handleRowSelectionModelChange = (newSelection) => {
@@ -72,7 +108,7 @@ const ApplicationList = () => {
       ApplicationDataService.removeApplication(selectedId, user.token)
         .then(() => {
           // Handle success, such as updating the UI
-          console.log(`Application ${selectedId} has been deleted.`);
+          // console.log(`Application ${selectedId} has been deleted.`);
           retrieveApplications();
         })
         .catch((error) => {
@@ -105,7 +141,31 @@ const ApplicationList = () => {
         }
       },
     },
-    { field: 'status',         headerName: 'Status',            width: 70 },
+    { 
+      field: 'status',         
+      headerName: 'Status',      
+      width: 70,
+      renderCell: (params) => {
+        const status = params.row.status;
+        let pointColor = 'transparent';
+  
+        if (status === 0) {
+          pointColor = 'red';
+        } else if (status === 1) {
+          pointColor = 'green';
+        } else if (status === 2) {
+          pointColor = 'yellow';
+        }
+  
+        return (
+          <Tooltip title={`Status: ${status}`}>
+            <TableCell align="center">
+              <FiberManualRecord style={{ color: pointColor }} />
+            </TableCell>
+          </Tooltip>
+        );
+      },
+    },
     { field: 'aqf',            headerName: 'AQF',               width: 70 },
     { field: 'location',       headerName: 'Location',          width: 150 },
     { field: 'award',          headerName: 'Award',             width: 200 },
@@ -124,6 +184,7 @@ const ApplicationList = () => {
     },
     { field: 'assessorNotes',  headerName: 'Assessor Notes',    width: 400 },
   ];
+  
   
   return (
     <>
@@ -174,6 +235,11 @@ const ApplicationList = () => {
       </div>
       <Box sx={{ height: '100%', width: '100%' }}>
         <DataGrid
+          sx = {{
+            "& .MuiDataGrid-row:hover": {
+              backgroundColor: "#cccccc",
+            },
+          }}
           rows={applications}
           rowHeight={30}
           columns={columns}
@@ -191,7 +257,7 @@ const ApplicationList = () => {
           disableRowSelectionOnClick
           selectionModel={selectedApplications}
           onRowSelectionModelChange={handleRowSelectionModelChange}
-          //onRowSelectionModelChange={handleRowSelectionModelChange}
+          className="list-column"
         />
       </Box>
     </>

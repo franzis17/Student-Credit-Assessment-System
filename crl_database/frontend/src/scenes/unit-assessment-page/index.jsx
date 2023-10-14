@@ -5,7 +5,8 @@ import './App.css';
 import './buttonStyles.css';
 import { useAuthContext } from '../../hooks/useAuthContext';
 import ApplicationDataService from "../../services/application";
-import InstitutionDataService from "../../services/institution";
+import UnitDataService from "../../services/unit";
+
 
 const UnitAssessmentPage = () => {
   const [searchedUnit, setSearchedUnit] = useState('');
@@ -28,7 +29,7 @@ const UnitAssessmentPage = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // Provide fallback so if state is undefined, it can handle blank units or get from local storage
+
   const { selectedUnits: initialSelectedUnits } = location.state || { selectedUnits: JSON.parse(localStorage.getItem('selectedUnits') || '[]') }
   const [selectedAction, setSelectedAction] = useState(
     localStorage.getItem('selectedAction') || ''
@@ -54,8 +55,7 @@ const UnitAssessmentPage = () => {
   }, [initialSelectedUnits]);
   
 
-  // Retrieve all Curtin Units when the user first lands at the Unit Assessment Page.
-  // Used by search dropdown to list all the Curtin Units that the user can select.
+
   useEffect(() => {
     retrieveCurtinUnits();
   }, []);
@@ -69,7 +69,7 @@ const UnitAssessmentPage = () => {
   }, [searchedUnit]); 
   
   const retrieveCurtinUnits = () => {
-    InstitutionDataService.getUnitsOfCurtin(user.token)
+    UnitDataService.getUnitsOfCurtin(user.token)
       .then((response) => {
         console.log("Retrieved Curtin Units:", response.data);
         setCurtinUnits(response.data);
@@ -82,16 +82,16 @@ const UnitAssessmentPage = () => {
   const handleSearchInputChange = (event) => {
     const searchInput = event.target.value;
 
-    // Filter the curtinUnits based on the search input (both unit code and name)
+ 
     const filteredResults = curtinUnits.filter(item =>
-      item.name.toLowerCase().includes(searchInput.toLowerCase()) || // Search by name
-      item.unitCode.toLowerCase().includes(searchInput.toLowerCase()) // Search by unit code
+      item.name.toLowerCase().includes(searchInput.toLowerCase()) || 
+      item.unitCode.toLowerCase().includes(searchInput.toLowerCase()) 
     );
 
     setSearchResults(filteredResults);
     setSearchedUnit(searchInput);
 
-    // Show search suggestions if there are results and input is not empty
+
     setShowSuggestions(filteredResults.length > 0 && searchInput !== '');
   };
 
@@ -109,7 +109,6 @@ const UnitAssessmentPage = () => {
     setSelectedItemIndex(-1);
     setShowSuggestions(false);
 
-    // Update local storage with the selected item details
     localStorage.setItem('selectedItemDetails', JSON.stringify(item));
   };
 
@@ -119,14 +118,13 @@ const UnitAssessmentPage = () => {
       const currentTime = new Date();
       const formattedTime = `${currentTime.getFullYear()}-${
         String(currentTime.getMonth() + 1).padStart(2, '0')
-      }-${String(currentTime.getDate()).padStart(2, '0')} ${
-        String(currentTime.getHours()).padStart(2, '0')
-      }:${String(currentTime.getMinutes()).padStart(2, '0')}`;
+      }-${String(currentTime.getDate()).padStart(2, '0')}`;
       const noteWithTimestamp = `${formattedTime} - ${noteText}`;
   
       const updatedNotes = [...notes, noteWithTimestamp];
+  
       const isConfirmed = window.confirm("Are you sure you want to add this note?");
-    
+      
       if (isConfirmed) {
         setNotes(updatedNotes);
         document.querySelector('.notes-section textarea').value = '';
@@ -134,6 +132,7 @@ const UnitAssessmentPage = () => {
       }
     }
   };
+  
   
   const handleApprove = () => {
     if (!selectedItemDetails) {
@@ -145,9 +144,9 @@ const UnitAssessmentPage = () => {
       const updatedChangeLog = [...changeLog, logEntry];
   
       setChangeLog(updatedChangeLog);
-      setSelectedAction('Approved'); // Set selected action here
-      const status = 0;
-      localStorage.setItem('selectedAction', 'Approved'); // Store selected action in local storage
+      setSelectedAction('Approved'); 
+      const status = 1;
+      localStorage.setItem('selectedAction', 'Approved'); 
       localStorage.setItem('status', status.toString());
     }
   };
@@ -161,9 +160,9 @@ const UnitAssessmentPage = () => {
       const updatedChangeLog = [...changeLog, logEntry];
   
       setChangeLog(updatedChangeLog);
-      setSelectedAction('Conditional'); // Set selected action here
+      setSelectedAction('Conditional'); 
       const status = 2;
-      localStorage.setItem('selectedAction', 'Conditional'); // Store selected action in local storage
+      localStorage.setItem('selectedAction', 'Conditional'); 
       localStorage.setItem('status', status.toString());
     }
   };
@@ -178,9 +177,9 @@ const UnitAssessmentPage = () => {
       const updatedChangeLog = [...changeLog, logEntry];
   
       setChangeLog(updatedChangeLog);
-      setSelectedAction('Denied'); // Set selected action here
-      const status = 1;
-      localStorage.setItem('selectedAction', 'Denied'); // Store selected action in local storage
+      setSelectedAction('Denied'); 
+      const status = 0;
+      localStorage.setItem('selectedAction', 'Denied'); 
       localStorage.setItem('status', status.toString());
     }
   };
@@ -191,11 +190,14 @@ const UnitAssessmentPage = () => {
     if (!initialSelectedUnits || initialSelectedUnits.length === 0) {
       alert("No other Unit Information is selected on the Units page");
     } else if (!selectedItemDetails) {
-      alert("Please select an action (Deny, Conditional, or Approve) first.");
+      alert("Please select a Curtin unit before performing this action.");
+    } else if (!selectedAction) {
+      alert("Please select an action (Approve, Conditional, or Deny) first.");
     } else {
       toggleModal();
     }
   };
+  
 
 
   const handleRemoveUnit = (indexToRemove) => {
@@ -224,12 +226,12 @@ const UnitAssessmentPage = () => {
           assessor: user.username,
           assessedUnits: selectedUnits.map(unit => unit._id),
           curtinUnit: selectedItemDetails._id,
-          assessorNotes: notes.join('\n'), //notes by itself is an array and cannot be saved
-          studentNotes: studentNotesFormatted //this is an array and cannot be saved (student info)
+          assessorNotes: notes.join('\n'),
+          studentNotes: studentNotesFormatted
         };
-
+  
         const isConfirmed = window.confirm("Are you sure you want to submit this information?");
-    
+      
         if (isConfirmed) {
           console.log("HERE ARE THE NOTES: " + notes);
           console.log("APPLICATION: " + studentInfo.studentNumber);
@@ -244,10 +246,9 @@ const UnitAssessmentPage = () => {
               console.error('Error while adding application: ', error);
             });
         }
-     }
-     else {
-      alert('AQF must be an integer between 0 and 10.');
-     }
+      } else {
+        alert('AQF must be an integer between 0 and 10.');
+      }
     } else {
       setNameError(true);
       setTimeout(() => {
@@ -256,6 +257,7 @@ const UnitAssessmentPage = () => {
       alert('Please fill in all required fields (Name, AQF, Award).');
     }
   };
+  
   
 
 return (
@@ -430,14 +432,6 @@ return (
         </div>
       </div>
 
-      {/*{showPrerequisites && (
-        <div className="prerequisites-modal">
-          <div className="prerequisites-content">
-            <span className="close-button" onClick={handleClosePrerequisites}>&times;</span>
-            <h2>Prerequisites for {searchedUnit}</h2>
-          </div>
-        </div>
-      )}*/}
 
       {showModal && (
         <div className="modal-overlay">

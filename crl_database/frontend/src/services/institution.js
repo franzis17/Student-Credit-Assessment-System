@@ -8,7 +8,6 @@ class InstitutionDataService {
   
   /* Fields - to be changed as needed */
   static defaultRoute = `/institutions`;
-  static curtinId = "6527f81d3548aaf69fb67adf";
   
   /**
    * Header used to add the user's token and verified by API Provider
@@ -31,22 +30,6 @@ class InstitutionDataService {
   getCount(userToken) {
     const headers = InstitutionDataService.getHeader(userToken);
     return http.get((InstitutionDataService.defaultRoute + "/count"), headers);
-  }
-  
-  getUnitsOfInstitution(institutionId, userToken) {
-    const params = { institution: institutionId };
-    return http.get((InstitutionDataService.defaultRoute + "/units"),
-      {
-        params,
-        headers: {
-          Authorization: ( "Bearer " + userToken )
-        }
-      }
-    );
-  }
-  
-  getUnitsOfCurtin(userToken) {
-    return this.getUnitsOfInstitution(InstitutionDataService.curtinId, userToken);
   }
   
   
