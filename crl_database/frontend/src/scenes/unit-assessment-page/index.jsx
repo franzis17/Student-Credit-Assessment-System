@@ -143,7 +143,7 @@ const UnitAssessmentPage = () => {
   
       setChangeLog(updatedChangeLog);
       setSelectedAction('Approved'); // Set selected action here
-      const status = 0;
+      const status = 1;
       localStorage.setItem('selectedAction', 'Approved'); // Store selected action in local storage
       localStorage.setItem('status', status.toString());
     }
@@ -176,7 +176,7 @@ const UnitAssessmentPage = () => {
   
       setChangeLog(updatedChangeLog);
       setSelectedAction('Denied'); // Set selected action here
-      const status = 1;
+      const status = 0;
       localStorage.setItem('selectedAction', 'Denied'); // Store selected action in local storage
       localStorage.setItem('status', status.toString());
     }

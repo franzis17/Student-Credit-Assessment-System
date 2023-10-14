@@ -57,9 +57,10 @@ function App() {
                 <Route path="/dashboard" element={user && user.isVerified === true ? <Dashboard /> : <Navigate to="/login"/>}/>
                 <Route path="/institutions" element={user && user.isVerified === true ? <InstitutionList/> : <Navigate to="/login"/>}/>
                 <Route path="/units" element={user && user.isVerified === true ? <UnitList /> : <Navigate to="/login"/>}/>
-                <Route path="/units/:institutionId" element={user ? <UnitList /> : <Navigate to="/login"/>}/>
+                <Route path="/units/:institutionId" element={user && user.isVerified ? <UnitList /> : <Navigate to="/login"/>}/>
                 <Route path="/unitassessmentpage" element={user && user.isVerified === true ? <UnitAssessmentPage /> : <Navigate to="/login"/>}/>
                 <Route path="/applications" element={user && user.isVerified === true ? <ApplicationList /> : <Navigate to="/login"/>}/>
+                <Route path="/applications/:studentToSearch" element={user && user.isVerified === true ? <ApplicationList /> : <Navigate to="/login"/>}/>
               </Routes> 
               
         </ThemeProvider>

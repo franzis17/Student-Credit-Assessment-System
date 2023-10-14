@@ -22,6 +22,20 @@ class ApplicationDataService {
     return http.get(ApplicationDataService.defaultRoute, headers);
   }
   
+  getApplicationsOfStudent(student, userToken) {
+    const params = {
+      student: student,
+    };
+    return http.get((ApplicationDataService.defaultRoute + "/studentsearch"),
+      {
+        headers: {
+          Authorization: `Bearer ${userToken}`
+        },
+        params: params,
+      }
+    );
+  }
+  
   
   // ---- [ POST ] ----
   
@@ -33,7 +47,9 @@ class ApplicationDataService {
     );
   }
 
+  
   // ---- [ DELETE ] ----
+  
   removeApplication(applicationID, userToken) {
     const headers = ApplicationDataService.getHeader(userToken);
     console.log("ENPOINT: " + applicationID)

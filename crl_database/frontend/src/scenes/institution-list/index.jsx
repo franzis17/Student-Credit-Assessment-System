@@ -39,7 +39,7 @@ const InstitutionList = () => {
     InstitutionDataService.getAll(user.token)
       .then((response) => {
         const data = response.data;
-        console.log("Retrieved institutions:\n", data);
+        // console.log("Retrieved institutions:\n", data);
         
         // replace the null fields of with text "NO DATA"
         dataUtils.replaceNullFields(data);
@@ -100,7 +100,7 @@ const InstitutionList = () => {
   };
   
   const handleSelection = (institution) => {
-    console.log("Selected:", institution);
+    //console.log("Selected:", institution);
     navigate(`/units/${institution}`);
   };
   
@@ -124,15 +124,14 @@ const InstitutionList = () => {
   
   
   const columns = [
-    { field: 'name',      headerName: 'Name',      width: 250, },
+    { field: 'name',      headerName: 'Name',      width: 400, },
     { field: 'rank',      headerName: 'Rank',      width: 60,  },
     { field: 'location',  headerName: 'Location',  width: 300, },
     { field: 'major',     headerName: 'Major',     width: 150, },
-    { field: 'notes',     headerName: 'Notes',     width: 400, },
     {
       field: 'delete',
       headerName: 'Delete',
-      width: "100%",
+      width: 90,
       renderCell: (params) => (
         <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
           <IconButton
@@ -152,13 +151,19 @@ const InstitutionList = () => {
       <Navbar />
       <AddInstitutionButton onInstitutionSave={handleInstitutionSave} />
 
-      <div style={containerStyle}>
+      <div style={containerStyle} className="center-data-grid">
         <Box sx={{ flex: 1 }}>
           <DataGrid
+            sx = {{
+              "& .MuiDataGrid-row:hover": {
+                backgroundColor: "#cccccc",
+              },
+            }}
             rows={institutions}
             columns={columns}
             columnResizable={true}
             getRowId={(row) => row._id}
+            autoHeight={true} // Set autoHeight to true
             initialState={{
               pagination: {
                 paginationModel: {
@@ -171,7 +176,7 @@ const InstitutionList = () => {
             // Apart from the "delete" column, selecting an institution should navigate to
             // the specific List of Units of the selected institution
             onCellClick={ (params, event) => {
-              console.log("clicked an institution, params =", params);
+              // console.log("clicked an institution, params =", params);
               if (params.field !== 'delete') {
                 console.log("params.id =", params.id);
                 handleSelection(params.id);
