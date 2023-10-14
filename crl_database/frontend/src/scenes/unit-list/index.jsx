@@ -41,7 +41,7 @@ const UnitList = () => {
   useEffect(() => {
     console.log("In Unit List, user:\n", user);
     retrieveUnits();
-  }, []);
+  }, [institutionId]);
   
   const retrieveUnits = () => {
     // List all units in the DB, if an institutionId has not been specified
