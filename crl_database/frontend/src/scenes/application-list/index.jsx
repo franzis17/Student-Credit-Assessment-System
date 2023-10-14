@@ -22,11 +22,11 @@ const ApplicationList = () => {
   
   // Fields
   const { user } = useAuthContext();
-  const { studentInfo } = useParams();
-  //const studentInfo = "nathan";
+  const { studentToSearch } = useParams();
   const dataUtils = new DataUtils();
   
-  console.log("studentInfo =", studentInfo);
+  // console.log(">>> In application list");
+  // console.log("studentToSearch =", studentToSearch);
   
   // State variables
   const [applications, setApplications] = useState([]);
@@ -35,18 +35,18 @@ const ApplicationList = () => {
   
   useEffect(() => {
     retrieveApplications();
-    //retrieveApplicationsOfStudent(studentInfo);
-  }, [studentInfo]);
+    //retrieveApplicationsOfStudent(studentToSearch);
+  }, [studentToSearch]);
   
   const retrieveApplications = () => {
-    console.log(">>> Getting applications...");
+    // console.log(">>> Getting applications...");
     // 1. LIST ALL applications (without searchInput)
-    if (studentInfo === undefined || studentInfo === null) {
+    if (!studentToSearch) {
       retrieveAllApplications();
     }
     // 2. LIST STUDENTS' applications (with searchInput)
     else {
-      retrieveApplicationsOfStudent(studentInfo);
+      retrieveApplicationsOfStudent(studentToSearch);
     }
   };
   
@@ -54,7 +54,7 @@ const ApplicationList = () => {
     ApplicationDataService.getAll(user.token)
       .then((response) => {
         const data = response.data;
-        console.log("Retrieved all applications:\n", data);
+        // console.log("Retrieved all applications:\n", data);
         
         // replace the null fields of with text "NO DATA"
         dataUtils.replaceNullFields(data);
@@ -70,7 +70,7 @@ const ApplicationList = () => {
     ApplicationDataService.getApplicationsOfStudent(student, user.token)
       .then((response) => {
         const data = response.data;
-        console.log("Retrieved a student's applications:\n", data);
+        // console.log("Retrieved a student's applications:\n", data);
         
         // replace the null fields of with text "NO DATA"
         dataUtils.replaceNullFields(data);
@@ -105,7 +105,7 @@ const ApplicationList = () => {
       ApplicationDataService.removeApplication(selectedId, user.token)
         .then(() => {
           // Handle success, such as updating the UI
-          console.log(`Application ${selectedId} has been deleted.`);
+          // console.log(`Application ${selectedId} has been deleted.`);
           retrieveApplications();
         })
         .catch((error) => {

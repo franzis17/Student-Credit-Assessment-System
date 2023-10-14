@@ -39,7 +39,7 @@ const InstitutionList = () => {
     InstitutionDataService.getAll(user.token)
       .then((response) => {
         const data = response.data;
-        console.log("Retrieved institutions:\n", data);
+        // console.log("Retrieved institutions:\n", data);
         
         // replace the null fields of with text "NO DATA"
         dataUtils.replaceNullFields(data);
@@ -100,7 +100,7 @@ const InstitutionList = () => {
   };
   
   const handleSelection = (institution) => {
-    console.log("Selected:", institution);
+    //console.log("Selected:", institution);
     navigate(`/units/${institution}`);
   };
   
@@ -176,7 +176,7 @@ const InstitutionList = () => {
             // Apart from the "delete" column, selecting an institution should navigate to
             // the specific List of Units of the selected institution
             onCellClick={ (params, event) => {
-              console.log("clicked an institution, params =", params);
+              // console.log("clicked an institution, params =", params);
               if (params.field !== 'delete') {
                 console.log("params.id =", params.id);
                 handleSelection(params.id);
