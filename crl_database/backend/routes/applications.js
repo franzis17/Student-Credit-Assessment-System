@@ -20,6 +20,37 @@ router.route("/").get(async (req, res) => {
   }
 });
 
+/**
+ * [ /applications/studentSearch ]
+ * Search for a student.
+ */
+router.route("/studentSearch").get(async (req, res) => {
+  console.log("req params =", req.params);
+  console.log("req body =", req.body);
+  console.log("req query =", req.query);
+
+  const student = req.query.student;
+  console.log(">>> Searching applications of a student...");
+  console.log("student =", student);
+  
+  try {
+    let results = [];
+    if (student) {
+      results = await Application.find(
+        {
+          studentNotes: { $regex: student, $options: 'i' }
+        }
+      ).populate("institution assessedUnits curtinUnit");
+    }
+    console.log("Student's applications =", results);
+    res.json(results);
+  }
+  catch (e) {
+    console.error(`ERROR: ${e}`);
+    res.status(500).json("ERROR: Failed to fetch search results. More details:", e);
+  }
+});
+
 
 // ---- [ POST ] ----
 

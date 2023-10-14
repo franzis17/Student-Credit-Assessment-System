@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useParams } from 'react-router-dom';
 import { useAuthContext } from "../../hooks/useAuthContext";
 import ApplicationDataService from "../../services/application";
 import DataUtils from "../../utils/dataUtils";
@@ -19,36 +20,69 @@ import {
 
 const ApplicationList = () => {
   
+  // Fields
+  const { user } = useAuthContext();
+  const { studentToSearch } = useParams();
+  const dataUtils = new DataUtils();
+  
+  // console.log(">>> In application list");
+  // console.log("studentToSearch =", studentToSearch);
+  
   // State variables
   const [applications, setApplications] = useState([]);
   const [selectedApplications, setSelectedApplications] = useState([]);
   const [isModalOpen, setModalOpen] = useState(false);
-
-  
-  const { user } = useAuthContext();
-
-  const dataUtils = new DataUtils();
   
   useEffect(() => {
     retrieveApplications();
-  }, []);
+    //retrieveApplicationsOfStudent(studentToSearch);
+  }, [studentToSearch]);
   
   const retrieveApplications = () => {
-    console.log("Getting applications...");
+    // console.log(">>> Getting applications...");
+    // 1. LIST ALL applications (without searchInput)
+    if (!studentToSearch) {
+      retrieveAllApplications();
+    }
+    // 2. LIST STUDENTS' applications (with searchInput)
+    else {
+      retrieveApplicationsOfStudent(studentToSearch);
+    }
+  };
+  
+  const retrieveAllApplications = () => {
     ApplicationDataService.getAll(user.token)
       .then((response) => {
         const data = response.data;
-        console.log("Retrieved applications:\n", data);
+        // console.log("Retrieved all applications:\n", data);
         
         // replace the null fields of with text "NO DATA"
         dataUtils.replaceNullFields(data);
+        
         setApplications(data);
       })
       .catch((error) => {
-        console.log("ERROR: Failed to retrieve applications.\nMore info:", error);
+        console.log("ERROR: Failed to retrieve all applications.\nMore info:", error);
+      });
+  };
+  
+  const retrieveApplicationsOfStudent = (student) => {
+    ApplicationDataService.getApplicationsOfStudent(student, user.token)
+      .then((response) => {
+        const data = response.data;
+        // console.log("Retrieved a student's applications:\n", data);
+        
+        // replace the null fields of with text "NO DATA"
+        dataUtils.replaceNullFields(data);
+        
+        setApplications(data);
       })
+      .catch((error) => {
+        console.log("ERROR: Failed to retrieve a student's applications.\nMore info:", error);
+      });
   };
 
+  
   const handleRowSelectionModelChange = (newSelection) => {
     // > "newSelections" are the id's of the units selected but we want the Unit object itself
     // > replace the unit id's with the actual unit objects that are selected
@@ -61,7 +95,7 @@ const ApplicationList = () => {
     localStorage.setItem('selected Applications', JSON.stringify(selectedApplications));
   };
 
-  //MODAL
+  // MODAL
 
   const handleRemoveConfirm = () => {
     if (selectedApplications.length === 0) {
@@ -174,6 +208,11 @@ const ApplicationList = () => {
       </div>
       <Box sx={{ height: '100%', width: '100%' }}>
         <DataGrid
+          sx = {{
+            "& .MuiDataGrid-row:hover": {
+              backgroundColor: "#cccccc",
+            },
+          }}
           rows={applications}
           rowHeight={30}
           columns={columns}
@@ -191,7 +230,7 @@ const ApplicationList = () => {
           disableRowSelectionOnClick
           selectionModel={selectedApplications}
           onRowSelectionModelChange={handleRowSelectionModelChange}
-          //onRowSelectionModelChange={handleRowSelectionModelChange}
+          className="list-column"
         />
       </Box>
     </>

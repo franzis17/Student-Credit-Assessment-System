@@ -1,12 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { Link , useLocation, useParams, useNavigate } from 'react-router-dom';
-import InstitutionDataService from '../../services/institution';
+import { useParams, useNavigate } from 'react-router-dom';
 import UnitDataService from "../../services/unit";
 import Navbar from "../../components/Navbar";
 import AddUnitButton from '../../components/AddUnitButton';
 import SimpleButton from "../../components/buttons/SimpleButton";
-import { DataGrid } from '@mui/x-data-grid';
 import '../institution-list/list.css';
+import { DataGrid } from '@mui/x-data-grid';
 
 import { useAuthContext } from '../../hooks/useAuthContext';
 import DataUtils from "../../utils/dataUtils";
@@ -31,11 +30,10 @@ const UnitList = () => {
 
   const dataUtils = new DataUtils();
   const navigate = useNavigate();
+  
   // State variables
   const [units, setUnits] = useState([]);
   const [selectedUnits, setSelectedUnits] = useState([]);
-  const [unitData, setUnitData] = useState(null);
-
   const [selectedUnitIDs, setSelectedUnitIDs] = useState([]);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
@@ -140,7 +138,6 @@ const UnitList = () => {
         }
       },
     },
-    { field: 'notes',       headerName: 'Notes',       width: 400 }
   ];
   
   // Handle selecting one or more units
@@ -190,7 +187,7 @@ const UnitList = () => {
               }}
             />
           )}
-       
+        
         {selectedUnitIDs.length > 0 && (
           <Button
             sx={{
@@ -210,51 +207,60 @@ const UnitList = () => {
           </Button>
         )}
       </div>
+      
+      <div>
+        <Dialog
+          open={isDeleteModalOpen}
+          onClose={handleRemoveCancel}
+          aria-labelledby="remove-dialog-title"
+          aria-describedby="remove-dialog-description"
+        >
+          <DialogTitle id="remove-dialog-title">Confirm Removal</DialogTitle>
+          <DialogContent>
+            <DialogContentText id="remove-dialog-description">
+              Are you sure you want to remove {selectedUnitIDs.length} selected unit(s)?
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleRemoveCancel} sx={{color:"black"}}>
+              Cancel
+            </Button>
+            <Button onClick={handleRemoveConfirm} color="error">
+              Remove
+            </Button>
+          </DialogActions>
+        </Dialog>
+      </div>
 
-      <Box sx={{ height: '100%', width: '100%' }}>
-        <DataGrid
-          rows={units}
-          rowHeight={30}
-          columns={columns}
-          columnResizable={true}
-          getRowId={(row) => row._id}  // use the Unit's mongo ID as the row ID
-          initialState={{
-            pagination: {
-              paginationModel: {
-                pageSize: 25,
+      <div>
+        <Box sx={{ height: '100%', width: '100%' }}>
+          <DataGrid
+            sx = {{
+              "& .MuiDataGrid-row:hover": {
+                backgroundColor: "#cccccc",
               },
-            },
-          }}
-          pageSizeOptions={[10, 25, 50]}
-          checkboxSelection
-          disableRowSelectionOnClick
-          selectionModel={selectedUnits}
-          onRowSelectionModelChange={handleRowSelectionModelChange}
-          className="list-column"
-        />
-      </Box>
-
-      <Dialog
-        open={isDeleteModalOpen}
-        onClose={handleRemoveCancel}
-        aria-labelledby="remove-dialog-title"
-        aria-describedby="remove-dialog-description"
-      >
-        <DialogTitle id="remove-dialog-title">Confirm Removal</DialogTitle>
-        <DialogContent>
-          <DialogContentText id="remove-dialog-description">
-            Are you sure you want to remove {selectedUnitIDs.length} selected unit(s)?
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleRemoveCancel} sx={{color:"black"}}>
-            Cancel
-          </Button>
-          <Button onClick={handleRemoveConfirm} color="error">
-            Remove
-          </Button>
-        </DialogActions>
-      </Dialog>
+            }}
+            rows={units}
+            rowHeight={30}
+            columns={columns}
+            columnResizable={true}
+            getRowId={(row) => row._id}  // use the Unit's mongo ID as the row ID
+            initialState={{
+              pagination: {
+                paginationModel: {
+                  pageSize: 25,
+                },
+              },
+            }}
+            pageSizeOptions={[10, 25, 50]}
+            checkboxSelection
+            disableRowSelectionOnClick
+            selectionModel={selectedUnits}
+            onRowSelectionModelChange={handleRowSelectionModelChange}
+            className="unit-list-column"
+          />
+        </Box>
+      </div>
     </>
   );
 };
