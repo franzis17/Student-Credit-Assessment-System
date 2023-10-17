@@ -83,15 +83,16 @@ const UnitModal = ({ onClose, onUnitSave}) => {
   }
 
   const handleInstitutionClick = (institutionId) => {
-    console.log("selected instititution id is: " + institutionId);
+    console.log("selected institution id is: " + institutionId);
     const selectedInstitutionObj = institutionArray.find(
       (institution) => institution._id === institutionId
     );
   
     if (selectedInstitutionObj) {
-      setInstitutionName(institutionId);
+      setInstitutionName(selectedInstitutionObj.name);
+      setLocation(selectedInstitutionObj.location);
     }
-
+  
     setFilteredList([]);
     setSelectedInstitution(null);
   };

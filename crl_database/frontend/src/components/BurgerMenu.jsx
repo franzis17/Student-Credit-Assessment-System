@@ -41,10 +41,11 @@ const BurgerMenu = () => {
   const {logout} = useLogout()
   
   //Conditionally set the menu items 
-  const menuItems = ['Dashboard', 'Lists', 'Student Search']
+  const menuItems = ['Dashboard', 'Lists']
   //Check if the user is admin
   if (user && user.role == 'Admin') {
-    menuItems.push('Whitelist')
+    menuItems.push('Whitelist');
+    menuItems.push('Student Search');
   }
 
   const toggleDrawer = () => {
@@ -114,7 +115,7 @@ const BurgerMenu = () => {
                     </ListItemIcon>
                     <ListItemText primary={text} />
                   </ListItemButton>
-                ) :  index == 3 && user && user.role === 'Admin' ? (
+                ) :  index == 2 && user && user.role === 'Admin' ? (
                   <ListItemButton
                   onClick={toggleWhitelistMenu}
                  >
@@ -123,7 +124,7 @@ const BurgerMenu = () => {
                   </ListItemIcon>
                   <ListItemText primary={text} />
                 </ListItemButton>
-                ) : index == 2 ? ( 
+                ) : index == 3 && user && user.role === 'Admin' ? ( 
                     <ListItemButton 
                     onClick={toggleSearchModal}
                     >
@@ -191,8 +192,8 @@ const BurgerMenu = () => {
           </Button>
         </div>
       </Drawer>
-      <SearchStudent open={searchModalOpen} onClose={toggleSearchModal} />
-      <Whitelist open={whitelistModalOpen} onClose={toggleWhitelistMenu} />
+        <StudentSearch open={searchModalOpen} onClose={toggleSearchModal} />
+        <Whitelist open={whitelistModalOpen} onClose={toggleWhitelistMenu} />
     </>
   );
 };

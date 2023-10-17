@@ -134,12 +134,14 @@ const InstitutionList = () => {
       width: 90,
       renderCell: (params) => (
         <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-          <IconButton
-            style={deleteButtonStyle}
-            onClick={() => openConfirmationModal(params.row._id)}
-          >
-            <DeleteIcon />
-          </IconButton>
+          {user && (user.role === "Admin" || user.role === "Moderator") && (
+            <IconButton
+              style={deleteButtonStyle}
+              onClick={() => openConfirmationModal(params.row._id)}
+            >
+              <DeleteIcon />
+            </IconButton>
+          )}
         </div>
       ),
     },
@@ -149,7 +151,9 @@ const InstitutionList = () => {
   return (
     <div>
       <Navbar />
-      <AddInstitutionButton onInstitutionSave={handleInstitutionSave} />
+        {user && (user.role === "Admin" || user.role === "Moderator") && (
+          <AddInstitutionButton onInstitutionSave={handleInstitutionSave} />
+        )}
 
       <div style={containerStyle} className="center-data-grid">
         <Box sx={{ flex: 1 }}>
