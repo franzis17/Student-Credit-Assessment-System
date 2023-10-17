@@ -43,9 +43,7 @@ const Navbar = () => {
                 <LightModeOutlined sx={{ fontSize: '25px' }} />
               )}
             </IconButton> */}
-            <IconButton>
-              <SettingsDropDown/>
-            </IconButton>
+
             <IconButton>
               <AvatarDropDown/>
             </IconButton>

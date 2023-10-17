@@ -16,7 +16,7 @@ const AddInstitutionButton = ({onInstitutionSave}) => {
     const buttonStyle = {
         position: 'absolute',
         top: '15px', // Adjust the top position as needed
-        right: '180px', // Adjust the left position as needed
+        right: '130px', // Adjust the left position as needed
         color: 'white',
         borderRadius: '10px',
         background: '#24a0ed',

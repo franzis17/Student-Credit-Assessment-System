@@ -1,19 +1,14 @@
 import React from 'react'
 import { useState, useEffect, useRef} from 'react'
-import { LightModeOutlined,  //For darkmode functionality later
-    DarkModeOutlined, 
+import { LightModeOutlined,
     Menu as MenuIcon,
     Search,
-    CountertopsRounded
 } from "@mui/icons-material";
 import FlexBetween from '../../components/FlexBetween';
 import { useDispatch} from 'react-redux';
-import { setMode } from "../../state" //For darkmode functionality later maybe
-import { Box, 
-  Grid, 
+import {
   IconButton, 
   InputBase, 
-  Button, 
   useTheme, 
   List,
   ListItem,
@@ -23,7 +18,7 @@ import Navbar from "../../components/Navbar";
 import InstitutionDataService from "../../services/institution";
 import UnitDataService from "../../services/unit";
 import { useNavigate, useLocation} from 'react-router-dom';
-import Counter from './animate/counter';
+
 import dashboardBackground from '../../assets/dashboard-backdrop.jpg';
 
 import { useAuthContext } from '../../hooks/useAuthContext';
@@ -42,8 +37,8 @@ const Dashboard = () => {
 
   // To do after render
   useEffect(() => {
-    getInstitutionCount();
-    getUnitCount();
+    // getInstitutionCount();
+    // getUnitCount();
     getAllInstitutions();
 
 
@@ -61,31 +56,31 @@ const Dashboard = () => {
 
   }, []);
 
-  const getInstitutionCount = () => {
-    InstitutionDataService.getCount(user.token)
-      .then((response) => {
-        const instCount = response.data;
-        setTotalInstitutions(instCount);
-      })
-      .catch((err) => {
-        console.log(
-          `ERROR when retrieving institution's count. \nError: ${err}`
-        );
-      });
-  };
+  // const getInstitutionCount = () => {
+  //   InstitutionDataService.getCount(user.token)
+  //     .then((response) => {
+  //       const instCount = response.data;
+  //       setTotalInstitutions(instCount);
+  //     })
+  //     .catch((err) => {
+  //       console.log(
+  //         `ERROR when retrieving institution's count. \nError: ${err}`
+  //       );
+  //     });
+  // };
 
-  const getUnitCount = () => {
-    UnitDataService.getCount(user.token)
-    .then((response) => {
-      const unitCount = response.data;
-      setTotalUnits(unitCount);
-    })
-    .catch((err) => {
-      console.log(
-        `ERROR when retrieving unit's count. \nError: ${err}`
-      );
-    });
-  };
+  // const getUnitCount = () => {
+  //   UnitDataService.getCount(user.token)
+  //   .then((response) => {
+  //     const unitCount = response.data;
+  //     setTotalUnits(unitCount);
+  //   })
+  //   .catch((err) => {
+  //     console.log(
+  //       `ERROR when retrieving unit's count. \nError: ${err}`
+  //     );
+  //   });
+  // };
 
 
   const getAllInstitutions = () => {
@@ -120,11 +115,6 @@ const Dashboard = () => {
     setSelectedInstitution(institutionId);
     navigateToSortedUnitList(institutionId);
   };
-  
-  
-  const navigateToInstitutionList = (institutionId) => {
-    navigate(`/institutions/`);
-  };
 
   const navigateToSortedUnitList = (institutionId) => {
     console.log("here is the instition id: " + institutionId)
@@ -156,14 +146,14 @@ const Dashboard = () => {
     <div>
       <Navbar />
     </div>
-    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column', marginTop: '2rem' }}>
+    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column', marginTop: '9rem' }}>
     <div style={{ fontSize: '32px', fontWeight: 'bold', marginBottom: '1rem', textAlign: 'center' }}>
       Welcome to the CRL Database, {user.username}
     </div>
     <FlexBetween backgroundColor={theme.palette.background.alt} borderRadius="10px" gap="0.5rem" p="0.1rem 1rem" style={{ position: 'relative', backgroundColor:"white", border:"solid", borderColor:"#D3D3D3" }}>
           <InputBase
               type="text"
-              placeholder="Search an institution..."
+              placeholder="Search an institution to get started..."
               style={{ width: '500px', padding: "0"}}
               onChange={(event) => handleSearchChange(event)}
             />
@@ -213,220 +203,6 @@ const Dashboard = () => {
               </List>
             )}
           </FlexBetween>
-      <Grid container justifyContent="space-between" sx={{ marginTop: '5rem' }}>
-          <Grid item xs={4} textAlign="center">
-            <b style={{
-              fontSize:"19px",
-              position:"relative",
-              left:"-60px"
-
-            }}>Total Mapped Units</b>
-            <Box sx={{ 
-                    display:"flex",
-                    flexDirection: 'column',
-                    justifyContent: 'center',
-                    width: ["100%", '200px', '300px'], 
-                    height: "100px",
-                    alignItems: "center",
-                    borderRadius: "15px",
-                    backgroundColor: "#D3D3D3",
-                    margin: '0 auto',
-                    marginTop:"5px"
-                    }}onClick={() => navigate('/units')}>
-                    <div style={{
-                        fontSize: "18px",
-                        fontWeight: "bold",
-                    }}> <Counter number={totalUnits}/>
-                    </div>
-      </Box>
-            <div>
-              <Button style={{
-                       color: '#0070E0',
-                       padding: "8px 10px",
-                       fontSize: "10px",
-                       position: 'relative',
-                       bottom: '0',
-                       left: '-105px'
-                      }}
-                      onClick={() => navigate('/units')}>
-                      View All Units
-              </Button>
-            </div>
-          </Grid>
-          <Grid item xs={4} textAlign="center">
-          <b style={{
-              fontSize:"19px",
-              position:"relative",
-              left:"-35px"
-
-            }}>Units Listed This Month</b>
-            <Box sx={{ 
-                    display:"flex",
-                    flexDirection: 'column',
-                    justifyContent: 'center',
-                    width: ["100%", '200px', '300px'], 
-                    height: "100px",
-                    alignItems: "center",
-                    borderRadius: "15px",
-                    backgroundColor: "#D3D3D3",
-                    margin: '0 auto',
-                    marginTop:"5px"
-                    }}>
-        Put Total Monthly Cases Here
-      </Box>
-            <div>
-              <Button style={{
-                       color: '#0070E0',
-                       padding: "8px 10px",
-                       fontSize: "10px",
-                       position: 'relative',
-                       bottom: '0',
-                       left: '-105px'
-                      }}>
-              View new Cases</Button>
-            </div>
-          </Grid>
-          <Grid item xs={4} textAlign="center">
-          <b style={{
-              fontSize:"19px",
-              position:"relative",
-              left:"-35px"
-
-            }}>Conditional Status Units</b>
-            <Box sx={{ 
-                    display:"flex",
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    width: ["100%", '200px', '300px'], 
-                    height: "100px",
-                    borderRadius: "15px",
-                    backgroundColor: "#D3D3D3",
-                    margin: '0 auto',
-                    marginTop:"5px"
-                    }}>
-        Put number of Conditional Status Units Here
-      </Box>
-            <div>
-              <Button style={{
-                       color: '#0070E0',
-                       padding: "8px 10px",
-                       fontSize: "10px",
-                       position: 'relative',
-                       bottom: '0',
-                       left: '-60px'
-                      }}>
-              View Conditional Status Units</Button>
-            </div>
-          </Grid>
-          <div style={{ marginTop: '15rem' }} />
-          <Grid item xs={4} textAlign="center">
-          <b style={{
-              fontSize:"19px",
-              position:"relative",
-              left:"-45px"
-
-            }}>Total Unmapped Units</b>
-            <Box sx={{ 
-                    display:"flex",
-                    flexDirection: 'column',
-                    alignItems: 'center', 
-                    justifyContent: 'center',
-                    width: ["100%", '200px', '300px'], 
-                    height: "100px",
-                    borderRadius: "15px",
-                    backgroundColor: "#D3D3D3",
-                    margin: '0 auto',
-                    marginTop:"5px"
-                    }}>Put Total Unmapped Units Here
-        </Box>
-            <div>
-              <Button style={{
-                       color: '#0070E0',
-                       padding: "8px 10px",
-                       fontSize: "10px",
-                       position: 'relative',
-                       bottom: '0', 
-                       left: '-85px'
-                      }}>
-                    View Unmapped Units</Button>
-            </div>
-          </Grid>
-          <Grid item xs={4} textAlign="center">
-          <b style={{
-              fontSize:"19px",
-              position:"relative",
-              left:"-15px"
-
-            }}>Total Rejected Comparisons</b>
-            <Box sx={{ 
-                    display:"flex",
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    width: ["100%", '200px', '300px'], 
-                    height: "100px",
-                    borderRadius: "15px",
-                    backgroundColor: "#D3D3D3",
-                    margin: '0 auto',
-                    marginTop:"5px"
-                    }}>
-        Put Total Rejected Unit Comparisons Here
-      </Box>
-            <div>
-            <Button
-              style={{
-                color: '#0070E0',
-                padding: "8px 10px",
-                fontSize: "10px",
-                position: 'relative',
-                bottom: '0',
-                left: '-70px'
-              }}
-            >
-              View Rejected Comparisons
-            </Button>
-            </div>
-          </Grid>
-          <Grid item xs={4} textAlign="center">
-          <b style={{
-              fontSize:"19px",
-              position:"relative",
-              left:"-20px"
-
-            }}>Total Registered Institutions</b>
-            <Box sx={{ 
-                    display:"flex",
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    width: ["100%", '200px', '300px'], 
-                    height: "100px",
-                    borderRadius: "15px",
-                    backgroundColor: "#D3D3D3",
-                    margin: '0 auto',
-                    marginTop:"5px"
-                    }}onClick={() => navigate('/institutions')}>
-                       <div style={{
-                          fontSize: "18px",
-                          fontWeight: "bold",
-                         }}
-                         > <Counter number={totalInstitutions}/>
-                      </div>
-      </Box>
-            <div>
-              <Button style={{
-                       color: '#0070E0',
-                       padding: "8px 10px",
-                       fontSize: "10px",
-                       position: 'relative',
-                       bottom: '0',
-                       left: '-100px'
-                      }}onClick={() => navigate('/institutions')}>
-              View Institutions</Button>
-            </div>
-          </Grid>
-        </Grid>
     </div>
   </div>
 </div>

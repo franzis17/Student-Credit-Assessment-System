@@ -174,8 +174,10 @@ const UnitList = () => {
     <>
       <div>
         <Navbar />
-        <AddUnitButton onUnitSave={handleUnitSave}/>
-          {selectedUnitIDs.length > 0 && (
+          {user && (user.role === "Admin" || user.role === "Moderator") && (
+            <AddUnitButton onUnitSave={handleUnitSave} />
+          )}
+          {selectedUnitIDs.length > 0 && (user.role === "Admin" || user.role === "Moderator") && (
             <SimpleButton
               content={`Assess (${selectedUnitIDs.length})`}
               onClick={() => {
@@ -190,24 +192,24 @@ const UnitList = () => {
             />
           )}
        
-        {selectedUnitIDs.length > 0 && (
-          <Button
-            sx={{
-              position: 'absolute',
-              top: '15px',
-              right: '290px',
-              color: 'white',
-              borderRadius: '10px',
-              background: 'error',
-              zIndex: 1200,
-            }}
-            variant="contained"
-            color="error"
-            onClick={handleRemoveClick}
-          >
-            Remove ({selectedUnitIDs.length})
-          </Button>
-        )}
+       {selectedUnitIDs.length > 0 && (user.role === "Admin" || user.role === "Moderator") && (
+        <Button
+          sx={{
+            position: 'absolute',
+            top: '15px',
+            right: '290px',
+            color: 'white',
+            borderRadius: '10px',
+            background: 'error',
+            zIndex: 1200,
+          }}
+          variant="contained"
+          color="error"
+          onClick={handleRemoveClick}
+        >
+          Remove ({selectedUnitIDs.length})
+        </Button>
+      )}
       </div>
 
       {/* [TESTING] - if a Unit is actually added in the DB */}
