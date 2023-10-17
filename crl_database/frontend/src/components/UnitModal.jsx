@@ -20,6 +20,7 @@ const UnitModal = ({ onClose, onUnitSave}) => {
   const [selectedInstitution, setSelectedInstitution] = useState(null);
   const listRef = useRef(null);
   const [institutionArray, setInstitutionArray] = useState([]);
+  const [institutionID, setInstitutionID] = useState('');
   
   const {user} = useAuthContext();
 
@@ -44,7 +45,7 @@ const UnitModal = ({ onClose, onUnitSave}) => {
       unitCode,
       name,
       location,
-      institution,
+      institutionID,
       major,
     };
     onUnitSave(unitToAdd);
@@ -82,16 +83,21 @@ const UnitModal = ({ onClose, onUnitSave}) => {
     });
   }
 
-  const handleInstitutionClick = (institutionId) => {
-    console.log("selected institution id is: " + institutionId);
+  const handleInstitutionClick = (institutionP) => {
+    console.log("selected institution id is: " + institutionP._id);
     const selectedInstitutionObj = institutionArray.find(
-      (institution) => institution._id === institutionId
+      (institution) => institution._id === institutionP._id
     );
   
     if (selectedInstitutionObj) {
+      setInstitutionID(selectedInstitutionObj._id);
       setInstitutionName(selectedInstitutionObj.name);
       setLocation(selectedInstitutionObj.location);
     }
+
+    console.log("ID = " + institutionID);
+    console.log("NAME = " + name);
+    console.log("LOCATION = " + location);
   
     setFilteredList([]);
     setSelectedInstitution(null);
@@ -187,10 +193,10 @@ const UnitModal = ({ onClose, onUnitSave}) => {
                 }}
               >
                 {filteredList.map((institution, index) => (
-                  <React.Fragment key={institution.id}>
+                  <React.Fragment key={institution}>
                     <ListItem
                       button
-                      onClick={() => handleInstitutionClick(institution._id)}
+                      onClick={() => handleInstitutionClick(institution)}
                     >
                       <ListItemText primary={institution.name} />
                     </ListItem>

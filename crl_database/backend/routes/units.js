@@ -111,6 +111,7 @@ router.route("/add").post((req, res) => {
   const name        = req.body.name;
   const location    = req.body.location;
   const major       = req.body.major;
+  console.log("INSTITUTION ID = " + req.body.institution)
   const institution = new mongoose.Types.ObjectId(req.body.institution);
   const notes       = req.body.notes;
   
