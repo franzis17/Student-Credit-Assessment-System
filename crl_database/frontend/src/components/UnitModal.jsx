@@ -10,6 +10,7 @@ import Divider from '@mui/material/Divider';
 import { useAuthContext } from '../hooks/useAuthContext';
 
 const UnitModal = ({ onClose, onUnitSave}) => {
+  
   const [name, setUnitName] = useState('');
   const [institution, setInstitutionName] = useState('');
   const [unitCode, setUnitCode] = useState('');
@@ -20,6 +21,7 @@ const UnitModal = ({ onClose, onUnitSave}) => {
   const [selectedInstitution, setSelectedInstitution] = useState(null);
   const listRef = useRef(null);
   const [institutionArray, setInstitutionArray] = useState([]);
+  const [institutionID, setInstitutionID] = useState('');
   
   const {user} = useAuthContext();
 
@@ -40,11 +42,13 @@ const UnitModal = ({ onClose, onUnitSave}) => {
   }, []);
 
   const handleSave = () => {
+    console.log(">>> Saving unit...");
+    console.log("institutionID =", institutionID);
     const unitToAdd = {
       unitCode,
       name,
       location,
-      institution,
+      institutionID,
       major,
     };
     onUnitSave(unitToAdd);
@@ -82,17 +86,19 @@ const UnitModal = ({ onClose, onUnitSave}) => {
     });
   }
 
-  const handleInstitutionClick = (institutionId) => {
-    console.log("selected institution id is: " + institutionId);
-    const selectedInstitutionObj = institutionArray.find(
-      (institution) => institution._id === institutionId
-    );
+  const handleInstitutionClick = (institutionSelected) => {
+    console.log("selected institution =", institutionSelected);
   
-    if (selectedInstitutionObj) {
-      setInstitutionName(selectedInstitutionObj.name);
-      setLocation(selectedInstitutionObj.location);
+    if (institutionSelected) {
+      setInstitutionID(institutionSelected._id);
+      setInstitutionName(institutionSelected.name);
+      setLocation(institutionSelected.location);
     }
-  
+
+    console.log("ID = " + institutionID);
+    console.log("NAME = " + name);
+    console.log("LOCATION = " + location);
+
     setFilteredList([]);
     setSelectedInstitution(null);
   };
@@ -187,10 +193,10 @@ const UnitModal = ({ onClose, onUnitSave}) => {
                 }}
               >
                 {filteredList.map((institution, index) => (
-                  <React.Fragment key={institution.id}>
+                  <React.Fragment key={institution}>
                     <ListItem
                       button
-                      onClick={() => handleInstitutionClick(institution._id)}
+                      onClick={() => handleInstitutionClick(institution)}
                     >
                       <ListItemText primary={institution.name} />
                     </ListItem>

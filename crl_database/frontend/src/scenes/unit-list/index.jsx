@@ -18,6 +18,7 @@ import {
   DialogContent,
   DialogContentText,
   DialogActions,
+  Alert
 } from '@mui/material';
 
 
@@ -91,7 +92,7 @@ const UnitList = () => {
     console.log('Received unit data:', unitData);
     UnitDataService.addUnit(unitData, user.token)
       .then((response) => {
-        console.log("Successfully added the unit in the database");
+        console.log("Successfully added the unit in the database " + response.status);
         retrieveUnits();
       })
       .catch((error) => {
