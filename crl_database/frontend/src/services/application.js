@@ -57,5 +57,7 @@ class ApplicationDataService {
   }
 }
 
+
+
 const applicationDataService = new ApplicationDataService();
 export default applicationDataService;

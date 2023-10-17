@@ -9,6 +9,9 @@ import Navbar from "../../components/Navbar";
 import Box from '@mui/material/Box';
 import { DataGrid } from '@mui/x-data-grid';
 import { Button } from '@mui/material';
+import { TableCell, Tooltip } from '@mui/material';
+import { FiberManualRecord } from '@mui/icons-material';
+
 
 import {
   Dialog,
@@ -137,7 +140,31 @@ const ApplicationList = () => {
         }
       },
     },
-    { field: 'status',         headerName: 'Status',            width: 70 },
+    { 
+      field: 'status',         
+      headerName: 'Status',      
+      width: 70,
+      renderCell: (params) => {
+        const status = params.row.status;
+        let pointColor = 'transparent';
+  
+        if (status === 0) {
+          pointColor = 'red';
+        } else if (status === 1) {
+          pointColor = 'green';
+        } else if (status === 2) {
+          pointColor = 'yellow';
+        }
+  
+        return (
+          <Tooltip title={`Status: ${status}`}>
+            <TableCell align="center">
+              <FiberManualRecord style={{ color: pointColor }} />
+            </TableCell>
+          </Tooltip>
+        );
+      },
+    },
     { field: 'aqf',            headerName: 'AQF',               width: 70 },
     { field: 'location',       headerName: 'Location',          width: 150 },
     { field: 'award',          headerName: 'Award',             width: 200 },
@@ -156,6 +183,7 @@ const ApplicationList = () => {
     },
     { field: 'assessorNotes',  headerName: 'Assessor Notes',    width: 400 },
   ];
+  
   
   return (
     <>
