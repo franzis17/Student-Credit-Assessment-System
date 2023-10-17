@@ -147,9 +147,9 @@ const Dashboard = () => {
       <Navbar />
     </div>
     <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column', marginTop: '9rem' }}>
-    <div style={{ fontSize: '32px', fontWeight: 'bold', marginBottom: '1rem', textAlign: 'center' }}>
+    <div style={{ fontSize: '38px', marginBottom: '1rem', textAlign: 'center', fontFamily: 'Circular, sans-serif' }}>
       Welcome to the CRL Database, {user.username}
-    </div>
+    </div>  
     <FlexBetween backgroundColor={theme.palette.background.alt} borderRadius="10px" gap="0.5rem" p="0.1rem 1rem" style={{ position: 'relative', backgroundColor:"white", border:"solid", borderColor:"#D3D3D3" }}>
           <InputBase
               type="text"
