@@ -26,10 +26,11 @@ import { Link } from 'react-router-dom';
 import LockIcon from '@mui/icons-material/Lock';
 import { useAuthContext } from '../hooks/useAuthContext.js';
 import { useLogout } from '../hooks/useLogout.js'
-import StudentSearch from './studentSearch.jsx';
+import SearchStudent from './searchStudent.jsx';
 import Whitelist from './whitelistMenu.jsx';
 
 const BurgerMenu = () => {
+  
   const [open, setOpen] = useState(false);
   const [searchModalOpen, setSearchModalOpen] = useState(false)
   const [whitelistModalOpen, setWhitelistModalOpen] = useState(false)
@@ -128,7 +129,7 @@ const BurgerMenu = () => {
                     <ListItemIcon>
                     <PersonSearchIcon />
                     </ListItemIcon>
-                   <ListItemText primary="Student Search" />
+                   <ListItemText primary="Search student" />
                    </ListItemButton>      
                 ) : (
                   <ListItemButton onClick={() => handleListItemClick(index)}>
@@ -150,7 +151,7 @@ const BurgerMenu = () => {
               {index === 1 && (
                 <Collapse in={openLists} timeout="auto" unmountOnExit>
                   <List component="div" disablePadding>
-                    {['Units', 'Institutions', 'Applications'].map((subText) => (
+                    {['Institutions', 'Units', 'Applications'].map((subText) => (
                       <ListItem key={subText} disablePadding>
                         <ListItemButton
                           component={Link}
@@ -161,8 +162,6 @@ const BurgerMenu = () => {
                         </ListItemButton>
                       </ListItem>
                     ))}
-
-      
                   </List>
                 </Collapse>
               )}
@@ -191,7 +190,7 @@ const BurgerMenu = () => {
           </Button>
         </div>
       </Drawer>
-      <StudentSearch open={searchModalOpen} onClose={toggleSearchModal} />
+      <SearchStudent open={searchModalOpen} onClose={toggleSearchModal} />
       <Whitelist open={whitelistModalOpen} onClose={toggleWhitelistMenu} />
     </>
   );

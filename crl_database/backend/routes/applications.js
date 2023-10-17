@@ -10,13 +10,40 @@ router.use(requireAuth)
 
 router.route("/").get(async (req, res) => {
   try {
-    console.log(">>> Getting applications...");
+    // console.log(">>> Getting applications...");
     const applications = await Application.find({}).populate("institution assessedUnits curtinUnit");
-    console.log("applications =", applications);
+    // console.log("applications =", applications);
     res.json(applications);
   } catch (e) {
     console.error(`ERROR: ${e}`);
     res.status(500).json(`ERROR: Failed to fetch applications. More details: ${e}`);
+  }
+});
+
+/**
+ * [ /applications/studentSearch ]
+ * Search for a student.
+ */
+router.route("/studentSearch").get(async (req, res) => {
+  const student = req.query.student;
+  // console.log(">>> Searching applications of a student...");
+  // console.log("student =", student);
+  
+  try {
+    let results = [];
+    if (student) {
+      results = await Application.find(
+        {
+          studentNotes: { $regex: student, $options: 'i' }
+        }
+      ).populate("institution assessedUnits curtinUnit");
+    }
+    // console.log("Student's applications =", results);
+    res.json(results);
+  }
+  catch (e) {
+    console.error(`ERROR: ${e}`);
+    res.status(500).json("ERROR: Failed to fetch search results. More details:", e);
   }
 });
 
@@ -73,34 +100,13 @@ router.route("/add").post((req, res) => {
 router.route("/delete/:id").delete((req, res) => {
   Application.findByIdAndDelete(req.params.id)
     .then(() => {
-      res.json("The Application has successfully been deleted!")
+      res.json("The Application has successfully been deleted!");
     })
     .catch((e) => {
       res.status(400).json(`ERROR: ${e}`);
     });
 });
 
-// ---- [ Search for Student ] ----
-router.route("/studentSearch").get(async (req, res) => {
-  console.log("Endpoint accessed");
-  const query = req.query.q;
-    
-  // Search logic: StudentNotes
-  try {
-      let results = [];
-      if(query) {
-          results = await Application.find({
-              
-              studentNotes: { $regex: query, $options: 'i' }
-              
-          }).populate("institution assessedUnits assessorNotes");
-      }
-      res.json(results);
-  } catch (e) {
-      console.error(`ERROR: ${e}`);
-      res.status(500).json(`ERROR: Failed to fetch search results. More details: ${e}`);
-  }
-});
 
 router.route("/totty").get((req, res) => {
   res.send("Route is working");

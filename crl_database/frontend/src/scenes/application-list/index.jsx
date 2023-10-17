@@ -1,32 +1,58 @@
 import React, { useState, useEffect } from 'react';
+import { useParams } from 'react-router-dom';
 import { useAuthContext } from "../../hooks/useAuthContext";
 import ApplicationDataService from "../../services/application";
 import DataUtils from "../../utils/dataUtils";
+import '../institution-list/list.css';
 
 import Navbar from "../../components/Navbar";
 import Box from '@mui/material/Box';
 import { DataGrid } from '@mui/x-data-grid';
+import { Button } from '@mui/material';
+
+import {
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogContentText,
+  DialogActions,
+} from '@mui/material';
 
 const ApplicationList = () => {
+  
+  // Fields
+  const { user } = useAuthContext();
+  const { studentToSearch } = useParams();
+  const dataUtils = new DataUtils();
+  
+  // console.log(">>> In application list");
+  // console.log("studentToSearch =", studentToSearch);
   
   // State variables
   const [applications, setApplications] = useState([]);
   const [selectedApplications, setSelectedApplications] = useState([]);
-  
-  const { user } = useAuthContext();
-
-  const dataUtils = new DataUtils();
+  const [isModalOpen, setModalOpen] = useState(false);
   
   useEffect(() => {
     retrieveApplications();
-  }, []);
+  }, [studentToSearch]);
   
   const retrieveApplications = () => {
-    console.log("Getting applications...");
+    // 1. LIST ALL applications (without searchInput)
+    if (!studentToSearch) {
+      retrieveAllApplications();
+    }
+    // 2. LIST STUDENTS' applications (with searchInput)
+    else {
+      retrieveApplicationsOfStudent(studentToSearch);
+    }
+  };
+  
+  const retrieveAllApplications = () => {
     ApplicationDataService.getAll(user.token)
       .then((response) => {
         const data = response.data;
-        console.log("Retrieved applications:\n", data);
+        // console.log("Retrieved all applications:\n", data);
         
         // replace the null fields of with text "NO DATA"
         dataUtils.replaceNullFields(data);
@@ -34,8 +60,68 @@ const ApplicationList = () => {
         setApplications(data);
       })
       .catch((error) => {
-        console.log("ERROR: Failed to retrieve applications.\nMore info:", error);
+        console.log("ERROR: Failed to retrieve all applications.\nMore info:", error);
+      });
+  };
+  
+  const retrieveApplicationsOfStudent = (student) => {
+    ApplicationDataService.getApplicationsOfStudent(student, user.token)
+      .then((response) => {
+        const data = response.data;
+        // console.log("Retrieved a student's applications:\n", data);
+        
+        // replace the null fields of with text "NO DATA"
+        dataUtils.replaceNullFields(data);
+        
+        setApplications(data);
       })
+      .catch((error) => {
+        console.log("ERROR: Failed to retrieve a student's applications.\nMore info:", error);
+      });
+  };
+
+  
+  const handleRowSelectionModelChange = (newSelection) => {
+    // > "newSelections" are the id's of the units selected but we want the Unit object itself
+    // > replace the unit id's with the actual unit objects that are selected
+    const selectedUnitObj = newSelection.map((selectedId) => 
+      applications.find((application) => application._id === selectedId)
+    );
+    setSelectedApplications(newSelection);
+
+    // add selected units to local storage incase of refresh
+    localStorage.setItem('selected Applications', JSON.stringify(selectedApplications));
+  };
+
+  // MODAL
+
+  const handleRemoveConfirm = () => {
+    if (selectedApplications.length === 0) {
+      handleCloseModal();
+      return;
+    }
+    selectedApplications.forEach((selectedId) => {
+      ApplicationDataService.removeApplication(selectedId, user.token)
+        .then(() => {
+          // Handle success, such as updating the UI
+          console.log(`Application ${selectedId} has been deleted.`);
+          retrieveApplications();
+        })
+        .catch((error) => {
+          // Handle errors
+          console.error(`Error deleting application ${selectedId}: ${error}`);
+        });
+    });
+    setModalOpen(false);
+    retrieveApplications();
+  };
+
+  const handleOpenModal = () => {
+    setModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setModalOpen(false);
   };
   
   
@@ -75,28 +161,78 @@ const ApplicationList = () => {
     <>
       <div>
         <Navbar/>
+        {selectedApplications.length > 0 && (
+          <Button
+            sx={{
+              position: 'absolute',
+              top: '15px',
+              right: '180px',
+              color: 'white',
+              borderRadius: '10px',
+              background: 'error',
+              zIndex: 1200,
+            }}
+            variant="contained"
+            color="error"
+            onClick={handleOpenModal}  // Add this line
+          >
+            Remove ({selectedApplications.length})
+          </Button>
+        )}
+
+        {isModalOpen && (
+          <Dialog
+          open={isModalOpen}
+          onClose={handleCloseModal}
+          aria-labelledby="remove-dialog-title"
+          aria-describedby="remove-dialog-description"
+        >
+          <DialogTitle id="remove-dialog-title">Confirm Removal</DialogTitle>
+          <DialogContent>
+            <DialogContentText id="remove-dialog-description">
+              Are you sure you want to remove {selectedApplications.length} selected application(s)?
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleCloseModal} sx={{color:"black"}}>
+              Cancel
+            </Button>
+            <Button onClick={handleRemoveConfirm} color="error">
+              Remove
+            </Button>
+          </DialogActions>
+        </Dialog>
+        )}
       </div>
-      <Box sx={{ height: '100%', width: '100%' }}>
-        <DataGrid
-          rows={applications}
-          rowHeight={30}
-          columns={columns}
-          columnResizable={true}
-          getRowId={(row) => row._id}  // use the Unit's mongo ID as the row ID
-          initialState={{
-            pagination: {
-              paginationModel: {
-                pageSize: 25,
+      <div>
+        <Box sx={{ height: '100%', width: '100%' }}>
+          <DataGrid
+            sx = {{
+              "& .MuiDataGrid-row:hover": {
+                backgroundColor: "#cccccc",
               },
-            },
-          }}
-          pageSizeOptions={[10, 25, 50]}
-          checkboxSelection
-          disableRowSelectionOnClick
-          selectionModel={selectedApplications}
-          //onRowSelectionModelChange={handleRowSelectionModelChange}
-        />
-      </Box>
+            }}
+            rows={applications}
+            rowHeight={30}
+            columns={columns}
+            columnResizable={true}
+            getRowId={(row) => row._id}
+            initialState={{
+              pagination: {
+                paginationModel: {
+                  pageSize: 25,
+                },
+              },
+            }}
+            pageSizeOptions={[10, 25, 50]}
+            checkboxSelection
+            disableRowSelectionOnClick
+            selectionModel={selectedApplications}
+            onRowSelectionModelChange={handleRowSelectionModelChange}
+            className="list-column"
+          />
+        </Box>
+      </div>
     </>
   );
   

@@ -1,10 +1,11 @@
 import express from "express";
 import mongoose from "mongoose";
 import Unit from "../models/unit.model.js";
+import Institution from "../models/institution.model.js";
 import requireAuth from '../middleware/requireAuth.js';
 
 const router = express.Router();
-router.use(requireAuth)
+router.use(requireAuth);
 
 
 // ---- [GET] ----
@@ -22,16 +23,50 @@ router.route("/").get(async (req, res) => {
 });
 
 /**
- * Replace the institution field with JUST the institution's
- * name instead of the institution object
+ * [/units/institution/{institution_id}]
+ * GET the List of Units for a given institution
  */
-function getInstitutionNames(units) {
-  const unitsWithInstitutionNames = units.map(unit => ({
-    ...unit.toObject(),
-    institution: unit.institution.name,  // replace the institution field
-  }));
-  return unitsWithInstitutionNames;
-}
+router.route("/institution").get((req, res) => {
+  const institution = req.query.institution;
+  
+  console.log("querying an institution's units, institution id = " + institution);
+  
+  Unit.find({ institution: institution })
+    .populate("institution")
+    .then((units) => {
+      console.log("units =", units);
+      res.json(units)
+    })
+    .catch((err) => {
+      console.error(`ERROR: ${err}`);
+      res.status(500).json(`ERROR: Failed to retrieve the institution's units.\nMore details: ${err}`);
+    });
+});
+
+/**
+ * [ /units/curtin ]
+ * Get Curtin's Units. Used in assessment page to credit other instutition's units.
+ */
+router.route("/curtin").get(async (req, res) => {
+  try {
+    console.log(">>> GETTING curtin units...");
+    // 1. Find institution using its name "Curtin University"
+    const curtinName = "Curtin University";
+    const curtin = await Institution.findOne({ name: curtinName });
+    
+    if (!curtin) {
+      throw Error("Curtin doesn't exist");
+    }
+    
+    // 2. Using Curtin's "_id" (object id), get all units of Curtin
+    const curtinUnits = await Unit.find({ institution: curtin._id }).populate("institution");
+    res.json(curtinUnits);
+  }
+  catch (error) {
+    console.error("ERROR:", error);
+    res.status(500).json("ERROR: Failed to fetch units.\nMore details:", err);
+  }
+});
 
 
 /**
@@ -179,6 +214,33 @@ router.route("/remove-multiple").delete(async (req, res) => {
   } catch (error) {
     console.error("Error removing units:", error);
     res.status(500).json("Error removing units: " + error.message);
+  }
+});
+
+/** 
+ * [ /units/remove-notes ]
+ * Remove notes field
+ */
+router.route("/remove-notes").delete(async (req, res) => {
+  console.log(">>> Deleting notes of all units");
+  
+  // Define the update operation to remove the 'notes' field
+  const updateOperation = {
+    $unset: {
+      notes: 1, // Setting the value to 1 means to unset the field
+    },
+  };
+
+  try {
+    // Use the updateMany method to remove the 'notes' field from all documents
+    const result = await Unit.updateMany({}, updateOperation);
+
+    console.log("Removed 'notes' field from", result.nModified, "documents.");
+    res.json("Removed 'notes' field from " + result.nModified + " documents.");
+  }
+  catch (e) {
+    console.error("ERROR:", e);
+    res.status(500).json("Error deleting notes field of institutions.\nMore info:" + e);
   }
 });
 

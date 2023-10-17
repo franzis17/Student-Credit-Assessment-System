@@ -2,6 +2,7 @@ import User from '../models/userModel.js'
 import jwt from 'jsonwebtoken';
 import crypto from 'crypto';
 import {sendVerificationEmail} from '../utils/sendVerificationEmail.js';
+import WhitelstdUser from '../models/whitelistModel.js';
 
 //JSON token creation using token password
 const createJsonToken = (_id) => {
@@ -13,11 +14,19 @@ const createJsonToken = (_id) => {
 // login user 
 const loginUser = async (req, res) => {
 
-    const {email, password} = req.body
+    const {email, password, curtinID} = req.body
 
-    if (!email || !password) {
+    if (!email || !password || !curtinID) {
         return res.status(400).json({ error: 'Email and password are required' });
     }
+
+    //check if whitelisted user exists
+    const whitelistedUser = await WhitelstdUser.findOne({ curtinID });
+    if (!whitelistedUser) {
+        return res.status(403).json({ error: 'User is not whitelisted.' });
+    }
+
+    
 
     try {
 
