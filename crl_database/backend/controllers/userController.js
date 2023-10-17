@@ -16,7 +16,7 @@ const loginUser = async (req, res) => {
 
     const {email, password, curtinID} = req.body
 
-    if (!email || !password || !curtinID) {
+    if (!email || !password) {
         return res.status(400).json({ error: 'Email and password are required' });
     }
 
