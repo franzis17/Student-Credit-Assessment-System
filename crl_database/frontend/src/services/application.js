@@ -52,7 +52,7 @@ class ApplicationDataService {
   
   removeApplication(applicationID, userToken) {
     const headers = ApplicationDataService.getHeader(userToken);
-    console.log("ENPOINT: " + applicationID)
+    // console.log("ENPOINT: " + applicationID)
     return http.delete(`/applications/delete/${applicationID}`, headers);
   }
 }

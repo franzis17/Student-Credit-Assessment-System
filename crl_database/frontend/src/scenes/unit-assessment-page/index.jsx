@@ -215,7 +215,7 @@ const UnitAssessmentPage = () => {
     if (studentInfo.name.trim() !== '' && aqf.trim() !== '' && award.trim() !== '') {
       const parsedAqf = parseInt(aqf, 10);
       if (Number.isInteger(parsedAqf) && parsedAqf >= 0 && parsedAqf <= 10) {
-        const studentNotesFormatted = `${studentInfo.name} (${studentInfo.studentNumber}): ${studentInfo.studentNote}`;
+        const studentNotesFormatted = `${studentInfo.name}:${studentInfo.studentNumber}:${studentInfo.studentNote}`;
         const applicationToAdd = {
           institution: selectedUnits[0].institution._id,
           status: localStorage.getItem('status'),
