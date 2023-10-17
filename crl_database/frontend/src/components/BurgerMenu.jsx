@@ -26,6 +26,7 @@ import { Link } from 'react-router-dom';
 import LockIcon from '@mui/icons-material/Lock';
 import { useAuthContext } from '../hooks/useAuthContext.js';
 import { useLogout } from '../hooks/useLogout.js'
+import StudentSearch from './studentSearch.jsx';
 import SearchStudent from './searchStudent.jsx';
 import Whitelist from './whitelistMenu.jsx';
 

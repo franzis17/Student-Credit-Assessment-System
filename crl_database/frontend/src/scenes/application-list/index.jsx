@@ -104,7 +104,7 @@ const ApplicationList = () => {
       ApplicationDataService.removeApplication(selectedId, user.token)
         .then(() => {
           // Handle success, such as updating the UI
-          console.log(`Application ${selectedId} has been deleted.`);
+          // console.log(`Application ${selectedId} has been deleted.`);
           retrieveApplications();
         })
         .catch((error) => {

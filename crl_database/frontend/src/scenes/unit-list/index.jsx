@@ -242,7 +242,7 @@ const UnitList = () => {
             rowHeight={30}
             columns={columns}
             columnResizable={true}
-            getRowId={(row) => row._id}
+            getRowId={(row) => row._id}  // use the Unit's mongo ID as the row ID
             initialState={{
               pagination: {
                 paginationModel: {
