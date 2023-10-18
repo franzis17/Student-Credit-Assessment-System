@@ -111,12 +111,8 @@ router.route("/add").post((req, res) => {
   const name        = req.body.name;
   const location    = req.body.location;
   const major       = req.body.major;
-  const institution = new mongoose.Types.ObjectId(req.body.institution);
+  const institution = new mongoose.Types.ObjectId(req.body.institutionID);
   const notes       = req.body.notes;
-  
-  // TO DO in the frontend (WHEN adding a Unit):
-  // - Implement a dropdown with a search menu, that searches for the institution.
-  //   On select --> Retrieve instituion_id selected and put it on the HTTP post request
 
   const newUnit = new Unit({
     unitCode,
@@ -199,9 +195,6 @@ router.route("/institution-unit-delete/:institutionId").delete(async (req, res) 
  */
 router.route("/remove-multiple").delete(async (req, res) => {
   const unitIds = req.body.unitIds;
-  
-  console.log("body =", req.body);
-  console.log("unitIds =", unitIds);
 
   try {
     const result = await Unit.deleteMany({ _id: { $in: unitIds } });

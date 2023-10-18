@@ -18,6 +18,7 @@ import {
   DialogContent,
   DialogContentText,
   DialogActions,
+  Alert
 } from '@mui/material';
 
 
@@ -91,7 +92,7 @@ const UnitList = () => {
     console.log('Received unit data:', unitData);
     UnitDataService.addUnit(unitData, user.token)
       .then((response) => {
-        console.log("Successfully added the unit in the database");
+        console.log("Successfully added the unit in the database " + response.status);
         retrieveUnits();
       })
       .catch((error) => {
@@ -170,54 +171,97 @@ const UnitList = () => {
 
   return (
     <>
-    <div>
-      <Navbar />
-    </div>
-    
-    { /* FOR TESTING - Add/Delete Unit Buttons */ }
-    <SimpleButton content="Add Unit" onClick={handleAddUnit} />
-    
-    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-      <Link
-        to="/unitassessmentpage"
-        state={{ selectedUnits: selectedUnits }}
-      >
-        <SimpleButton content="Assess" />
-      </Link>
-      <Button
-        variant="contained"
-        sx={
-          {
-            color: 'white', borderRadius: '10px', background: '#24a0ed',
-            marginRight: '10px',
-          }
-        }
-        onClick={handleDeleteUnit}
-      >
-        Delete
-      </Button>
-    </div>
-    <Box sx={{ height: '100%', width: '100%' }}>
-      <DataGrid
-        rows={units}
-        rowHeight={30}
-        columns={columns}
-        columnResizable={true}
-        getRowId={(row) => row._id}  // use the Unit's mongo ID as the row ID
-        initialState={{
-          pagination: {
-            paginationModel: {
-              pageSize: 25,
-            },
-          },
-        }}
-        pageSizeOptions={[10, 25, 50]}
-        checkboxSelection
-        disableRowSelectionOnClick
-        selectionModel={selectedUnits}
-        onRowSelectionModelChange={handleRowSelectionModelChange}
-      />
-    </Box>
+      <div>
+        <Navbar />
+          {user && (user.role === "Admin" || user.role === "Moderator") && (
+            <AddUnitButton onUnitSave={handleUnitSave} />
+          )}
+          {selectedUnitIDs.length > 0 && (user.role === "Admin" || user.role === "Moderator") && (
+            <SimpleButton
+              content={`Assess (${selectedUnitIDs.length})`}
+              onClick={() => {
+                if (checkUnitsHaveSameInstitution()) {
+                  navigate("/unitassessmentpage", { state: { selectedUnits: selectedUnits } });
+                } else {
+                  alert('Selected units must have the same institution.');
+                }
+              }}
+            />
+          )}
+       
+       {selectedUnitIDs.length > 0 && (user.role === "Admin" || user.role === "Moderator") && (
+        <Button
+          sx={{
+            position: 'absolute',
+            top: '15px',
+            right: '290px',
+            color: 'white',
+            borderRadius: '10px',
+            background: 'error',
+            zIndex: 1200,
+          }}
+          variant="contained"
+          color="error"
+          onClick={handleRemoveClick}
+        >
+          Remove ({selectedUnitIDs.length})
+        </Button>
+      )}
+      </div>
+      
+      <div>
+        <Dialog
+          open={isDeleteModalOpen}
+          onClose={handleRemoveCancel}
+          aria-labelledby="remove-dialog-title"
+          aria-describedby="remove-dialog-description"
+        >
+          <DialogTitle id="remove-dialog-title">Confirm Removal</DialogTitle>
+          <DialogContent>
+            <DialogContentText id="remove-dialog-description">
+              Are you sure you want to remove {selectedUnitIDs.length} selected unit(s)?
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleRemoveCancel} sx={{color:"black"}}>
+              Cancel
+            </Button>
+            <Button onClick={handleRemoveConfirm} color="error">
+              Remove
+            </Button>
+          </DialogActions>
+        </Dialog>
+      </div>
+
+      <div>
+        <Box sx={{ height: '100%', width: '100%' }}>
+          <DataGrid
+            sx = {{
+              "& .MuiDataGrid-row:hover": {
+                backgroundColor: "#cccccc",
+              },
+            }}
+            rows={units}
+            rowHeight={30}
+            columns={columns}
+            columnResizable={true}
+            getRowId={(row) => row._id}  // use the Unit's mongo ID as the row ID
+            initialState={{
+              pagination: {
+                paginationModel: {
+                  pageSize: 25,
+                },
+              },
+            }}
+            pageSizeOptions={[10, 25, 50]}
+            checkboxSelection
+            disableRowSelectionOnClick
+            selectionModel={selectedUnits}
+            onRowSelectionModelChange={handleRowSelectionModelChange}
+            className="unit-list-column"
+          />
+        </Box>
+      </div>
     </>
   );
 };

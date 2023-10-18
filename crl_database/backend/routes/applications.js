@@ -10,9 +10,9 @@ router.use(requireAuth)
 
 router.route("/").get(async (req, res) => {
   try {
-    console.log(">>> Getting applications...");
+    // console.log(">>> Getting applications...");
     const applications = await Application.find({}).populate("institution assessedUnits curtinUnit");
-    console.log("applications =", applications);
+    // console.log("applications =", applications);
     res.json(applications);
   } catch (e) {
     console.error(`ERROR: ${e}`);
@@ -25,13 +25,9 @@ router.route("/").get(async (req, res) => {
  * Search for a student.
  */
 router.route("/studentSearch").get(async (req, res) => {
-  console.log("req params =", req.params);
-  console.log("req body =", req.body);
-  console.log("req query =", req.query);
-
   const student = req.query.student;
-  console.log(">>> Searching applications of a student...");
-  console.log("student =", student);
+  // console.log(">>> Searching applications of a student...");
+  // console.log("student =", student);
   
   try {
     let results = [];
@@ -42,7 +38,7 @@ router.route("/studentSearch").get(async (req, res) => {
         }
       ).populate("institution assessedUnits curtinUnit");
     }
-    console.log("Student's applications =", results);
+    // console.log("Student's applications =", results);
     res.json(results);
   }
   catch (e) {
@@ -114,6 +110,18 @@ router.route("/delete/:id").delete((req, res) => {
 
 router.route("/totty").get((req, res) => {
   res.send("Route is working");
+});
+
+router.route("/applicationsByInstitution/:id").get(async (req, res) => {
+  const institutionId = req.params.id;
+  
+  try {
+    const applications = await Application.find({ institution: institutionId }).populate("institution assessedUnits curtinUnit");
+    res.json(applications);
+  } catch (e) {
+    console.error(`ERROR: ${e}`);
+    res.status(500).json(`ERROR: Failed to fetch applications. More details: ${e}`);
+  }
 });
 
 

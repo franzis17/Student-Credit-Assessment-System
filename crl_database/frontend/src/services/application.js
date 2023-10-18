@@ -46,8 +46,24 @@ class ApplicationDataService {
       headers,
     );
   }
+
+  
+  // ---- [ DELETE ] ----
+  
+  removeApplication(applicationID, userToken) {
+    const headers = ApplicationDataService.getHeader(userToken);
+    // console.log("ENPOINT: " + applicationID)
+    return http.delete(`/applications/delete/${applicationID}`, headers);
+  }
+
+  getApplicationsByInstitution(institutionId, userToken) {
+    const headers = ApplicationDataService.getHeader(userToken);
+    return http.get(`${ApplicationDataService.defaultRoute}/applicationsByInstitution/${institutionId}`, headers);
+  }
   
 }
+
+
 
 const applicationDataService = new ApplicationDataService();
 export default applicationDataService;

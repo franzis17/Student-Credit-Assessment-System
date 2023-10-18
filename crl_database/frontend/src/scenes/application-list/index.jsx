@@ -107,7 +107,7 @@ const ApplicationList = () => {
       ApplicationDataService.removeApplication(selectedId, user.token)
         .then(() => {
           // Handle success, such as updating the UI
-          console.log(`Application ${selectedId} has been deleted.`);
+          // console.log(`Application ${selectedId} has been deleted.`);
           retrieveApplications();
         })
         .catch((error) => {
@@ -232,33 +232,35 @@ const ApplicationList = () => {
         </Dialog>
         )}
       </div>
-      <Box sx={{ height: '100%', width: '100%' }}>
-        <DataGrid
-          sx = {{
-            "& .MuiDataGrid-row:hover": {
-              backgroundColor: "#cccccc",
-            },
-          }}
-          rows={applications}
-          rowHeight={30}
-          columns={columns}
-          columnResizable={true}
-          getRowId={(row) => row._id}
-          initialState={{
-            pagination: {
-              paginationModel: {
-                pageSize: 25,
+      <div>
+        <Box sx={{ height: '100%', width: '100%' }}>
+          <DataGrid
+            sx = {{
+              "& .MuiDataGrid-row:hover": {
+                backgroundColor: "#cccccc",
               },
-            },
-          }}
-          pageSizeOptions={[10, 25, 50]}
-          checkboxSelection
-          disableRowSelectionOnClick
-          selectionModel={selectedApplications}
-          onRowSelectionModelChange={handleRowSelectionModelChange}
-          className="list-column"
-        />
-      </Box>
+            }}
+            rows={applications}
+            rowHeight={30}
+            columns={columns}
+            columnResizable={true}
+            getRowId={(row) => row._id}
+            initialState={{
+              pagination: {
+                paginationModel: {
+                  pageSize: 25,
+                },
+              },
+            }}
+            pageSizeOptions={[10, 25, 50]}
+            checkboxSelection
+            disableRowSelectionOnClick
+            selectionModel={selectedApplications}
+            onRowSelectionModelChange={handleRowSelectionModelChange}
+            className="list-column"
+          />
+        </Box>
+      </div>
     </>
   );
   
