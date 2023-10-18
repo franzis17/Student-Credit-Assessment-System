@@ -38,11 +38,9 @@ const ApplicationList = () => {
   
   useEffect(() => {
     retrieveApplications();
-    //retrieveApplicationsOfStudent(studentToSearch);
   }, [studentToSearch]);
   
   const retrieveApplications = () => {
-    // console.log(">>> Getting applications...");
     // 1. LIST ALL applications (without searchInput)
     if (!studentToSearch) {
       retrieveAllApplications();
@@ -85,6 +83,7 @@ const ApplicationList = () => {
       });
   };
 
+  
   const handleRowSelectionModelChange = (newSelection) => {
     // > "newSelections" are the id's of the units selected but we want the Unit object itself
     // > replace the unit id's with the actual unit objects that are selected
@@ -97,7 +96,7 @@ const ApplicationList = () => {
     localStorage.setItem('selected Applications', JSON.stringify(selectedApplications));
   };
 
-  //MODAL
+  // MODAL
 
   const handleRemoveConfirm = () => {
     if (selectedApplications.length === 0) {
@@ -108,7 +107,7 @@ const ApplicationList = () => {
       ApplicationDataService.removeApplication(selectedId, user.token)
         .then(() => {
           // Handle success, such as updating the UI
-          // console.log(`Application ${selectedId} has been deleted.`);
+          console.log(`Application ${selectedId} has been deleted.`);
           retrieveApplications();
         })
         .catch((error) => {
@@ -244,7 +243,7 @@ const ApplicationList = () => {
           rowHeight={30}
           columns={columns}
           columnResizable={true}
-          getRowId={(row) => row._id}  // use the Unit's mongo ID as the row ID
+          getRowId={(row) => row._id}
           initialState={{
             pagination: {
               paginationModel: {

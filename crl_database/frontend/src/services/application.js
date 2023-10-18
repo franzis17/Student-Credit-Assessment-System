@@ -46,19 +46,8 @@ class ApplicationDataService {
       headers,
     );
   }
-
-  
-  // ---- [ DELETE ] ----
-  
-  removeApplication(applicationID, userToken) {
-    const headers = ApplicationDataService.getHeader(userToken);
-    console.log("ENPOINT: " + applicationID)
-    return http.delete(`/applications/delete/${applicationID}`, headers);
-  }
   
 }
-
-
 
 const applicationDataService = new ApplicationDataService();
 export default applicationDataService;

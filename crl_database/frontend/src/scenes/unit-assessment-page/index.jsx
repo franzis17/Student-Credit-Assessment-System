@@ -29,7 +29,7 @@ const UnitAssessmentPage = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-
+  // Provide fallback so if state is undefined, it can handle blank units or get from local storage
   const { selectedUnits: initialSelectedUnits } = location.state || { selectedUnits: JSON.parse(localStorage.getItem('selectedUnits') || '[]') }
   const [selectedAction, setSelectedAction] = useState(
     localStorage.getItem('selectedAction') || ''
@@ -55,7 +55,8 @@ const UnitAssessmentPage = () => {
   }, [initialSelectedUnits]);
   
 
-
+  // Retrieve all Curtin Units when the user first lands at the Unit Assessment Page.
+  // Used by search dropdown to list all the Curtin Units that the user can select.
   useEffect(() => {
     retrieveCurtinUnits();
   }, []);
@@ -109,6 +110,7 @@ const UnitAssessmentPage = () => {
     setSelectedItemIndex(-1);
     setShowSuggestions(false);
 
+    // Update local storage with the selected item details
     localStorage.setItem('selectedItemDetails', JSON.stringify(item));
   };
 
@@ -118,21 +120,17 @@ const UnitAssessmentPage = () => {
       const currentTime = new Date();
       const formattedTime = `${currentTime.getFullYear()}-${
         String(currentTime.getMonth() + 1).padStart(2, '0')
-      }-${String(currentTime.getDate()).padStart(2, '0')}`;
+      }-${String(currentTime.getDate()).padStart(2, '0')} ${
+        String(currentTime.getHours()).padStart(2, '0')
+      }:${String(currentTime.getMinutes()).padStart(2, '0')}`;
       const noteWithTimestamp = `${formattedTime} - ${noteText}`;
   
       const updatedNotes = [...notes, noteWithTimestamp];
-  
-      const isConfirmed = window.confirm("Are you sure you want to add this note?");
-      
-      if (isConfirmed) {
-        setNotes(updatedNotes);
-        document.querySelector('.notes-section textarea').value = '';
-        localStorage.setItem('notes', JSON.stringify(updatedNotes));
-      }
+      setNotes(updatedNotes);
+      document.querySelector('.notes-section textarea').value = '';
+      localStorage.setItem('notes', JSON.stringify(updatedNotes));
     }
   };
-  
   
   const handleApprove = () => {
     if (!selectedItemDetails) {
@@ -144,9 +142,9 @@ const UnitAssessmentPage = () => {
       const updatedChangeLog = [...changeLog, logEntry];
   
       setChangeLog(updatedChangeLog);
-      setSelectedAction('Approved'); 
+      setSelectedAction('Approved'); // Set selected action here
       const status = 1;
-      localStorage.setItem('selectedAction', 'Approved'); 
+      localStorage.setItem('selectedAction', 'Approved'); // Store selected action in local storage
       localStorage.setItem('status', status.toString());
     }
   };
@@ -160,9 +158,9 @@ const UnitAssessmentPage = () => {
       const updatedChangeLog = [...changeLog, logEntry];
   
       setChangeLog(updatedChangeLog);
-      setSelectedAction('Conditional'); 
+      setSelectedAction('Conditional'); // Set selected action here
       const status = 2;
-      localStorage.setItem('selectedAction', 'Conditional'); 
+      localStorage.setItem('selectedAction', 'Conditional'); // Store selected action in local storage
       localStorage.setItem('status', status.toString());
     }
   };
@@ -177,9 +175,9 @@ const UnitAssessmentPage = () => {
       const updatedChangeLog = [...changeLog, logEntry];
   
       setChangeLog(updatedChangeLog);
-      setSelectedAction('Denied'); 
+      setSelectedAction('Denied'); // Set selected action here
       const status = 0;
-      localStorage.setItem('selectedAction', 'Denied'); 
+      localStorage.setItem('selectedAction', 'Denied'); // Store selected action in local storage
       localStorage.setItem('status', status.toString());
     }
   };
@@ -190,14 +188,11 @@ const UnitAssessmentPage = () => {
     if (!initialSelectedUnits || initialSelectedUnits.length === 0) {
       alert("No other Unit Information is selected on the Units page");
     } else if (!selectedItemDetails) {
-      alert("Please select a Curtin unit before performing this action.");
-    } else if (!selectedAction) {
-      alert("Please select an action (Approve, Conditional, or Deny) first.");
+      alert("Please select an action (Deny, Conditional, or Approve) first.");
     } else {
       toggleModal();
     }
   };
-  
 
 
   const handleRemoveUnit = (indexToRemove) => {
@@ -216,7 +211,6 @@ const UnitAssessmentPage = () => {
     if (studentInfo.name.trim() !== '' && aqf.trim() !== '' && award.trim() !== '') {
       const parsedAqf = parseInt(aqf, 10);
       if (Number.isInteger(parsedAqf) && parsedAqf >= 0 && parsedAqf <= 10) {
-        const studentNotesFormatted = `${studentInfo.name} (${studentInfo.studentNumber}): ${studentInfo.studentNote}`;
         const applicationToAdd = {
           institution: selectedUnits[0].institution._id,
           status: localStorage.getItem('status'),
@@ -226,29 +220,27 @@ const UnitAssessmentPage = () => {
           assessor: user.username,
           assessedUnits: selectedUnits.map(unit => unit._id),
           curtinUnit: selectedItemDetails._id,
-          assessorNotes: notes.join('\n'),
-          studentNotes: studentNotesFormatted
+          assessorNotes: notes.join('\n'), //notes by itself is an array and cannot be saved
+          studentNotes: JSON.stringify(studentInfo) //this is an array and cannot be saved (student info)
         };
-  
-        const isConfirmed = window.confirm("Are you sure you want to submit this information?");
-      
-        if (isConfirmed) {
-          console.log("HERE ARE THE NOTES: " + notes);
-          console.log("APPLICATION: " + studentInfo.studentNumber);
-          console.log(applicationToAdd.curtinUnit);
-  
-          ApplicationDataService.addApplication(applicationToAdd, user.token)
-            .then(response => {
-              console.log('Application Successfully Added: ', response.data);
-              navigate('/applications');
-            })
-            .catch(error => {
-              console.error('Error while adding application: ', error);
-            });
-        }
-      } else {
-        alert('AQF must be an integer between 0 and 10.');
-      }
+
+      console.log("HERE ARE THE NOTES: " + notes);
+
+      console.log("APPLICATION: " + studentInfo.studentNumber);
+      console.log(applicationToAdd.curtinUnit);
+
+      ApplicationDataService.addApplication(applicationToAdd, user.token)
+      .then(response => {
+        console.log('Application Successfully Added: ', response.data);
+        navigate('/applications');
+      })
+      .catch(error => {
+        console.error('Error while adding application: ' , error)
+      });
+     }
+     else {
+      alert('AQF must be an integer between 0 and 10.');
+     }
     } else {
       setNameError(true);
       setTimeout(() => {
@@ -257,7 +249,6 @@ const UnitAssessmentPage = () => {
       alert('Please fill in all required fields (Name, AQF, Award).');
     }
   };
-  
   
 
 return (
@@ -432,6 +423,14 @@ return (
         </div>
       </div>
 
+      {/*{showPrerequisites && (
+        <div className="prerequisites-modal">
+          <div className="prerequisites-content">
+            <span className="close-button" onClick={handleClosePrerequisites}>&times;</span>
+            <h2>Prerequisites for {searchedUnit}</h2>
+          </div>
+        </div>
+      )}*/}
 
       {showModal && (
         <div className="modal-overlay">
