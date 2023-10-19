@@ -48,9 +48,9 @@ function App() {
                 <Route path="/" element={user ? (user.isVerified === true ? <Dashboard /> : <Navigate to="/verifyemail"/>) : <Navigate to="/login"/>}/>
 
                 <Route path="/login" element={
-                    user ?
-                    (user.isVerified === true ? <Navigate to="/"/> : <Login />)
-                    : <Login />
+                    !user ? <Login />
+                    : user.isVerified ? <Navigate to="/"/>
+                    : <Navigate to="/verifyemail"/>
                 }/>
                 <Route path="/signup" element={!user ? <Signup /> : <Navigate to="/"/>}/>
                 <Route path="/verifyemail" element={<VerifyEmail/>}/>
