@@ -47,18 +47,6 @@ router.route("/studentSearch").get(async (req, res) => {
   }
 });
 
-router.route("/applicationsByInstitution/:id").get(async (req, res) => {
-  const institutionId = req.params.id;
-  
-  try {
-    const applications = await Application.find({ institution: institutionId }).populate("institution assessedUnits curtinUnit");
-    res.json(applications);
-  } catch (e) {
-    console.error(`ERROR: ${e}`);
-    res.status(500).json(`ERROR: Failed to fetch applications. More details: ${e}`);
-  }
-});
-
 // ---- [ POST ] ----
 
 /** 
@@ -121,6 +109,18 @@ router.route("/delete/:id").delete((req, res) => {
 
 router.route("/totty").get((req, res) => {
   res.send("Route is working");
+});
+
+router.route("/applicationsByAssessedUnits").post(async (req, res) => {
+  const { assessedUnits } = req.body;
+
+  try {
+    const applications = await Application.find({ assessedUnits: { $in: assessedUnits } }).populate("institution assessedUnits curtinUnit");
+    res.json(applications);
+  } catch (e) {
+    console.error(`ERROR: ${e}`);
+    res.status(500).json(`ERROR: Failed to fetch applications. More details: ${e}`);
+  }
 });
 
 

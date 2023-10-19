@@ -38,6 +38,7 @@ const UnitAssessmentPage = () => {
   const [assessmentData, setAssessmentData] = useState([]);
   const [aqf, setAqf] = useState(''); 
   const [award, setAward] = useState(''); 
+  const [changelogunit, setchangelogunit] = useState([]);
 
 
   useEffect(() => {
@@ -68,24 +69,28 @@ const UnitAssessmentPage = () => {
     }
   }, [searchedUnit]); 
 
-  const institutionId = selectedUnits.length > 0 ? selectedUnits[0].institution._id : null;
+  const [dataLoaded, setDataLoaded] = useState(false);
 
   useEffect(() => {
-    if (institutionId) {
-      ApplicationDataService.getApplicationsByInstitution(institutionId, user.token)
+    if (!dataLoaded && selectedUnits.length > 0) {
+      const assessedUnitIds = selectedUnits.map(unit => unit._id);
+  
+      ApplicationDataService.getApplicationsByAssessedUnits(assessedUnitIds, user.token)
         .then((response) => {
           const institutionApplications = response.data;
           const institutionStatusOperations = institutionApplications.map(application => application.status);
           const institutionCurtinUnits = institutionApplications.map(application => application.curtinUnit);
   
           setAssessmentData(institutionStatusOperations);
-          setChangeLogUnits(institutionCurtinUnits);
+          setchangelogunit(institutionCurtinUnits);
+          setDataLoaded(true);
         })
         .catch((error) => {
           console.error("Error while fetching institution applications: ", error);
         });
     }
-  }, [institutionId, user.token]);
+  }, [selectedUnits, user.token, dataLoaded]);
+  
   
   
   
@@ -443,8 +448,8 @@ return (
               ) : status === 0 ? (
                 <span className="status-dot-red"></span>
               ) : null}
-              {status !== null && changeLogUnits[index] && changeLogUnits[index].unitCode
-                  ? ` - ${changeLogUnits[index].unitCode}: ${changeLogUnits[index].name}`
+              {status !== null && changelogunit[index] && changelogunit[index].name
+                  ? ` - ${changelogunit[index].name}`
                   : "N/A"
                 }
               </p>

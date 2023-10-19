@@ -35,11 +35,6 @@ class ApplicationDataService {
       }
     );
   }
-
-  getApplicationsByInstitution(institutionId, userToken) {
-    const headers = ApplicationDataService.getHeader(userToken);
-    return http.get(`${ApplicationDataService.defaultRoute}/applicationsByInstitution/${institutionId}`, headers);
-  }
   
   
   // ---- [ POST ] ----
@@ -59,6 +54,13 @@ class ApplicationDataService {
     const headers = ApplicationDataService.getHeader(userToken);
     // console.log("ENPOINT: " + applicationID)
     return http.delete(`/applications/delete/${applicationID}`, headers);
+  }
+
+  getApplicationsByAssessedUnits(assessedUnits, userToken) {
+    const headers = ApplicationDataService.getHeader(userToken);
+    const requestData = { assessedUnits };
+    
+    return http.post(`${ApplicationDataService.defaultRoute}/applicationsByAssessedUnits`, requestData, headers);
   }
   
 }
