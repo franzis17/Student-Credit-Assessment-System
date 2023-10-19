@@ -6,6 +6,7 @@ import AddUnitButton from '../../components/AddUnitButton';
 import SimpleButton from "../../components/buttons/SimpleButton";
 import '../institution-list/list.css';
 import { DataGrid } from '@mui/x-data-grid';
+import CustomToolbar from "../../components/CustomToolbar";
 
 import { useAuthContext } from '../../hooks/useAuthContext';
 import DataUtils from "../../utils/dataUtils";
@@ -264,6 +265,9 @@ const UnitList = () => {
               "& .MuiDataGrid-row:hover": {
                 backgroundColor: "#cccccc",
               },
+            }}
+            slots={{
+              toolbar: CustomToolbar,
             }}
             rows={units}
             rowHeight={30}

@@ -5,9 +5,11 @@ import UnitDataService from "../../services/unit"
 import Navbar from "../../components/Navbar";
 import "./list.css";
 
+// MUI
 import DeleteIcon from '@mui/icons-material/Delete';
 import Box from '@mui/material/Box';
 import { DataGrid } from '@mui/x-data-grid';
+import CustomToolbar from "../../components/CustomToolbar";
 import { IconButton } from '@mui/material';
 import AddInstitutionButton from '../../components/AddInstitutionButton';
 import Button from '@mui/material/Button'; 
@@ -19,6 +21,7 @@ import DialogTitle from '@mui/material/DialogTitle';
 
 import { useAuthContext } from '../../hooks/useAuthContext';
 import DataUtils from "../../utils/dataUtils";
+
 
 const InstitutionList = () => {
   
@@ -162,6 +165,9 @@ const InstitutionList = () => {
               "& .MuiDataGrid-row:hover": {
                 backgroundColor: "#cccccc",
               },
+            }}
+            slots={{
+              toolbar: CustomToolbar,
             }}
             rows={institutions}
             columns={columns}

@@ -8,6 +8,7 @@ import '../institution-list/list.css';
 import Navbar from "../../components/Navbar";
 import Box from '@mui/material/Box';
 import { DataGrid } from '@mui/x-data-grid';
+import CustomToolbar from "../../components/CustomToolbar";
 import { Button } from '@mui/material';
 import { TableCell, Tooltip } from '@mui/material';
 import { FiberManualRecord } from '@mui/icons-material';
@@ -239,6 +240,9 @@ const ApplicationList = () => {
               "& .MuiDataGrid-row:hover": {
                 backgroundColor: "#cccccc",
               },
+            }}
+            slots={{
+              toolbar: CustomToolbar,
             }}
             rows={applications}
             rowHeight={30}
