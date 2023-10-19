@@ -24,6 +24,7 @@ const UnitAssessmentPage = () => {
   const [selectedItemDetails, setSelectedItemDetails] = useState(
     JSON.parse(localStorage.getItem('selectedItemDetails')) || null
   );
+  const [changeLogUnits, setChangeLogUnits] = useState([]);
 
   const {user} = useAuthContext();
   const navigate = useNavigate();
@@ -66,6 +67,27 @@ const UnitAssessmentPage = () => {
       setShowConditionalButton(false);
     }
   }, [searchedUnit]); 
+
+  const institutionId = selectedUnits.length > 0 ? selectedUnits[0].institution._id : null;
+
+  useEffect(() => {
+    if (institutionId) {
+      ApplicationDataService.getApplicationsByInstitution(institutionId, user.token)
+        .then((response) => {
+          const institutionApplications = response.data;
+          const institutionStatusOperations = institutionApplications.map(application => application.status);
+          const institutionCurtinUnits = institutionApplications.map(application => application.curtinUnit);
+  
+          setAssessmentData(institutionStatusOperations);
+          setChangeLogUnits(institutionCurtinUnits);
+        })
+        .catch((error) => {
+          console.error("Error while fetching institution applications: ", error);
+        });
+    }
+  }, [institutionId, user.token]);
+  
+  
   
   const retrieveCurtinUnits = () => {
     UnitDataService.getUnitsOfCurtin(user.token)
@@ -407,19 +429,30 @@ return (
           </div>
 
           <div className="change-log">
-            <h2>Change Log</h2>
-            {assessmentData.length === 0 ? (
-              <p>No change log entries available.</p>
-            ) : (
-              <div className="log-container">
-                {assessmentData.map((entry, index) => (
-                  <p key={index}>
-                    {`${entry.selectedItemDetails.unitCode} - ${entry.selectedItemDetails.name} ${entry.selectedAction}`}
-                  </p>
-                ))}
-              </div>
-            )}
+          <h2>Change Log</h2>
+          {assessmentData.length === 0 ? (
+          <p>The selected institution is not performing any operations.</p>
+        ) : (
+          <div className="log-container">
+            {assessmentData.map((status, index) => (
+              <p key={index}>
+                {status === 1 ? (
+                <span className="status-dot-green"></span>
+              ) : status === 2 ? (
+                <span className="status-dot-yellow"></span>
+              ) : status === 0 ? (
+                <span className="status-dot-red"></span>
+              ) : null}
+              {status !== null && changeLogUnits[index] && changeLogUnits[index].unitCode
+                  ? ` - ${changeLogUnits[index].unitCode}: ${changeLogUnits[index].name}`
+                  : "N/A"
+                }
+              </p>
+            ))}
           </div>
+        )}
+       </div>
+
 
           </div>
         </div>

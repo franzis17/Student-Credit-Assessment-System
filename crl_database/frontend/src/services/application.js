@@ -35,6 +35,11 @@ class ApplicationDataService {
       }
     );
   }
+
+  getApplicationsByInstitution(institutionId, userToken) {
+    const headers = ApplicationDataService.getHeader(userToken);
+    return http.get(`${ApplicationDataService.defaultRoute}/applicationsByInstitution/${institutionId}`, headers);
+  }
   
   
   // ---- [ POST ] ----
@@ -55,6 +60,7 @@ class ApplicationDataService {
     // console.log("ENPOINT: " + applicationID)
     return http.delete(`/applications/delete/${applicationID}`, headers);
   }
+  
 }
 
 
