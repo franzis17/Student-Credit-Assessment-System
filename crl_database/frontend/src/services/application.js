@@ -56,10 +56,13 @@ class ApplicationDataService {
     return http.delete(`/applications/delete/${applicationID}`, headers);
   }
 
-  getApplicationsByInstitution(institutionId, userToken) {
+  getApplicationsByAssessedUnits(assessedUnits, userToken) {
     const headers = ApplicationDataService.getHeader(userToken);
-    return http.get(`${ApplicationDataService.defaultRoute}/applicationsByInstitution/${institutionId}`, headers);
+    const requestData = { assessedUnits };
+    
+    return http.post(`${ApplicationDataService.defaultRoute}/applicationsByAssessedUnits`, requestData, headers);
   }
+  
   
 }
 

@@ -112,11 +112,11 @@ router.route("/totty").get((req, res) => {
   res.send("Route is working");
 });
 
-router.route("/applicationsByInstitution/:id").get(async (req, res) => {
-  const institutionId = req.params.id;
-  
+router.route("/applicationsByAssessedUnits").post(async (req, res) => {
+  const { assessedUnits } = req.body;
+
   try {
-    const applications = await Application.find({ institution: institutionId }).populate("institution assessedUnits curtinUnit");
+    const applications = await Application.find({ assessedUnits: { $in: assessedUnits } }).populate("institution assessedUnits curtinUnit");
     res.json(applications);
   } catch (e) {
     console.error(`ERROR: ${e}`);

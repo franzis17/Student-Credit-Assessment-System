@@ -37,6 +37,7 @@ const UnitAssessmentPage = () => {
   const [assessmentData, setAssessmentData] = useState([]);
   const [aqf, setAqf] = useState(''); 
   const [award, setAward] = useState(''); 
+  const [changelogunit, setchangelogunit] = useState([]);
 
 
   useEffect(() => {
@@ -70,21 +71,24 @@ const UnitAssessmentPage = () => {
   const institutionId = selectedUnits.length > 0 ? selectedUnits[0].institution._id : null;
 
   useEffect(() => {
-    if (institutionId) {
-      ApplicationDataService.getApplicationsByInstitution(institutionId, user.token)
+    if (selectedUnits.length > 0) {
+      const assessedUnitIds = selectedUnits.map(unit => unit._id);
+  
+      ApplicationDataService.getApplicationsByAssessedUnits(assessedUnitIds, user.token)
         .then((response) => {
           const institutionApplications = response.data;
           const institutionStatusOperations = institutionApplications.map(application => application.status);
           const institutionCurtinUnits = institutionApplications.map(application => application.curtinUnit);
   
           setAssessmentData(institutionStatusOperations);
-          setCurtinUnits(institutionCurtinUnits);
+          setchangelogunit(institutionCurtinUnits);
         })
         .catch((error) => {
           console.error("Error while fetching institution applications: ", error);
         });
     }
-  }, [institutionId, user.token]);
+  }, [selectedUnits, user.token]);
+  
   
   
   
@@ -430,7 +434,7 @@ return (
           <div className="change-log">
           <h2>Change Log</h2>
           {assessmentData.length === 0 ? (
-          <p>The selected institution is not performing any operations.</p>
+          <p>The selected institution units is not performing any operations.</p>
         ) : (
           <div className="log-container">
             {assessmentData.map((status, index) => (
@@ -439,11 +443,11 @@ return (
                 <span className="status-dot-green"></span>
               ) : status === 2 ? (
                 <span className="status-dot-yellow"></span>
-              ) : status === 3 ? (
+              ) : status === 0 ? (
                 <span className="status-dot-red"></span>
               ) : null}
-              {status !== null && curtinUnits[index] && curtinUnits[index].unitCode
-                  ? ` - ${curtinUnits[index].unitCode}`
+              {status !== null && changelogunit[index] && changelogunit[index].name
+                  ? ` - ${changelogunit[index].name}`
                   : "N/A"
                 }
               </p>
