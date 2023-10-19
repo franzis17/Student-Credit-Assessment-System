@@ -68,10 +68,10 @@ const UnitAssessmentPage = () => {
     }
   }, [searchedUnit]); 
 
-  const institutionId = selectedUnits.length > 0 ? selectedUnits[0].institution._id : null;
+  const [dataLoaded, setDataLoaded] = useState(false);
 
   useEffect(() => {
-    if (selectedUnits.length > 0) {
+    if (!dataLoaded && selectedUnits.length > 0) {
       const assessedUnitIds = selectedUnits.map(unit => unit._id);
   
       ApplicationDataService.getApplicationsByAssessedUnits(assessedUnitIds, user.token)
@@ -82,12 +82,13 @@ const UnitAssessmentPage = () => {
   
           setAssessmentData(institutionStatusOperations);
           setchangelogunit(institutionCurtinUnits);
+          setDataLoaded(true);
         })
         .catch((error) => {
           console.error("Error while fetching institution applications: ", error);
         });
     }
-  }, [selectedUnits, user.token]);
+  }, [selectedUnits, user.token, dataLoaded]);
   
   
   
@@ -434,7 +435,7 @@ return (
           <div className="change-log">
           <h2>Change Log</h2>
           {assessmentData.length === 0 ? (
-          <p>The selected institution units is not performing any operations.</p>
+          <p>The selected institution is not performing any operations.</p>
         ) : (
           <div className="log-container">
             {assessmentData.map((status, index) => (
