@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import Navbar from '../../components/Navbar';
 import './App.css';
 import './buttonStyles.css';
@@ -24,7 +24,6 @@ const UnitAssessmentPage = () => {
   const [selectedItemDetails, setSelectedItemDetails] = useState(
     JSON.parse(localStorage.getItem('selectedItemDetails')) || null
   );
-  const [changeLogUnits, setChangeLogUnits] = useState([]);
 
   const {user} = useAuthContext();
   const navigate = useNavigate();
@@ -232,6 +231,7 @@ const UnitAssessmentPage = () => {
     setSelectedUnits(updatedUnits);
   
     localStorage.setItem('selectedUnits', JSON.stringify(updatedUnits));
+    setDataLoaded(false);
   };
 
   const toggleModal = () => {
@@ -449,7 +449,7 @@ return (
                 <span className="status-dot-red"></span>
               ) : null}
               {status !== null && changelogunit[index] && changelogunit[index].name
-                  ? ` - ${changelogunit[index].name}`
+                  ? ` - [${changelogunit[index].unitCode}]: ${changelogunit[index].name}`
                   : "N/A"
                 }
               </p>
