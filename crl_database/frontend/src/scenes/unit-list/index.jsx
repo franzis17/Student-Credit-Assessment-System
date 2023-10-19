@@ -232,6 +232,30 @@ const UnitList = () => {
           </DialogActions>
         </Dialog>
       </div>
+      
+      <div>
+        <Dialog
+          open={isDeleteModalOpen}
+          onClose={handleRemoveCancel}
+          aria-labelledby="remove-dialog-title"
+          aria-describedby="remove-dialog-description"
+        >
+          <DialogTitle id="remove-dialog-title">Confirm Removal</DialogTitle>
+          <DialogContent>
+            <DialogContentText id="remove-dialog-description">
+              Are you sure you want to remove {selectedUnitIDs.length} selected unit(s)?
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleRemoveCancel} sx={{color:"black"}}>
+              Cancel
+            </Button>
+            <Button onClick={handleRemoveConfirm} color="error">
+              Remove
+            </Button>
+          </DialogActions>
+        </Dialog>
+      </div>
 
       <div>
         <Box sx={{ height: '100%', width: '100%' }}>

@@ -19,12 +19,19 @@ const Signup = () => {
     const {signup, error, isLoading} = useSignup()
     const [showPassword, setShowPassword] = useState(false)
     const navigate = useNavigate();
-    const [showAccessDeniedMessage, setShowAccessDeniedMessage] = useState(JSON.parse(localStorage.getItem('showAccessDeniedMessage') || "false"))
-    const classes = useStyles()
-    useState(JSON.parse(localStorage.getItem('showAccessDeniedMessage') || "false"))
+    const [showAccessDeniedMessage, setShowAccessDeniedMessage] = useState(
+        JSON.parse(localStorage.getItem('showAccessDeniedMessage') || "false")
+      )
 
+      useEffect(() => {
+        return () => {
+          localStorage.removeItem('showAccessDeniedMessage');
+        };
+      }, []);
     
+    const classes = useStyles()
     
+
     const handle = async(e) => {
         e.preventDefault()
 

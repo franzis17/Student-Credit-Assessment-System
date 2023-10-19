@@ -63,6 +63,13 @@ class ApplicationDataService {
     return http.post(`${ApplicationDataService.defaultRoute}/applicationsByAssessedUnits`, requestData, headers);
   }
   
+  // ---- [ DELETE ] ----
+  
+  removeApplication(applicationID, userToken) {
+    const headers = ApplicationDataService.getHeader(userToken);
+    console.log("ENPOINT: " + applicationID)
+    return http.delete(`/applications/delete/${applicationID}`, headers);
+  }
 }
 
 
