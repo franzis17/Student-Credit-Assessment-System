@@ -1,4 +1,4 @@
-import WhitelistedUser from '../models/whitelistModel.js'
+import WhitelstdUser from '../models/whitelistModel.js'
 import registeredUsers from '../models/userModel.js'
 import jwt from 'jsonwebtoken';
 
@@ -14,7 +14,7 @@ const addWhitelistedUser = async (req, res) => {
     const {curtinID, role} = req.body
     try {
 
-        const idExists = await WhitelistedUser.findOne({ curtinID })
+        const idExists = await WhitelstdUser.findOne({ curtinID })
 
         if (idExists) {
             return res.status(400).json({ error: 'ID already added to whitelist' })
@@ -48,7 +48,7 @@ const checkWhitelistUser = async (req, res) => {
 
     try {
 
-        const idExists = await WhitelistedUser.findOne({ curtinID })
+        const idExists = await WhitelstdUser.findOne({ curtinID })
 
         if(idExists) {
             console.log("User is whitelisted.");
@@ -72,7 +72,7 @@ const getUserRole = async (req, res)  => {
 
      try {
 
-        const idExists = await WhitelistedUser.findOne({ curtinID })
+        const idExists = await WhitelstdUser.findOne({ curtinID })
 
         if(idExists) {
 
@@ -110,7 +110,7 @@ const updateRole = async (req, res)  => {
     
         try {
 
-            const user = await WhitelistedUser.findOne({ curtinID: curtinID });
+            const user = await WhitelstdUser.findOne({ curtinID: curtinID });
             console.log("Found user:", user);
     
             if (!user) {
@@ -135,6 +135,20 @@ const updateRole = async (req, res)  => {
             console.error("Error updating role:", error);
             return res.status(500).json({error:"Server error."});
         }
-    }
+}
 
-export { addWhitelistedUser, checkWhitelistUser, getUserRole, updateRole }
+const isUserWhitelisted = async (curtinID) => {
+    try {
+        const whitelistedUser = await WhitelstdUser.findOne({ curtinID })
+        
+        return !!whitelistedUser
+
+    } catch (error) {
+        console.error('Error:', error)
+        return false;
+
+
+   }
+}
+
+export { addWhitelistedUser, checkWhitelistUser, getUserRole, updateRole, isUserWhitelisted }

@@ -1,7 +1,10 @@
 import User from '../models/userModel.js'
 import jwt from 'jsonwebtoken';
 import crypto from 'crypto';
+import bcrypt from 'bcrypt';
 import {sendVerificationEmail} from '../utils/sendVerificationEmail.js';
+import WhitelstdUser from '../models/whitelistModel.js';
+import { isUserWhitelisted } from './whitelistController.js';
 
 //JSON token creation using token password
 const createJsonToken = (_id) => {
@@ -16,12 +19,31 @@ const loginUser = async (req, res) => {
     const {email, password} = req.body
 
     if (!email || !password) {
-        return res.status(400).json({ error: 'Email and password are required' });
+        return res.status(400).json({ 
+            error: 'Email and password are required' });
     }
-
+    
     try {
 
-        const user = await User.login(email,password)
+        console.log("Attempting to login with Email:", email, "Password:", password);
+        
+        //const user = await User.findOne({ email, password })
+        const user = await User.findOne({ email });
+
+        if (user && bcrypt.compareSync(password, user.password)) {
+
+        /*if (!user) {
+            return res.status(401).json({error:'Invalid email or password'});
+        }
+        console.log("Fetched user from the database:", user);*/
+
+        //Check whitelist
+        const whitelistedID = await isUserWhitelisted(user.curtinID);
+        console.log('Whitelist check:', whitelistedID);
+
+        if (!whitelistedID) {
+            return res.status(403).json({error: 'You have not been approved by Admin to have login access - please contact the Admin for support'});
+        }
 
         // Check if email is verified
         if(!user.isVerified) {
@@ -29,20 +51,35 @@ const loginUser = async (req, res) => {
             return res.status(401).json({ error: 'Email is not verified. Please verify your email before logging in.' });
         }
 
-        const { role, username, isVerified } = user;
+        console.log("User isVerified from the database:", user.isVerified);
+
+        const { role, isVerified } = user;
 
         //create a token for user
         const token = createJsonToken(user._id)
 
         //token -> payload encoded, headers encoded, secret_token encoded
-        res.status(200).json({username, email, token, role, isVerified})
+        res.status(200).json({
+            username: user.username,
+            email: user.email,
+            token: token,
+            role: role,
+            isVerified: isVerified
+        })
+        } else {
+            return res.status(401).json({ error: 'Incorrect password or email'})     
+        }
 
     } catch (error) {
         res.status(400).json({error: error.message})
+        setIsLoading(false)
+        console.error(error)
 
     }
 
 }
+
+
 
 
 // sign up user account - after admin acceptance

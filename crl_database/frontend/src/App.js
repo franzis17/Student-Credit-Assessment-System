@@ -48,18 +48,19 @@ function App() {
                 <Route path="/" element={user ? (user.isVerified === true ? <Dashboard /> : <Navigate to="/verifyemail"/>) : <Navigate to="/login"/>}/>
 
                 <Route path="/login" element={
-                    user ?
-                    (user.isVerified === true ? <Navigate to="/"/> : <Login />)
-                    : <Login />
+                    !user ? <Login />
+                    : user.isVerified ? <Navigate to="/"/>
+                    : <Navigate to="/verifyemail"/>
                 }/>
                 <Route path="/signup" element={!user ? <Signup /> : <Navigate to="/"/>}/>
                 <Route path="/verifyemail" element={<VerifyEmail/>}/>
                 <Route path="/dashboard" element={user && user.isVerified === true ? <Dashboard /> : <Navigate to="/login"/>}/>
                 <Route path="/institutions" element={user && user.isVerified === true ? <InstitutionList/> : <Navigate to="/login"/>}/>
                 <Route path="/units" element={user && user.isVerified === true ? <UnitList /> : <Navigate to="/login"/>}/>
-                <Route path="/units/:institutionId" element={user ? <UnitList /> : <Navigate to="/login"/>}/>
+                <Route path="/units/:institutionId" element={user && user.isVerified ? <UnitList /> : <Navigate to="/login"/>}/>
                 <Route path="/unitassessmentpage" element={user && user.isVerified === true ? <UnitAssessmentPage /> : <Navigate to="/login"/>}/>
                 <Route path="/applications" element={user && user.isVerified === true ? <ApplicationList /> : <Navigate to="/login"/>}/>
+                <Route path="/applications/:studentToSearch" element={user && user.isVerified === true ? <ApplicationList /> : <Navigate to="/login"/>}/>
               </Routes> 
               
         </ThemeProvider>

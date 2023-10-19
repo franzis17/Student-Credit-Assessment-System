@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { Link , useLocation, useParams, useNavigate } from 'react-router-dom';
-import InstitutionDataService from '../../services/institution';
+import { useParams, useNavigate } from 'react-router-dom';
 import UnitDataService from "../../services/unit";
 import Navbar from "../../components/Navbar";
 import AddUnitButton from '../../components/AddUnitButton';
 import SimpleButton from "../../components/buttons/SimpleButton";
-import { DataGrid } from '@mui/x-data-grid';
 import '../institution-list/list.css';
+import { DataGrid } from '@mui/x-data-grid';
+import CustomToolbar from "../../components/CustomToolbar";
 
 import { useAuthContext } from '../../hooks/useAuthContext';
 import DataUtils from "../../utils/dataUtils";
@@ -19,6 +19,7 @@ import {
   DialogContent,
   DialogContentText,
   DialogActions,
+  Alert
 } from '@mui/material';
 
 
@@ -31,11 +32,10 @@ const UnitList = () => {
 
   const dataUtils = new DataUtils();
   const navigate = useNavigate();
+  
   // State variables
   const [units, setUnits] = useState([]);
   const [selectedUnits, setSelectedUnits] = useState([]);
-  const [unitData, setUnitData] = useState(null);
-
   const [selectedUnitIDs, setSelectedUnitIDs] = useState([]);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
@@ -74,7 +74,7 @@ const UnitList = () => {
   };
   
   const retrieveUnitsOfInstitution = (id) => {
-    InstitutionDataService.getUnitsOfInstitution(id, user.token)
+    UnitDataService.getUnitsOfInstitution(id, user.token)
       .then((response) => {
         const data = response.data;
         console.log("Retrieved units:\n", data);
@@ -93,7 +93,7 @@ const UnitList = () => {
     console.log('Received unit data:', unitData);
     UnitDataService.addUnit(unitData, user.token)
       .then((response) => {
-        console.log("Successfully added the unit in the database");
+        console.log("Successfully added the unit in the database " + response.status);
         retrieveUnits();
       })
       .catch((error) => {
@@ -140,7 +140,6 @@ const UnitList = () => {
         }
       },
     },
-    { field: 'notes',       headerName: 'Notes',       width: 400 }
   ];
   
   // Handle selecting one or more units
@@ -175,15 +174,15 @@ const UnitList = () => {
     <>
       <div>
         <Navbar />
-        <AddUnitButton onUnitSave={handleUnitSave}/>
-          {selectedUnitIDs.length > 0 && (
+          {user && (user.role === "Admin" || user.role === "Moderator") && (
+            <AddUnitButton onUnitSave={handleUnitSave} />
+          )}
+          {selectedUnitIDs.length > 0 && (user.role === "Admin" || user.role === "Moderator") && (
             <SimpleButton
               content={`Assess (${selectedUnitIDs.length})`}
               onClick={() => {
                 if (checkUnitsHaveSameInstitution()) {
-                  console.log("TRUE");
                   navigate("/unitassessmentpage", { state: { selectedUnits: selectedUnits } });
-
                 } else {
                   alert('Selected units must have the same institution.');
                 }
@@ -191,70 +190,106 @@ const UnitList = () => {
             />
           )}
        
-        {selectedUnitIDs.length > 0 && (
-          <Button
-            sx={{
-              position: 'absolute',
-              top: '15px',
-              right: '290px',
-              color: 'white',
-              borderRadius: '10px',
-              background: 'error',
-              zIndex: 1200,
-            }}
-            variant="contained"
-            color="error"
-            onClick={handleRemoveClick}
-          >
-            Remove ({selectedUnitIDs.length})
-          </Button>
-        )}
+       {selectedUnitIDs.length > 0 && (user.role === "Admin" || user.role === "Moderator") && (
+        <Button
+          sx={{
+            position: 'absolute',
+            top: '15px',
+            right: '290px',
+            color: 'white',
+            borderRadius: '10px',
+            background: 'error',
+            zIndex: 1200,
+          }}
+          variant="contained"
+          color="error"
+          onClick={handleRemoveClick}
+        >
+          Remove ({selectedUnitIDs.length})
+        </Button>
+      )}
+      </div>
+      
+      <div>
+        <Dialog
+          open={isDeleteModalOpen}
+          onClose={handleRemoveCancel}
+          aria-labelledby="remove-dialog-title"
+          aria-describedby="remove-dialog-description"
+        >
+          <DialogTitle id="remove-dialog-title">Confirm Removal</DialogTitle>
+          <DialogContent>
+            <DialogContentText id="remove-dialog-description">
+              Are you sure you want to remove {selectedUnitIDs.length} selected unit(s)?
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleRemoveCancel} sx={{color:"black"}}>
+              Cancel
+            </Button>
+            <Button onClick={handleRemoveConfirm} color="error">
+              Remove
+            </Button>
+          </DialogActions>
+        </Dialog>
+      </div>
+      
+      <div>
+        <Dialog
+          open={isDeleteModalOpen}
+          onClose={handleRemoveCancel}
+          aria-labelledby="remove-dialog-title"
+          aria-describedby="remove-dialog-description"
+        >
+          <DialogTitle id="remove-dialog-title">Confirm Removal</DialogTitle>
+          <DialogContent>
+            <DialogContentText id="remove-dialog-description">
+              Are you sure you want to remove {selectedUnitIDs.length} selected unit(s)?
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleRemoveCancel} sx={{color:"black"}}>
+              Cancel
+            </Button>
+            <Button onClick={handleRemoveConfirm} color="error">
+              Remove
+            </Button>
+          </DialogActions>
+        </Dialog>
       </div>
 
-      <Box sx={{ height: '100%', width: '100%' }}>
-        <DataGrid
-          rows={units}
-          rowHeight={30}
-          columns={columns}
-          columnResizable={true}
-          getRowId={(row) => row._id}  // use the Unit's mongo ID as the row ID
-          initialState={{
-            pagination: {
-              paginationModel: {
-                pageSize: 25,
+      <div>
+        <Box sx={{ height: '100%', width: '100%' }}>
+          <DataGrid
+            sx = {{
+              "& .MuiDataGrid-row:hover": {
+                backgroundColor: "#cccccc",
               },
-            },
-          }}
-          pageSizeOptions={[10, 25, 50]}
-          checkboxSelection
-          disableRowSelectionOnClick
-          selectionModel={selectedUnits}
-          onRowSelectionModelChange={handleRowSelectionModelChange}
-          className="list-column"
-        />
-      </Box>
-
-      <Dialog
-        open={isDeleteModalOpen}
-        onClose={handleRemoveCancel}
-        aria-labelledby="remove-dialog-title"
-        aria-describedby="remove-dialog-description"
-      >
-        <DialogTitle id="remove-dialog-title">Confirm Removal</DialogTitle>
-        <DialogContent>
-          <DialogContentText id="remove-dialog-description">
-            Are you sure you want to remove {selectedUnitIDs.length} selected unit(s)?
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleRemoveCancel} sx={{color:"black"}}>
-            Cancel
-          </Button>
-          <Button onClick={handleRemoveConfirm} color="error">
-            Remove
-          </Button>
-        </DialogActions>
-      </Dialog>
+            }}
+            slots={{
+              toolbar: CustomToolbar,
+            }}
+            rows={units}
+            rowHeight={30}
+            columns={columns}
+            columnResizable={true}
+            getRowId={(row) => row._id}  // use the Unit's mongo ID as the row ID
+            initialState={{
+              pagination: {
+                paginationModel: {
+                  pageSize: 25,
+                },
+              },
+            }}
+            pageSizeOptions={[10, 25, 50]}
+            checkboxSelection
+            disableRowSelectionOnClick
+            selectionModel={selectedUnits}
+            onRowSelectionModelChange={handleRowSelectionModelChange}
+            className="unit-list-column"
+          />
+        </Box>
+      </div>
     </>
   );
 };

@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useLogin } from '../../hooks/useLogin.js';
 import { useNavigate } from 'react-router-dom';
+import Alert from '@material-ui/lab/Alert';
 import { Button, TextField, Container, Typography, Paper, IconButton } from '@material-ui/core';
 import { Visibility, VisibilityOff } from '@material-ui/icons';
 import useStyles from './loginFormStyle.js';
@@ -10,7 +11,8 @@ const Login = () => {
 
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
-    const {login, error, isLoading} = useLogin()
+    const {login, isLoading} = useLogin()
+    const [error, setError] = useState('')
     const [showPassword, setShowPassword] = useState(false)
 
     const classes = useStyles()
@@ -22,21 +24,32 @@ const Login = () => {
         e.preventDefault()
 
         try {
-
-            const loginSuccessful = await login(email, password)
-
-            if (loginSuccessful.isSucsess && loginSuccessful.isVerified) {
-                    navigate('/dashboard');
-            }
-            else if(loginSuccessful.isSuccess && !loginSuccessful.isVerified)
-            {
-                console.log('User is not verified')
-            }
+            setError(null)
+            const loginResponse = await login(email, password)
+    
+                if (loginResponse.isSuccess && loginResponse.isVerified) {
+                    setError(null)
+                    navigate('/dashboard')
+                } else if (loginResponse.isSuccess && !loginResponse.isVerified) {
+                    setError('User is not verified');
+                    navigate('/verifyemail')
+                } else if (!loginResponse.isSuccess && !loginResponse.isVerified) {
+                    setError('Password or email is incorrect');
+                }
+                else if (!loginResponse.isSuccess && !loginResponse.isVerified && !loginResponse.hasWhitelist)
+                {
+                    setError('Your account is not authorised')
+                }
+                else {
+                    setError('Error logging in - please contact admin');
+                }
         } catch (err) {
-            err("An unexpected error occurred.")
+            setError('Your account is not authorised')
+           
         }
-       
     }
+
+           
 
     return (
 
@@ -96,7 +109,7 @@ const Login = () => {
                         Login
                     </Button>
 
-                    {error && <div className={classes.error}>{error}</div>}
+                    {error && <Alert severity="error" style={{ marginTop: '1em' }}>{error}</Alert>}
 
                     <Button
                         type="button"

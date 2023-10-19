@@ -34,27 +34,6 @@ router.route("/count").get(async (req, res) => {
   }
 });
 
-/**
- * [/institutions/units]
- * GET the List of Units for a given institution
- */
-router.route("/units").get((req, res) => {
-  const institution = req.query.institution;
-  
-  console.log("querying an institution's units, institution id = " + institution);
-  
-  Unit.find({ institution: institution })
-    .populate("institution")
-    .then((units) => {
-      console.log("units =", units);
-      res.json(units)
-    })
-    .catch((err) => {
-      console.error(`ERROR: ${err}`);
-      res.status(500).json(`ERROR: Failed to retrieve the institution's units.\nMore details: ${err}`);
-    });
-});
-
 
 // ---- [POST] ----
 
@@ -144,6 +123,33 @@ router.route("/delete/:id").delete(async (req, res) => {
   } catch (error) {
     console.error("!!!Error deleting institution:", error);
     res.status(500).json("Error deleting institution.\nMore info:", error.message);
+  }
+});
+
+/** 
+ * [ /institutions/remove-notes ]
+ * Remove notes field
+ */
+router.route("/remove-notes").delete(async (req, res) => {
+  console.log(">>> Deleting notes of all institutions");
+  
+  // Define the update operation to remove the 'notes' field
+  const updateOperation = {
+    $unset: {
+      notes: 1, // Setting the value to 1 means to unset the field
+    },
+  };
+
+  try {
+    // Use the updateMany method to remove the 'notes' field from all documents
+    const result = await Institution.updateMany({}, updateOperation);
+
+    console.log("Removed 'notes' field from", result.nModified, "documents.");
+    res.json("Removed 'notes' field from " + result.nModified + " documents.");
+  }
+  catch (e) {
+    console.error("ERROR:", e);
+    res.status(500).json("Error deleting notes field of institutions.\nMore info:" + e);
   }
 });
 

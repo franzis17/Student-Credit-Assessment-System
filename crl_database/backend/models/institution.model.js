@@ -6,10 +6,10 @@ const institutionSchema = new Schema(
   {
     name: {
       type: String,
-      unique: true,
+      unique: false,
       trim: true,
       required: true,
-      minlength: 5,
+      minlength: 2,
     },
     rank: {
       type: Number,

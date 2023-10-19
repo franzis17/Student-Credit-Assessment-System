@@ -10,9 +10,9 @@ router.use(requireAuth)
 
 router.route("/").get(async (req, res) => {
   try {
-    console.log(">>> Getting applications...");
+    // console.log(">>> Getting applications...");
     const applications = await Application.find({}).populate("institution assessedUnits curtinUnit");
-    console.log("applications =", applications);
+    // console.log("applications =", applications);
     res.json(applications);
   } catch (e) {
     console.error(`ERROR: ${e}`);
@@ -20,6 +20,32 @@ router.route("/").get(async (req, res) => {
   }
 });
 
+/**
+ * [ /applications/studentSearch ]
+ * Search for a student.
+ */
+router.route("/studentSearch").get(async (req, res) => {
+  const student = req.query.student;
+  // console.log(">>> Searching applications of a student...");
+  // console.log("student =", student);
+  
+  try {
+    let results = [];
+    if (student) {
+      results = await Application.find(
+        {
+          studentNotes: { $regex: student, $options: 'i' }
+        }
+      ).populate("institution assessedUnits curtinUnit");
+    }
+    // console.log("Student's applications =", results);
+    res.json(results);
+  }
+  catch (e) {
+    console.error(`ERROR: ${e}`);
+    res.status(500).json("ERROR: Failed to fetch search results. More details:", e);
+  }
+});
 
 // ---- [ POST ] ----
 
@@ -80,30 +106,22 @@ router.route("/delete/:id").delete((req, res) => {
     });
 });
 
-// ---- [ Search for Student ] ----
-router.route("/studentSearch").get(async (req, res) => {
-  console.log("Endpoint accessed");
-  const query = req.query.q;
-    
-  // Search logic: StudentNotes
-  try {
-      let results = [];
-      if(query) {
-          results = await Application.find({
-              
-              studentNotes: { $regex: query, $options: 'i' }
-              
-          }).populate("institution assessedUnits assessorNotes");
-      }
-      res.json(results);
-  } catch (e) {
-      console.error(`ERROR: ${e}`);
-      res.status(500).json(`ERROR: Failed to fetch search results. More details: ${e}`);
-  }
-});
 
 router.route("/totty").get((req, res) => {
   res.send("Route is working");
 });
+
+router.route("/applicationsByAssessedUnits").post(async (req, res) => {
+  const { assessedUnits } = req.body;
+
+  try {
+    const applications = await Application.find({ assessedUnits: { $in: assessedUnits } }).populate("institution assessedUnits curtinUnit");
+    res.json(applications);
+  } catch (e) {
+    console.error(`ERROR: ${e}`);
+    res.status(500).json(`ERROR: Failed to fetch applications. More details: ${e}`);
+  }
+});
+
 
 export default router;

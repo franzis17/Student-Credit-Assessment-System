@@ -25,22 +25,26 @@ import ChevronUpIcon from '@mui/icons-material/ExpandLess';
 import { Link } from 'react-router-dom';
 import LockIcon from '@mui/icons-material/Lock';
 import { useAuthContext } from '../hooks/useAuthContext.js';
-import StudentSearch from './studentSearch.jsx';
+import { useLogout } from '../hooks/useLogout.js'
+import SearchStudent from './searchStudent.jsx';
 import Whitelist from './whitelistMenu.jsx';
 
 const BurgerMenu = () => {
+  
   const [open, setOpen] = useState(false);
   const [searchModalOpen, setSearchModalOpen] = useState(false)
   const [whitelistModalOpen, setWhitelistModalOpen] = useState(false)
   const navigate = useNavigate();
   const { user } = useAuthContext();
   const [openLists, setOpenLists] = useState(false);
+  const {logout} = useLogout()
   
   //Conditionally set the menu items 
-  const menuItems = ['Dashboard', 'Lists', 'Student Search']
+  const menuItems = ['Dashboard', 'Lists']
   //Check if the user is admin
   if (user && user.role == 'Admin') {
-    menuItems.push('Whistlist')
+    menuItems.push('Whitelist');
+    menuItems.push('Search Student');
   }
 
   const toggleDrawer = () => {
@@ -59,6 +63,14 @@ const BurgerMenu = () => {
   const toggleWhitelistMenu = () => {
     setWhitelistModalOpen(!whitelistModalOpen)
   }
+
+  const handleLogout = () => {
+    // Perform logout action here, e.g., clear authentication tokens, navigate to login page, etc.
+    logout()
+    navigate('/login')
+    // navigate('/login'); // You can uncomment this line if you have a navigation system set up
+  };
+
 
 
   function handleListItemClick(index) {
@@ -102,7 +114,7 @@ const BurgerMenu = () => {
                     </ListItemIcon>
                     <ListItemText primary={text} />
                   </ListItemButton>
-                ) :  index == 3 && user && user.role === 'Admin' ? (
+                ) :  index == 2 && user && user.role === 'Admin' ? (
                   <ListItemButton
                   onClick={toggleWhitelistMenu}
                  >
@@ -111,14 +123,14 @@ const BurgerMenu = () => {
                   </ListItemIcon>
                   <ListItemText primary={text} />
                 </ListItemButton>
-                ) : index == 2 ? ( 
+                ) : index == 3 && user && user.role === 'Admin' ? ( 
                     <ListItemButton 
                     onClick={toggleSearchModal}
                     >
                     <ListItemIcon>
                     <PersonSearchIcon />
                     </ListItemIcon>
-                   <ListItemText primary="Student Search" />
+                   <ListItemText primary="Search student" />
                    </ListItemButton>      
                 ) : (
                   <ListItemButton onClick={() => handleListItemClick(index)}>
@@ -140,7 +152,7 @@ const BurgerMenu = () => {
               {index === 1 && (
                 <Collapse in={openLists} timeout="auto" unmountOnExit>
                   <List component="div" disablePadding>
-                    {['Units', 'Institutions', 'Applications'].map((subText) => (
+                    {['Institutions', 'Units', 'Applications'].map((subText) => (
                       <ListItem key={subText} disablePadding>
                         <ListItemButton
                           component={Link}
@@ -151,8 +163,6 @@ const BurgerMenu = () => {
                         </ListItemButton>
                       </ListItem>
                     ))}
-
-      
                   </List>
                 </Collapse>
               )}
@@ -173,7 +183,7 @@ const BurgerMenu = () => {
               left: 0,
             }}
             onClick={() => {
-              navigateTo('/login');
+              handleLogout()
             }}
           >
             <LockIcon style={{ marginRight: '20px' }} />
@@ -181,7 +191,10 @@ const BurgerMenu = () => {
           </Button>
         </div>
       </Drawer>
-      <StudentSearch open={searchModalOpen} onClose={toggleSearchModal} />
+      
+      { /* SearchStudent is new one */ }
+      <SearchStudent open={searchModalOpen} onClose={toggleSearchModal} />
+      
       <Whitelist open={whitelistModalOpen} onClose={toggleWhitelistMenu} />
     </>
   );
