@@ -1,6 +1,5 @@
 import { useState } from 'react'
 import { useAuthContext } from './useAuthContext'
-import { useNavigate } from 'react-router-dom';
 
 export const useLogin = () => {
 
@@ -9,8 +8,6 @@ export const useLogin = () => {
   const [isLoading, setIsLoading] = useState(false)
 
   const {dispatch} = useAuthContext()
-
-  const navigate = useNavigate();
 
   const login = async (email, password) => {
     setIsLoading(true)
@@ -27,15 +24,32 @@ export const useLogin = () => {
   
     if (response.status === 401) {
       setIsLoading(false)
-      navigate('/verifyemail');
-      return { isSuccess: false,
-      isVerified: false };
+      if (json.error.includes('Incorrect password or email')) {
+      return {
+        isSuccess: false,
+        isVerified: false
     }
+   }
+  }
+
+   if (response.status === 403) {
+    setIsLoading(false)
+    return {
+      isSuccess: false,
+      isVerified: false,
+      hasWhitelist: false
+
+    }
+  }
 
     if (!response.ok) {
       setIsLoading(false)
       setError(json.error)
-      return false;
+      return {
+        isSuccess: false,
+        isVerified: false,
+  
+      }
     }
 
     if (response.ok) {

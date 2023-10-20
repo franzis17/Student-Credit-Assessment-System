@@ -6,6 +6,7 @@ import AddUnitButton from '../../components/AddUnitButton';
 import SimpleButton from "../../components/buttons/SimpleButton";
 import '../institution-list/list.css';
 import { DataGrid } from '@mui/x-data-grid';
+import CustomToolbar from "../../components/CustomToolbar";
 
 import { useAuthContext } from '../../hooks/useAuthContext';
 import DataUtils from "../../utils/dataUtils";
@@ -232,6 +233,30 @@ const UnitList = () => {
           </DialogActions>
         </Dialog>
       </div>
+      
+      <div>
+        <Dialog
+          open={isDeleteModalOpen}
+          onClose={handleRemoveCancel}
+          aria-labelledby="remove-dialog-title"
+          aria-describedby="remove-dialog-description"
+        >
+          <DialogTitle id="remove-dialog-title">Confirm Removal</DialogTitle>
+          <DialogContent>
+            <DialogContentText id="remove-dialog-description">
+              Are you sure you want to remove {selectedUnitIDs.length} selected unit(s)?
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleRemoveCancel} sx={{color:"black"}}>
+              Cancel
+            </Button>
+            <Button onClick={handleRemoveConfirm} color="error">
+              Remove
+            </Button>
+          </DialogActions>
+        </Dialog>
+      </div>
 
       <div>
         <Box sx={{ height: '100%', width: '100%' }}>
@@ -240,6 +265,9 @@ const UnitList = () => {
               "& .MuiDataGrid-row:hover": {
                 backgroundColor: "#cccccc",
               },
+            }}
+            slots={{
+              toolbar: CustomToolbar,
             }}
             rows={units}
             rowHeight={30}

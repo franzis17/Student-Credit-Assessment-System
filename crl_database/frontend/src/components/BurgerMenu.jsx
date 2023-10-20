@@ -26,7 +26,6 @@ import { Link } from 'react-router-dom';
 import LockIcon from '@mui/icons-material/Lock';
 import { useAuthContext } from '../hooks/useAuthContext.js';
 import { useLogout } from '../hooks/useLogout.js'
-import StudentSearch from './studentSearch.jsx';
 import SearchStudent from './searchStudent.jsx';
 import Whitelist from './whitelistMenu.jsx';
 
@@ -45,7 +44,7 @@ const BurgerMenu = () => {
   //Check if the user is admin
   if (user && user.role == 'Admin') {
     menuItems.push('Whitelist');
-    menuItems.push('Student Search');
+    menuItems.push('Search Student');
   }
 
   const toggleDrawer = () => {
@@ -192,8 +191,11 @@ const BurgerMenu = () => {
           </Button>
         </div>
       </Drawer>
-        <StudentSearch open={searchModalOpen} onClose={toggleSearchModal} />
-        <Whitelist open={whitelistModalOpen} onClose={toggleWhitelistMenu} />
+      
+      { /* SearchStudent is new one */ }
+      <SearchStudent open={searchModalOpen} onClose={toggleSearchModal} />
+      
+      <Whitelist open={whitelistModalOpen} onClose={toggleWhitelistMenu} />
     </>
   );
 };

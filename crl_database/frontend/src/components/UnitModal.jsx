@@ -10,6 +10,7 @@ import Divider from '@mui/material/Divider';
 import { useAuthContext } from '../hooks/useAuthContext';
 
 const UnitModal = ({ onClose, onUnitSave}) => {
+  
   const [name, setUnitName] = useState('');
   const [institution, setInstitutionName] = useState('');
   const [unitCode, setUnitCode] = useState('');
@@ -41,6 +42,8 @@ const UnitModal = ({ onClose, onUnitSave}) => {
   }, []);
 
   const handleSave = () => {
+    console.log(">>> Saving unit...");
+    console.log("institutionID =", institutionID);
     const unitToAdd = {
       unitCode,
       name,
@@ -83,22 +86,19 @@ const UnitModal = ({ onClose, onUnitSave}) => {
     });
   }
 
-  const handleInstitutionClick = (institutionP) => {
-    console.log("selected institution id is: " + institutionP._id);
-    const selectedInstitutionObj = institutionArray.find(
-      (institution) => institution._id === institutionP._id
-    );
+  const handleInstitutionClick = (institutionSelected) => {
+    console.log("selected institution =", institutionSelected);
   
-    if (selectedInstitutionObj) {
-      setInstitutionID(selectedInstitutionObj._id);
-      setInstitutionName(selectedInstitutionObj.name);
-      setLocation(selectedInstitutionObj.location);
+    if (institutionSelected) {
+      setInstitutionID(institutionSelected._id);
+      setInstitutionName(institutionSelected.name);
+      setLocation(institutionSelected.location);
     }
 
     console.log("ID = " + institutionID);
     console.log("NAME = " + name);
     console.log("LOCATION = " + location);
-  
+
     setFilteredList([]);
     setSelectedInstitution(null);
   };

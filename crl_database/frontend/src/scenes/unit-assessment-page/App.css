@@ -64,17 +64,33 @@ body {
   margin-right: 0.5rem;
 }
 
-.status-symbol.approval {
-  color: green;
+
+.status-dot-green {
+  background-color: green;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  display: inline-block;
 }
 
-.status-symbol.deny {
-  color: red;
+
+.status-dot-yellow {
+  background-color: yellow;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  display: inline-block;
 }
 
-.status-symbol.conditional {
-  color: brown;
+.status-dot-red {
+  background-color: red;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  display: inline-block;
 }
+
+
 
 .button-container {
   text-align: center;
