@@ -5,5 +5,5 @@ cd ./backend
 npx nodemon start
 
 # Start frontend service
-cd ../frontend
+cd ./frontend
 npm start
