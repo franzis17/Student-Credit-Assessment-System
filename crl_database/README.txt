@@ -48,16 +48,17 @@ Version is preferrably v18, to be specific, v18.17.1.
 
 
 4. Run the bash script to compile the application
-
 Use the bash script provided in the source file to compile and run the application.
 
-** Using the scripts to install and run the application **
 First, you must change the permission to allow the script on your computer. (If you want, check the code of each scripts to see if you trust it first)
-change the permission of script to be executable:
-chmod +x install.sh run.sh
+Note: The following command runs on Linux.
 
-[To install the application (ONLY DO ONCE)]
+[ a. change the permission of the script to be executable ]
+run: chmod +x install.sh run.sh
+
+[ b. To install the application ]
+Note: ONLY DO ONCE
 run: ./install.sh
 
-[To run the frontend and backend services/application]
+[ c. To run the frontend and backend services/application ]
 run: ./run.sh
