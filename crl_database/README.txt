@@ -42,11 +42,8 @@ Now you will be able have access to the database with your current IP
 
 Use the bash script provided in the source file to compile and run the application
 
-./install.sh
+To install the application (ONLY DO ONCE):
+Run: ./install.sh
 
-
-
-
-
-
-
+To run the frontend and backend services/application: 
+Run: ./run.sh
