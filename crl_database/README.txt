@@ -27,22 +27,24 @@ https://bitbucket.org/curtincomputingprojects/2023-10-crl-database/src/master/
 
 2. Setup MongoDB login
 - We have created a MongoDB accounts for the Admin to access the database
-- Username/email:mefny-crldatabase10@outlook.com | Password: 74e2dd294cd1ffe4e6cdbdcf71e6039b
-- In order to run the web application locally, you'll need to whitelist the IP for the device you are currently using on MongoDB.  
+    - Username/email:mefny-crldatabase10@outlook.com
+    - Password: 74e2dd294cd1ffe4e6cdbdcf71e6039b
+- In order to run the web application locally, you will need to whitelist the IP for the device you are currently using on MongoDB.  
   On the MongoDB account we have given you above, follow the navigation instructions below to whitelist your IP;
 
 [Whitelisting IP]
-- Navigate to 'Projects'
-- Select the CRL Database project 'CRL-Database'
--Navigate to 'Network Access'
--Add IP Address (green button in top right)
--Press the Add Current IP Address option and then choose a time to live for the IP
--Press save
+a.  From MongoDB Home page, navigate to 'Projects' (left-side-panel)
+b.  Select the CRL Database project 'CRL-Database'
+c.  Navigate to 'Network Access' (left-side-panel)
+d.  Select "Add IP Address" (green button in top right)
+e.  Press the Add Current IP Address button.
+        i. (Optionally) toggle your IP address as temporary (bottom-left button) and choose how long your IP address should be active in the DB.
+f.  Press save/confirm
 
-Now you will be able have access to the database with your current IP.
+Now you will be able to have access to the database with your current IP.
 
 
-3. Node installation
+3. Install Node (if not installed yet)
 Please install node by following the node's official instruction https://nodejs.org/en/download/package-manager#debian-and-ubuntu-based-linux-distributions.
 Version is preferrably v18, to be specific, v18.17.1.
 
