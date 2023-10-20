@@ -145,16 +145,6 @@ const UnitModal = ({ onClose, onUnitSave}) => {
           sx={{ width: '100%', marginBottom: '16px' }}
         />
         <TextField
-          label="Location"
-          fullWidth
-          margin="normal"
-          value={location}
-          onChange={(e) => setLocation(e.target.value)}
-          placeholder="Location"
-          sx={{ width: '100%', marginBottom: '16px' }}
-        />
-
-        <TextField
           label="Institution"
           fullWidth
           margin="normal"
@@ -163,7 +153,7 @@ const UnitModal = ({ onClose, onUnitSave}) => {
           placeholder="Institution ID will be pasted here on click"
           sx={{
             width: '100%',
-            marginBottom: '16px',
+            marginBottom: '5px',
             position: 'relative',
             zIndex: 301, //this helps but idk how...
           }}
@@ -204,8 +194,17 @@ const UnitModal = ({ onClose, onUnitSave}) => {
                   </React.Fragment>
                 ))}
               </List>
-        
             )}
+        
+        <TextField
+          label="Location"
+          fullWidth
+          margin="normal"
+          value={location}
+          onChange={(e) => setLocation(e.target.value)}
+          placeholder="Location"
+          sx={{ width: '100%', marginBottom: '16px' }}
+        />
         <TextField
           label="Course Major"
           fullWidth

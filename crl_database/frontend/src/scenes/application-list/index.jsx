@@ -12,6 +12,9 @@ import CustomToolbar from "../../components/CustomToolbar";
 import { Button } from '@mui/material';
 import { TableCell, Tooltip } from '@mui/material';
 import { FiberManualRecord } from '@mui/icons-material';
+import Collapse from '@mui/material/Collapse';
+import IconButton from '@mui/material/IconButton';
+import CloseIcon from '@mui/icons-material/Close';
 
 
 import {
@@ -20,6 +23,7 @@ import {
   DialogContent,
   DialogContentText,
   DialogActions,
+  Alert
 } from '@mui/material';
 
 const ApplicationList = () => {
@@ -36,6 +40,7 @@ const ApplicationList = () => {
   const [applications, setApplications] = useState([]);
   const [selectedApplications, setSelectedApplications] = useState([]);
   const [isModalOpen, setModalOpen] = useState(false);
+  const [openAlert, setAlertOpen] = useState();
   
   useEffect(() => {
     retrieveApplications();
@@ -190,7 +195,7 @@ const ApplicationList = () => {
     <>
       <div>
         <Navbar/>
-        {selectedApplications.length > 0 && (
+        {selectedApplications.length > 0 && (user.role === "Admin" || user.role === "Moderator") && (
           <Button
             sx={{
               position: 'absolute',

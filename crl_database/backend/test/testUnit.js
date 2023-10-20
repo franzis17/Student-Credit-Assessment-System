@@ -18,7 +18,6 @@ class Test {
       console.log(e.message);
     }
   }
-  
 }
 
 const test = new Test();
