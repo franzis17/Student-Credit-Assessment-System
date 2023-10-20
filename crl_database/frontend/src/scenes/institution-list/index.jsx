@@ -18,6 +18,9 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText'; 
 import DialogTitle from '@mui/material/DialogTitle';
+import Collapse from '@mui/material/Collapse';
+import CloseIcon from '@mui/icons-material/Close';
+import Alert from '@mui/material/Alert';
 
 import { useAuthContext } from '../../hooks/useAuthContext';
 import DataUtils from "../../utils/dataUtils";
@@ -28,6 +31,8 @@ const InstitutionList = () => {
   const [institutions, setInstitutions] = useState([]);
   const [institutionToDelete, setInstitutionToDelete] = useState('');
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [institutionToAdd, setInstitutinToAdd] = useState({});
+  const [openAlert, setAlertOpen] = useState();
 
   const { user } = useAuthContext();
   const navigate = useNavigate();
@@ -80,10 +85,11 @@ const InstitutionList = () => {
   // Use Axios to add new Institution in the DB by HTTP POST request
   const handleInstitutionSave = (institutionData) => {
     console.log("Received Institution Data: " + institutionData.name);
-  
+    setInstitutinToAdd(institutionData);
     InstitutionDataService.addInstitution(institutionData, user.token)
       .then((response) => {
         console.log(`Successfully added institution in the database.`);
+        setAlertOpen(true);
         retrieveInstitutions();
       })
       .catch((error) => {
@@ -157,6 +163,26 @@ const InstitutionList = () => {
         {user && (user.role === "Admin" || user.role === "Moderator") && (
           <AddInstitutionButton onInstitutionSave={handleInstitutionSave} />
         )}
+        <Collapse in={openAlert}>
+              <Alert
+                action={
+                  <IconButton
+                    id='alert'
+                    aria-label="close"
+                    color="inherit"
+                    size="small"
+                    onClick={() => {
+                      setAlertOpen(false);
+                    }}
+                  >
+                    <CloseIcon fontSize="inherit" />
+                  </IconButton>
+                }
+                sx={{ mb: 2 }}
+              >
+              Successfully Added {institutionToAdd.name} to the Database
+            </Alert>
+          </Collapse>
 
       <div style={containerStyle} className="center-data-grid">
         <Box sx={{ flex: 1 }}>

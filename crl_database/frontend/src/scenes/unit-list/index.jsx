@@ -7,6 +7,9 @@ import SimpleButton from "../../components/buttons/SimpleButton";
 import '../institution-list/list.css';
 import { DataGrid } from '@mui/x-data-grid';
 import CustomToolbar from "../../components/CustomToolbar";
+import Collapse from '@mui/material/Collapse';
+import IconButton from '@mui/material/IconButton';
+import CloseIcon from '@mui/icons-material/Close';
 
 import { useAuthContext } from '../../hooks/useAuthContext';
 import DataUtils from "../../utils/dataUtils";
@@ -24,7 +27,7 @@ import {
 
 
 const UnitList = () => {
-
+  const [openAlert, setAlertOpen] = useState();
   const { user } = useAuthContext();
   const { institutionId } = useParams();
 
@@ -38,6 +41,7 @@ const UnitList = () => {
   const [selectedUnits, setSelectedUnits] = useState([]);
   const [selectedUnitIDs, setSelectedUnitIDs] = useState([]);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [unitToAdd, setUnitToAdd] = useState({});
 
   // List units or units of an institution
   useEffect(() => {
@@ -90,10 +94,12 @@ const UnitList = () => {
   };
 
   const handleUnitSave = (unitData) => {
+    setUnitToAdd(unitData);
     console.log('Received unit data:', unitData);
     UnitDataService.addUnit(unitData, user.token)
       .then((response) => {
         console.log("Successfully added the unit in the database " + response.status);
+        setAlertOpen(true);
         retrieveUnits();
       })
       .catch((error) => {
@@ -189,6 +195,25 @@ const UnitList = () => {
               }}
             />
           )}
+          <Collapse in={openAlert}>
+            <Alert
+              action={
+                <IconButton
+                  aria-label="close"
+                  color="inherit"
+                  size="small"
+                  onClick={() => {
+                    setAlertOpen(false);
+                  }}
+                >
+                  <CloseIcon fontSize="inherit" />
+                </IconButton>
+              }
+              sx={{ mb: 2 }}
+            >
+            Successfully Added {unitToAdd.name} to the Database
+          </Alert>
+        </Collapse>
        
        {selectedUnitIDs.length > 0 && (user.role === "Admin" || user.role === "Moderator") && (
         <Button
@@ -293,5 +318,4 @@ const UnitList = () => {
     </>
   );
 };
-
 export default UnitList;
