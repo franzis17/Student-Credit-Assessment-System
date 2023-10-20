@@ -53,6 +53,8 @@ Use the bash script provided in the source file to compile and run the applicati
 
 ** Using the scripts to install and run the application **
 First, you must change the permission to allow the script on your computer. (If you want, check the code of each scripts to see if you trust it first)
+change the permission of script to be executable:
+chmod +x install.sh run.sh
 
 [To install the application (ONLY DO ONCE)]
 run: ./install.sh
