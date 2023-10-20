@@ -17,10 +17,13 @@ NOTE! The verify email process uses a setup Outlook account to foward the verify
 email: crl-database@outlook.com
 Password: DRt846bizaEnqA2EG5L0PDPK4
 -----------------------------------
-Setup Tutorial
+
+
+[ Setup Tutorial ]
 
 1. Download source files onto local system from repository 
 https://bitbucket.org/curtincomputingprojects/2023-10-crl-database/src/master/
+
 
 2. Setup MongoDB login
 - We have created a MongoDB accounts for the Admin to access the database
@@ -36,14 +39,23 @@ https://bitbucket.org/curtincomputingprojects/2023-10-crl-database/src/master/
 -Press the Add Current IP Address option and then choose a time to live for the IP
 -Press save
 
-Now you will be able have access to the database with your current IP
+Now you will be able have access to the database with your current IP.
 
-3. Run the bash script to compile application
 
-Use the bash script provided in the source file to compile and run the application
+3. Node installation
+Please install node by following the node's official instruction https://nodejs.org/en/download/package-manager#debian-and-ubuntu-based-linux-distributions.
+Version is preferrably v18, to be specific, v18.17.1.
 
-To install the application (ONLY DO ONCE):
-Run: ./install.sh
 
-To run the frontend and backend services/application: 
-Run: ./run.sh
+4. Run the bash script to compile the application
+
+Use the bash script provided in the source file to compile and run the application.
+
+** Using the scripts to install and run the application **
+First, you must change the permission to allow the script on your computer. (If you want, check the code of each scripts to see if you trust it first)
+
+[To install the application (ONLY DO ONCE)]
+run: ./install.sh
+
+[To run the frontend and backend services/application]
+run: ./run.sh
