@@ -27,8 +27,8 @@ https://bitbucket.org/curtincomputingprojects/2023-10-crl-database/src/master/
 
 2. Setup MongoDB login
 - We have created a MongoDB accounts for the Admin to access the database
-    - Username/email:mefny-crldatabase10@outlook.com
-    - Password: 74e2dd294cd1ffe4e6cdbdcf71e6039b
+    - Username/email:  mefny-crldatabase10@outlook.com
+    -       Password:  74e2dd294cd1ffe4e6cdbdcf71e6039b
 - In order to run the web application locally, you will need to whitelist the IP for the device you are currently using on MongoDB.  
   On the MongoDB account we have given you above, follow the navigation instructions below to whitelist your IP;
 
